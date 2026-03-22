@@ -8,9 +8,9 @@ import earthVert from '@/lib/shaders/earth.vert.glsl'
 import earthFrag from '@/lib/shaders/earth.frag.glsl'
 
 interface EarthProps {
-  groupRef: React.RefObject<THREE.Group>
-  meshRef: React.RefObject<THREE.Mesh>
-  materialRef: React.RefObject<THREE.ShaderMaterial>
+  groupRef: React.RefObject<THREE.Group | null>
+  meshRef: React.RefObject<THREE.Mesh | null>
+  materialRef: React.RefObject<THREE.ShaderMaterial | null>
 }
 
 export function Earth({ groupRef, meshRef, materialRef }: EarthProps) {

@@ -12,9 +12,9 @@ import {
 } from '@/lib/constants'
 
 interface AnimatorProps {
-  earthGroupRef: React.RefObject<THREE.Group>
-  earthMeshRef: React.RefObject<THREE.Mesh>
-  earthMaterialRef: React.RefObject<THREE.ShaderMaterial>
+  earthGroupRef: React.RefObject<THREE.Group | null>
+  earthMeshRef: React.RefObject<THREE.Mesh | null>
+  earthMaterialRef: React.RefObject<THREE.ShaderMaterial | null>
 }
 
 export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef }: AnimatorProps) {
