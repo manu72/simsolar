@@ -57,3 +57,52 @@ export function getEarthOrbitalPosition(jd: number): Vector3 {
 
   return new Vector3(r * Math.cos(nu), 0, r * Math.sin(nu))
 }
+
+// ─── Earth Rotation ────────────────────────────────────────────────────────
+
+/**
+ * Returns Earth's sidereal rotation angle in radians for the given JD.
+ * Pure — no speed multiplier. Animator applies rotationSpeed separately.
+ */
+export function getSiderealRotationAngle(jd: number): number {
+  return ((2 * Math.PI * jd) / SIDEREAL_DAY_DAYS) % (2 * Math.PI)
+}
+
+// ─── Seasons ───────────────────────────────────────────────────────────────
+
+const SOLAR_EVENTS = [
+  { month: 2,  day: 20, label: 'Mar Equinox' },
+  { month: 5,  day: 21, label: 'Jun Solstice' },
+  { month: 8,  day: 23, label: 'Sep Equinox' },
+  { month: 11, day: 21, label: 'Dec Solstice' },
+] as const
+
+export function getSolsticeEquinoxEvents(): { label: string; jd: number; date: Date }[] {
+  const year = new Date().getUTCFullYear()
+  return SOLAR_EVENTS.map(({ month, day, label }) => {
+    const date = new Date(Date.UTC(year, month, day))
+    return { label, date, jd: dateToJulianDay(date) }
+  })
+}
+
+export function getSeasonLabel(jd: number, hemisphere: 'north' | 'south'): string {
+  const year = julianDayToDate(jd).getUTCFullYear()
+
+  const marchJD = dateToJulianDay(new Date(Date.UTC(year, 2,  20)))
+  const juneJD  = dateToJulianDay(new Date(Date.UTC(year, 5,  21)))
+  const septJD  = dateToJulianDay(new Date(Date.UTC(year, 8,  23)))
+  const decJD   = dateToJulianDay(new Date(Date.UTC(year, 11, 21)))
+
+  let northSeason: string
+  if (jd >= marchJD && jd < juneJD)       northSeason = 'Spring'
+  else if (jd >= juneJD && jd < septJD)   northSeason = 'Summer'
+  else if (jd >= septJD && jd < decJD)    northSeason = 'Autumn'
+  else                                     northSeason = 'Winter'
+
+  if (hemisphere === 'north') return northSeason
+
+  const flip: Record<string, string> = {
+    Spring: 'Autumn', Summer: 'Winter', Autumn: 'Spring', Winter: 'Summer',
+  }
+  return flip[northSeason]
+}
