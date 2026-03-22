@@ -71,10 +71,10 @@ export function getSiderealRotationAngle(jd: number): number {
 // ─── Seasons ───────────────────────────────────────────────────────────────
 
 const SOLAR_EVENTS = [
-  { month: 2,  day: 20, label: 'Mar Equinox' },
-  { month: 5,  day: 21, label: 'Jun Solstice' },
-  { month: 8,  day: 23, label: 'Sep Equinox' },
-  { month: 11, day: 21, label: 'Dec Solstice' },
+  { month: 2,  day: 20, label: 'March Equinox' },
+  { month: 5,  day: 21, label: 'June Solstice' },
+  { month: 8,  day: 23, label: 'September Equinox' },
+  { month: 11, day: 21, label: 'December Solstice' },
 ] as const
 
 export function getSolsticeEquinoxEvents(): { label: string; jd: number; date: Date }[] {
@@ -94,15 +94,18 @@ export function getSeasonLabel(jd: number, hemisphere: 'north' | 'south'): strin
   const decJD   = dateToJulianDay(new Date(Date.UTC(year, 11, 21)))
 
   let northSeason: string
-  if (jd >= marchJD && jd < juneJD)       northSeason = 'Spring'
-  else if (jd >= juneJD && jd < septJD)   northSeason = 'Summer'
-  else if (jd >= septJD && jd < decJD)    northSeason = 'Autumn'
-  else                                     northSeason = 'Winter'
+  if (jd >= marchJD && jd < juneJD)       northSeason = 'Spring Equinox'
+  else if (jd >= juneJD && jd < septJD)   northSeason = 'Summer Solstice'
+  else if (jd >= septJD && jd < decJD)    northSeason = 'Autumn Equinox'
+  else                                     northSeason = 'Winter Solstice'
 
   if (hemisphere === 'north') return northSeason
 
   const flip: Record<string, string> = {
-    Spring: 'Autumn', Summer: 'Winter', Autumn: 'Spring', Winter: 'Summer',
+    'Spring Equinox': 'Autumn Equinox',
+    'Summer Solstice': 'Winter Solstice',
+    'Autumn Equinox': 'Spring Equinox',
+    'Winter Solstice': 'Summer Solstice',
   }
   return flip[northSeason]
 }

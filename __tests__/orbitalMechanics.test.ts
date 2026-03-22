@@ -87,29 +87,44 @@ describe('getSiderealRotationAngle', () => {
 })
 
 describe('getSeasonLabel', () => {
-  it('Jun 21 south = Winter', () => {
+  it('Jun 21 south = Winter Solstice', () => {
     const jd = dateToJulianDay(new Date('2024-06-21T00:00:00Z'))
-    expect(getSeasonLabel(jd, 'south')).toBe('Winter')
+    expect(getSeasonLabel(jd, 'south')).toBe('Winter Solstice')
   })
 
-  it('Dec 21 south = Summer', () => {
+  it('Dec 21 south = Summer Solstice', () => {
     const jd = dateToJulianDay(new Date('2024-12-21T00:00:00Z'))
-    expect(getSeasonLabel(jd, 'south')).toBe('Summer')
+    expect(getSeasonLabel(jd, 'south')).toBe('Summer Solstice')
   })
 
-  it('Mar 20 south = Autumn', () => {
+  it('Mar 20 south = Autumn Equinox', () => {
     const jd = dateToJulianDay(new Date('2024-03-20T00:00:00Z'))
-    expect(getSeasonLabel(jd, 'south')).toBe('Autumn')
+    expect(getSeasonLabel(jd, 'south')).toBe('Autumn Equinox')
   })
 
-  it('Sep 23 south = Spring', () => {
+  it('Sep 23 south = Spring Equinox', () => {
     const jd = dateToJulianDay(new Date('2024-09-23T00:00:00Z'))
-    expect(getSeasonLabel(jd, 'south')).toBe('Spring')
+    expect(getSeasonLabel(jd, 'south')).toBe('Spring Equinox')
   })
 
-  it('Jun 21 north = Summer', () => {
+  it('Jun 21 north = Summer Solstice', () => {
     const jd = dateToJulianDay(new Date('2024-06-21T00:00:00Z'))
-    expect(getSeasonLabel(jd, 'north')).toBe('Summer')
+    expect(getSeasonLabel(jd, 'north')).toBe('Summer Solstice')
+  })
+
+  it('Dec 21 north = Winter Solstice', () => {
+    const jd = dateToJulianDay(new Date('2024-12-21T00:00:00Z'))
+    expect(getSeasonLabel(jd, 'north')).toBe('Winter Solstice')
+  })
+
+  it('Mar 20 north = Spring Equinox', () => {
+    const jd = dateToJulianDay(new Date('2024-03-20T00:00:00Z'))
+    expect(getSeasonLabel(jd, 'north')).toBe('Spring Equinox')
+  })
+
+  it('Sep 23 north = Autumn Equinox', () => {
+    const jd = dateToJulianDay(new Date('2024-09-23T00:00:00Z'))
+    expect(getSeasonLabel(jd, 'north')).toBe('Autumn Equinox')
   })
 })
 
@@ -118,21 +133,39 @@ describe('getSolsticeEquinoxEvents', () => {
     expect(getSolsticeEquinoxEvents()).toHaveLength(4)
   })
 
-  it('March equinox is within ±3 days of Mar 20', () => {
+  it('March equinox is within ±2 days of Mar 20', () => {
     const events = getSolsticeEquinoxEvents()
-    const march = events.find(e => e.label.includes('Mar'))!
+    const march = events.find(e => e.label.includes('March'))!
     expect(march).toBeDefined()
     expect(march.date.getUTCMonth()).toBe(2)
-    expect(march.date.getUTCDate()).toBeGreaterThanOrEqual(17)
-    expect(march.date.getUTCDate()).toBeLessThanOrEqual(23)
+    expect(march.date.getUTCDate()).toBeGreaterThanOrEqual(18)
+    expect(march.date.getUTCDate()).toBeLessThanOrEqual(22)
   })
 
-  it('December solstice is within ±3 days of Dec 21', () => {
+  it('June solstice is within ±2 days of Jun 21', () => {
     const events = getSolsticeEquinoxEvents()
-    const dec = events.find(e => e.label.includes('Dec'))!
+    const june = events.find(e => e.label.includes('June'))!
+    expect(june).toBeDefined()
+    expect(june.date.getUTCMonth()).toBe(5)
+    expect(june.date.getUTCDate()).toBeGreaterThanOrEqual(19)
+    expect(june.date.getUTCDate()).toBeLessThanOrEqual(23)
+  })
+
+  it('September equinox is within ±2 days of Sep 23', () => {
+    const events = getSolsticeEquinoxEvents()
+    const sep = events.find(e => e.label.includes('September'))!
+    expect(sep).toBeDefined()
+    expect(sep.date.getUTCMonth()).toBe(8)
+    expect(sep.date.getUTCDate()).toBeGreaterThanOrEqual(21)
+    expect(sep.date.getUTCDate()).toBeLessThanOrEqual(25)
+  })
+
+  it('December solstice is within ±2 days of Dec 21', () => {
+    const events = getSolsticeEquinoxEvents()
+    const dec = events.find(e => e.label.includes('December'))!
     expect(dec).toBeDefined()
     expect(dec.date.getUTCMonth()).toBe(11)
-    expect(dec.date.getUTCDate()).toBeGreaterThanOrEqual(18)
-    expect(dec.date.getUTCDate()).toBeLessThanOrEqual(24)
+    expect(dec.date.getUTCDate()).toBeGreaterThanOrEqual(19)
+    expect(dec.date.getUTCDate()).toBeLessThanOrEqual(23)
   })
 })
