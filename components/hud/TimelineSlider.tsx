@@ -18,7 +18,7 @@ export function TimelineSlider() {
   const setIsPlaying   = useAppStore(s => s.setIsPlaying)
   const setDisplayDate = useAppStore(s => s.setDisplayDate)
 
-  const preScrubPlayingRef = useRef(true)
+  const preScrubPlayingRef = useRef(useAppStore.getState().isPlaying)
   const { min, max } = getYearBounds()
 
   const events = getSolsticeEquinoxEvents()
@@ -29,14 +29,24 @@ export function TimelineSlider() {
     day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC',
   })
 
-  // Season band positions (approximate % along the year for southern seasons)
-  // Summer wraps: Dec 1–Dec 31 is at end, Jan 1–Mar 1 is at start
+  // Compute season bands from event positions
+  // events is sorted: March, June, September, December
+  const marchPct  = (events[0].jd - min) / (max - min) * 100
+  const junePct   = (events[1].jd - min) / (max - min) * 100
+  const septPct   = (events[2].jd - min) / (max - min) * 100
+  const decPct    = (events[3].jd - min) / (max - min) * 100
+
   const seasonBands = [
-    { label: 'Summer',  color: 'rgba(255,140,0,0.25)',   left: 0,     width: 16.4 }, // Jan 1–Mar 1
-    { label: 'Autumn',  color: 'rgba(160,100,40,0.25)',  left: 16.4,  width: 25.2 }, // Mar 1–Jun 1
-    { label: 'Winter',  color: 'rgba(50,100,180,0.25)',  left: 41.6,  width: 24.9 }, // Jun 1–Sep 1
-    { label: 'Spring',  color: 'rgba(60,160,80,0.25)',   left: 66.5,  width: 16.9 }, // Sep 1–Dec 1
-    { label: 'Summer',  color: 'rgba(255,140,0,0.2)',    left: 83.4,  width: 16.6 }, // Dec 1–Dec 31
+    // Summer continues from Jan 1 (0%) to March Equinox
+    { label: 'Summer', color: 'rgba(255,140,0,0.25)',  left: 0,        width: marchPct },
+    // Autumn: March Equinox to June Solstice
+    { label: 'Autumn', color: 'rgba(160,100,40,0.25)', left: marchPct, width: junePct - marchPct },
+    // Winter: June Solstice to September Equinox
+    { label: 'Winter', color: 'rgba(50,100,180,0.25)', left: junePct,  width: septPct - junePct },
+    // Spring: September Equinox to December Solstice
+    { label: 'Spring', color: 'rgba(60,160,80,0.25)',  left: septPct,  width: decPct - septPct },
+    // Summer starts again at December Solstice through Dec 31
+    { label: 'Summer', color: 'rgba(255,140,0,0.2)',   left: decPct,   width: 100 - decPct },
   ]
 
   return (

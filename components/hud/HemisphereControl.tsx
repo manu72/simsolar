@@ -18,7 +18,7 @@ export function HemisphereControl() {
               : 'text-gray-600 hover:text-gray-400'
           }`}
         >
-          South
+          S
         </button>
         <button
           onClick={() => setHemisphere('north')}
@@ -28,7 +28,7 @@ export function HemisphereControl() {
               : 'text-gray-600 hover:text-gray-400'
           }`}
         >
-          North
+          N
         </button>
       </div>
     </div>
