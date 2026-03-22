@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useContext } from 'react'
+import { useRef, useContext, useMemo } from 'react'
 import { SimulationContext } from '@/components/canvas/SimulationContext'
 import { useAppStore } from '@/store/useAppStore'
 import { dateToJulianDay, julianDayToDate, getSolsticeEquinoxEvents } from '@/lib/orbitalMechanics'
@@ -21,7 +21,9 @@ export function TimelineSlider() {
   const preScrubPlayingRef = useRef(useAppStore.getState().isPlaying)
   const { min, max } = getYearBounds()
 
-  const events = getSolsticeEquinoxEvents()
+  // Memoized — getSolsticeEquinoxEvents returns new objects on every call;
+  // unstable references passed into render can cascade into infinite loops.
+  const events = useMemo(() => getSolsticeEquinoxEvents(), [])
 
   const sliderValue = Math.max(min, Math.min(max, clock.julianDay))
 
