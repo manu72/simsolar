@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import { Selection, Select, EffectComposer, Bloom } from '@react-three/postprocessing'
+import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import { Animator } from './Animator'
 import { Sun } from './Sun'
@@ -35,16 +35,12 @@ export function Scene() {
       <OrbitPath />
       <Annotations />
 
-      <Selection>
-        <Select enabled>
-          <Sun />
-        </Select>
-        <Earth
-          groupRef={earthGroupRef}
-          meshRef={earthMeshRef}
-          materialRef={earthMaterialRef}
-        />
-      </Selection>
+      <Sun />
+      <Earth
+        groupRef={earthGroupRef}
+        meshRef={earthMeshRef}
+        materialRef={earthMaterialRef}
+      />
 
       <EffectComposer>
         <Bloom
