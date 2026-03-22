@@ -260,7 +260,7 @@ Fixed bottom panel, `backdrop-filter: blur(12px)`, ~110px tall on desktop. Stack
 /public
   /textures
     earth-day.jpg       # NASA Blue Marble, 8192×4096 (~8MB)
-    earth-night.jpg     # NASA city lights, 8192×4096 (~4MB)
+    earth-night.png     # NASA city lights, 8192×4096 (~4MB)
 
 /__tests__
   orbitalMechanics.test.ts
