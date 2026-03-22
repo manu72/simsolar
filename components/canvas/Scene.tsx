@@ -3,7 +3,9 @@
 import { useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import { Selection, Select, EffectComposer, Bloom } from '@react-three/postprocessing'
+// postprocessing v3.0.4 removed — Selection/Select caused infinite re-render loops
+// and EffectComposer triggers WebGL context loss under Three.js r183 + React 19.
+// Sun bloom replaced with a lightweight additive glow mesh.
 import * as THREE from 'three'
 import { Animator } from './Animator'
 import { Sun } from './Sun'
@@ -35,24 +37,12 @@ export function Scene() {
       <OrbitPath />
       <Annotations />
 
-      <Selection>
-        <Select enabled>
-          <Sun />
-        </Select>
-        <Earth
-          groupRef={earthGroupRef}
-          meshRef={earthMeshRef}
-          materialRef={earthMaterialRef}
-        />
-      </Selection>
-
-      <EffectComposer>
-        <Bloom
-          luminanceThreshold={0.2}
-          intensity={1.5}
-          mipmapBlur
-        />
-      </EffectComposer>
+      <Sun />
+      <Earth
+        groupRef={earthGroupRef}
+        meshRef={earthMeshRef}
+        materialRef={earthMaterialRef}
+      />
 
       <OrbitControls
         minDistance={50}

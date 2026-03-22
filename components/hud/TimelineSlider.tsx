@@ -1,9 +1,11 @@
 'use client'
 
-import { useRef, useContext } from 'react'
+import { useRef, useContext, useMemo, useState, useEffect, useCallback } from 'react'
 import { SimulationContext } from '@/components/canvas/SimulationContext'
 import { useAppStore } from '@/store/useAppStore'
 import { dateToJulianDay, julianDayToDate, getSolsticeEquinoxEvents } from '@/lib/orbitalMechanics'
+
+const POLL_INTERVAL_MS = 250
 
 function getYearBounds() {
   const year = new Date().getUTCFullYear()
@@ -13,15 +15,31 @@ function getYearBounds() {
 }
 
 export function TimelineSlider() {
-  const clock          = useContext(SimulationContext)
-  const displayDate    = useAppStore(s => s.displayDate)
-  const setIsPlaying   = useAppStore(s => s.setIsPlaying)
-  const setDisplayDate = useAppStore(s => s.setDisplayDate)
+  const clock        = useContext(SimulationContext)
+  const setIsPlaying = useAppStore(s => s.setIsPlaying)
+
+  // Local display date — polled from the mutable clock ref on an interval,
+  // completely decoupled from R3F's useFrame loop (avoids rAF → Zustand → React DOM cascade).
+  const [displayDate, setDisplayDate] = useState(() => julianDayToDate(clock.julianDay))
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setDisplayDate(prev => {
+        const next = julianDayToDate(clock.julianDay)
+        return prev.getTime() === next.getTime() ? prev : next
+      })
+    }, POLL_INTERVAL_MS)
+    return () => clearInterval(id)
+  }, [clock])
+
+  const updateDisplayDateFromClock = useCallback(() => {
+    setDisplayDate(julianDayToDate(clock.julianDay))
+  }, [clock])
 
   const preScrubPlayingRef = useRef(useAppStore.getState().isPlaying)
   const { min, max } = getYearBounds()
 
-  const events = getSolsticeEquinoxEvents()
+  const events = useMemo(() => getSolsticeEquinoxEvents(), [])
 
   const sliderValue = Math.max(min, Math.min(max, clock.julianDay))
 
@@ -99,7 +117,7 @@ export function TimelineSlider() {
           onInput={e => {
             const newJD = parseFloat((e.target as HTMLInputElement).value)
             clock.julianDay = newJD
-            setDisplayDate(julianDayToDate(newJD))
+            updateDisplayDateFromClock()
           }}
           onPointerUp={() => {
             setIsPlaying(preScrubPlayingRef.current)

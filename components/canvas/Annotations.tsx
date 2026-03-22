@@ -25,14 +25,22 @@ export function Annotations() {
 
   const events = useMemo(() => getSolsticeEquinoxEvents(), [])
 
+  // Positions must be stable references — new array every render causes Html's
+  // useEffect to fire every render (referential equality), causing an infinite loop.
+  const eventPositions = useMemo(() =>
+    events.map(event => {
+      const pos = getEarthOrbitalPosition(event.jd)
+      return { ...event, position: [pos.x, pos.y + 6, pos.z] as [number, number, number] }
+    }),
+    [events],
+  )
+
   return (
     <>
-      {events.map(event => {
-        const pos = getEarthOrbitalPosition(event.jd)
-        return (
+      {eventPositions.map(event => (
           <Html
             key={event.label}
-            position={[pos.x, pos.y + 6, pos.z]}
+            position={event.position}
             center
             distanceFactor={80}
           >
@@ -40,8 +48,7 @@ export function Annotations() {
               {labels[event.label]}
             </div>
           </Html>
-        )
-      })}
+      ))}
     </>
   )
 }
