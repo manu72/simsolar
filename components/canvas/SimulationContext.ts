@@ -6,6 +6,7 @@ export type SimulationClock = {
   rotationAngle: number  // accumulated Earth rotation in radians
 }
 
+// Fallback default — consumers must be wrapped in a SimulationContext.Provider
 export const SimulationContext = createContext<SimulationClock>({
   julianDay: dateToJulianDay(new Date()),
   rotationAngle: 0,

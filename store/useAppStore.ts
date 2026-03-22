@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { DEFAULT_ORBIT_SPEED, DEFAULT_ROTATION_SPEED } from '@/lib/constants'
+import { DEFAULT_ORBIT_SPEED, DEFAULT_ROTATION_SPEED, MAX_ORBIT_SPEED, MAX_ROTATION_SPEED } from '@/lib/constants'
 
 interface AppState {
   isPlaying: boolean
@@ -23,8 +23,8 @@ export const useAppStore = create<AppState>((set) => ({
   hemisphere: 'south',
 
   setIsPlaying: (v) => set({ isPlaying: v }),
-  setOrbitSpeed: (v) => set({ orbitSpeed: Math.max(0, Math.min(50, v)) }),
-  setRotationSpeed: (v) => set({ rotationSpeed: Math.max(0, Math.min(100, v)) }),
+  setOrbitSpeed: (v) => set({ orbitSpeed: Math.max(0, Math.min(MAX_ORBIT_SPEED, v)) }),
+  setRotationSpeed: (v) => set({ rotationSpeed: Math.max(0, Math.min(MAX_ROTATION_SPEED, v)) }),
   setDisplayDate: (d) => set({ displayDate: d }),
   setHemisphere: (h) => set({ hemisphere: h }),
 }))
