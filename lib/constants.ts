@@ -9,13 +9,13 @@ export const EARTH_RADIUS = 3
 export const EARTH_AXIS_LENGTH = 7
 
 // Orbital timing
-export const ORBITAL_PERIOD_DAYS = 365.25
+export const ORBITAL_PERIOD_DAYS = 365.25 // Julian year approximation (tropical year = 365.2422 d)
 export const SIDEREAL_DAY_DAYS = 0.99726958    // one sidereal day in Julian days
 export const SIDEREAL_DAY_SECONDS = 86164.1    // one sidereal day in seconds
 export const TWO_PI_PER_SIDEREAL_SECOND = (2 * Math.PI) / SIDEREAL_DAY_SECONDS
 
 // Julian day of perihelion for J2000.0 epoch (Jan 3, 2000)
-export const PERIHELION_JD_2000 = 2451547.5
+export const PERIHELION_JD_2000 = 2451547.5 // Jan 3 2000 00:00 UTC (perihelion was ~05:18 UTC — midnight approximation)
 
 // Base: days of simulation time per real second at orbitSpeed = 1
 export const DAYS_PER_SECOND_BASE = 1

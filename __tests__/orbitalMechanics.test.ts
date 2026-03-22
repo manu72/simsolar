@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { SEMI_MAJOR_AXIS } from '@/lib/constants'
+import { SEMI_MAJOR_AXIS, SIDEREAL_DAY_DAYS } from '@/lib/constants'
 import {
   dateToJulianDay,
   julianDayToDate,
@@ -78,7 +78,7 @@ describe('getSiderealRotationAngle', () => {
 
   it('advances by one full rotation per sidereal day', () => {
     const jd1 = dateToJulianDay(new Date('2024-01-01T00:00:00Z'))
-    const jd2 = jd1 + 0.99726958
+    const jd2 = jd1 + SIDEREAL_DAY_DAYS
     const a1 = getSiderealRotationAngle(jd1)
     const a2 = getSiderealRotationAngle(jd2)
     const diff = Math.abs(a2 - a1)

@@ -23,6 +23,7 @@ export function julianDayToDate(jd: number): Date {
 /**
  * Solve Kepler's equation M = E - e*sin(E) for eccentric anomaly E.
  * Uses Newton-Raphson iteration.
+ * Convergence tolerance is 1e-8 rad; adequate for Earth's low eccentricity (e ≈ 0.017).
  */
 function solveKepler(M: number, e: number): number {
   let E = M
@@ -88,10 +89,10 @@ export function getSolsticeEquinoxEvents(): { label: string; jd: number; date: D
 export function getSeasonLabel(jd: number, hemisphere: 'north' | 'south'): string {
   const year = julianDayToDate(jd).getUTCFullYear()
 
-  const marchJD = dateToJulianDay(new Date(Date.UTC(year, 2,  20)))
-  const juneJD  = dateToJulianDay(new Date(Date.UTC(year, 5,  21)))
-  const septJD  = dateToJulianDay(new Date(Date.UTC(year, 8,  23)))
-  const decJD   = dateToJulianDay(new Date(Date.UTC(year, 11, 21)))
+  // Derive boundaries from SOLAR_EVENTS so both functions share a single source of truth
+  const [marchJD, juneJD, septJD, decJD] = SOLAR_EVENTS.map(({ month, day }) =>
+    dateToJulianDay(new Date(Date.UTC(year, month, day)))
+  )
 
   let northSeason: string
   if (jd >= marchJD && jd < juneJD)       northSeason = 'Spring Equinox'
