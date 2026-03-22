@@ -5,7 +5,11 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(pnpm add:*)",
-      "Bash(pnpm test:*)"
+      "Bash(pnpm test:*)",
+      "Bash(pnpm build:*)",
+      "WebFetch(domain:visibleearth.nasa.gov)",
+      "WebFetch(domain:neo.gsfc.nasa.gov)",
+      "WebFetch(domain:eoimages.gsfc.nasa.gov)"
     ]
   }
 }
