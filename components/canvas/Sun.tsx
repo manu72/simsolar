@@ -4,7 +4,7 @@ import { SUN_RADIUS } from '@/lib/constants'
 
 export function Sun() {
   return (
-    <group position={[0, 0, 0]}>
+    <>
       {/* Point light that illuminates Earth */}
       <pointLight
         intensity={2.5}
@@ -17,6 +17,6 @@ export function Sun() {
         <sphereGeometry args={[SUN_RADIUS, 32, 32]} />
         <meshBasicMaterial color="#ffa500" />
       </mesh>
-    </group>
+    </>
   )
 }
