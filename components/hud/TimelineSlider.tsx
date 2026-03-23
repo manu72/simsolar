@@ -71,8 +71,8 @@ export function TimelineSlider() {
     <div className="w-full">
       {/* Label row */}
       <div className="flex justify-between mb-1.5">
-        <span className="text-[8px] uppercase tracking-wider text-gray-500">Timeline</span>
-        <span className="text-[9px] text-gray-400">{formattedDate}</span>
+        <span className="text-xs uppercase tracking-wider text-gray-500">Timeline</span>
+        <span className="text-xs text-gray-400">{formattedDate}</span>
       </div>
 
       {/* Slider track with season bands */}
@@ -134,20 +134,20 @@ export function TimelineSlider() {
 
       {/* Tick labels */}
       <div className="relative flex justify-between mt-0.5 px-0.5">
-        <span className="text-[7px] text-gray-600">Jan</span>
+        <span className="text-[10px] text-gray-600">Jan</span>
         {events.map(event => {
           const tickPct = (event.jd - min) / (max - min) * 100
           return (
             <span
               key={event.label}
-              className="text-[7px] text-gray-500 absolute transform -translate-x-1/2"
+              className="text-[10px] text-gray-500 absolute transform -translate-x-1/2"
               style={{ left: `${tickPct}%` }}
             >
               {event.date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', timeZone: 'UTC' })}
             </span>
           )
         })}
-        <span className="text-[7px] text-gray-600">Dec</span>
+        <span className="text-[10px] text-gray-600">Dec</span>
       </div>
     </div>
   )

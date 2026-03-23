@@ -8,7 +8,7 @@ export function HemisphereControl() {
 
   return (
     <div className="flex flex-col gap-1 flex-shrink-0">
-      <span className="text-[8px] uppercase tracking-wider text-gray-500">Hemisphere</span>
+      <span className="text-xs uppercase tracking-wider text-gray-500">Hemisphere</span>
       <div className="flex bg-black/60 border border-white/10 rounded overflow-hidden">
         <button
           onClick={() => setHemisphere('south')}

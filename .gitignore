@@ -41,8 +41,8 @@ yarn-error.log*
 next-env.d.ts
 
 # textures (downloaded separately)
-public/textures/*.jpg
-public/textures/*.png
+# public/textures/*.jpg
+# public/textures/*.png
 
 # superpowers
 .superpowers/

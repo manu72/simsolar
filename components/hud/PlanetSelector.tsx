@@ -14,7 +14,7 @@ const PLANETS = [
 export function PlanetSelector() {
   return (
     <div className="flex flex-col gap-1 flex-shrink-0">
-      <span className="text-[8px] uppercase tracking-wider text-gray-500">Planets</span>
+      <span className="text-xs uppercase tracking-wider text-gray-500">Planets</span>
       <div className="flex items-center gap-1.5">
         {PLANETS.map(planet => (
           <button
