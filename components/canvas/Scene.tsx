@@ -10,6 +10,7 @@ import { Earth } from './Earth'
 import { OrbitPath } from './OrbitPath'
 import { Starfield } from './Starfield'
 import { Annotations } from './Annotations'
+import { ZoomSync } from './ZoomSync'
 
 export function Scene() {
   // Shared mesh refs — created here, passed to Animator + Earth
@@ -39,6 +40,7 @@ export function Scene() {
           materialRef={earthMaterialRef}
         />
       </Suspense>
+      <ZoomSync />
       <OrbitControls
         minDistance={50}
         maxDistance={600}

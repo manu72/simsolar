@@ -26,6 +26,11 @@ export const DEFAULT_ROTATION_SPEED = 20
 export const MAX_ORBIT_SPEED = 50
 export const MAX_ROTATION_SPEED = 1000
 
+// Zoom (camera distance from origin)
+export const MIN_ZOOM_DISTANCE = 50
+export const MAX_ZOOM_DISTANCE = 600
+export const DEFAULT_ZOOM_DISTANCE = 305  // ~sqrt(120² + 280²), matches initial camera pos
+
 // Orbit path geometry (semi-minor axis)
 // b = a * sqrt(1 - e^2)
 export const SEMI_MINOR_AXIS = SEMI_MAJOR_AXIS * Math.sqrt(1 - ECCENTRICITY ** 2) // ≈ 199.972
