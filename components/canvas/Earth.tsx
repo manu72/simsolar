@@ -41,7 +41,7 @@ export function Earth({ groupRef, meshRef, materialRef }: EarthProps) {
 
   return (
     <group ref={groupRef}>
-      <group rotation={[0, 0, AXIAL_TILT_RAD]}>
+      <group rotation={[0, 0, -AXIAL_TILT_RAD]}>
         <mesh
           ref={meshRef}
           onClick={() => useAppStore.getState().toggleFocusTarget()}
