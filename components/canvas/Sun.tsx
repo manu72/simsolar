@@ -9,6 +9,18 @@ import { useAppStore } from "@/store/useAppStore";
 import sunSurfaceVert from "@/lib/shaders/sunSurface.vert";
 import sunSurfaceFrag from "@/lib/shaders/sunSurface.frag";
 
+const HTML_STYLE: React.CSSProperties = { pointerEvents: "none" };
+const HTML_Z_INDEX_RANGE: [number, number] = [0, 0];
+const GLOW_STYLE: React.CSSProperties = {
+  width: "400px",
+  height: "400px",
+  borderRadius: "50%",
+  background:
+    "radial-gradient(circle, rgba(255,190,70,0.45) 0%, rgba(255,150,35,0.2) 30%, rgba(255,110,15,0.08) 60%, transparent 100%)",
+  pointerEvents: "none",
+  mixBlendMode: "screen",
+};
+
 export function Sun() {
   const surfaceRef = useRef<THREE.ShaderMaterial>(null);
 
@@ -42,18 +54,8 @@ export function Sun() {
         />
       </mesh>
       {/* CSS radial gradient glow */}
-      <Html center distanceFactor={40} style={{ pointerEvents: "none" }} zIndexRange={[0, 0]}>
-        <div
-          style={{
-            width: "400px",
-            height: "400px",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(255,190,70,0.45) 0%, rgba(255,150,35,0.2) 30%, rgba(255,110,15,0.08) 60%, transparent 100%)",
-            pointerEvents: "none",
-            mixBlendMode: "screen",
-          }}
-        />
+      <Html center distanceFactor={40} style={HTML_STYLE} zIndexRange={HTML_Z_INDEX_RANGE}>
+        <div style={GLOW_STYLE} />
       </Html>
     </>
   );
