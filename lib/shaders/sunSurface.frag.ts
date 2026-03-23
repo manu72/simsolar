@@ -55,6 +55,9 @@ void main() {
   rim = clamp(rim, 0.0, 1.0);
   color *= mix(0.7, 1.0, rim);
 
+  // Boost overall brightness
+  color *= 1.2;
+
   gl_FragColor = vec4(color, 1.0);
 }
 `

@@ -2,29 +2,18 @@
 
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { SUN_RADIUS } from '@/lib/constants'
 import { useAppStore } from '@/store/useAppStore'
 import sunSurfaceVert from '@/lib/shaders/sunSurface.vert'
 import sunSurfaceFrag from '@/lib/shaders/sunSurface.frag'
-import sunGlowVert from '@/lib/shaders/sunGlow.vert'
-import sunGlowFrag from '@/lib/shaders/sunGlow.frag'
-
-const GLOW_COLOR = new THREE.Vector3(1.0, 0.6, 0.1)
 
 export function Sun() {
   const surfaceRef = useRef<THREE.ShaderMaterial>(null)
 
   const surfaceUniforms = useMemo(
     () => ({ uTime: { value: 0 } }),
-    [],
-  )
-
-  const glowUniforms = useMemo(
-    () => ({
-      uColor: { value: GLOW_COLOR },
-      uIntensity: { value: 1.2 },
-    }),
     [],
   )
 
@@ -56,7 +45,23 @@ export function Sun() {
           uniforms={surfaceUniforms}
         />
       </mesh>
-      {/* TODO: glow effect — removed for now, needs better approach */}
+      {/* CSS radial gradient glow — always works */}
+      <Html
+        center
+        style={{ pointerEvents: 'none' }}
+        zIndexRange={[0, 0]}
+      >
+        <div
+          style={{
+            width: '400px',
+            height: '400px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(255,190,70,0.45) 0%, rgba(255,150,35,0.2) 30%, rgba(255,110,15,0.08) 60%, transparent 100%)',
+            pointerEvents: 'none',
+            mixBlendMode: 'screen',
+          }}
+        />
+      </Html>
     </>
   )
 }
