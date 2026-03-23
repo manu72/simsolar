@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
@@ -25,6 +25,8 @@ export function Sun() {
   const surfaceRef = useRef<THREE.ShaderMaterial>(null);
 
   const surfaceUniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
+
+  useEffect(() => () => { document.body.style.cursor = "auto"; }, []);
 
   useFrame((_, delta) => {
     if (surfaceRef.current) {
