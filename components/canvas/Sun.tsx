@@ -4,6 +4,7 @@ import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { SUN_RADIUS } from '@/lib/constants'
+import { useAppStore } from '@/store/useAppStore'
 import sunSurfaceVert from '@/lib/shaders/sunSurface.vert'
 import sunSurfaceFrag from '@/lib/shaders/sunSurface.frag'
 import sunGlowVert from '@/lib/shaders/sunGlow.vert'
@@ -42,7 +43,11 @@ export function Sun() {
         color="#fff5e0"
       />
       {/* Animated sun core */}
-      <mesh>
+      <mesh
+        onClick={() => useAppStore.getState().toggleFocusTarget()}
+        onPointerOver={() => { document.body.style.cursor = 'pointer' }}
+        onPointerOut={() => { document.body.style.cursor = 'auto' }}
+      >
         <sphereGeometry args={[SUN_RADIUS, 48, 48]} />
         <shaderMaterial
           ref={surfaceRef}

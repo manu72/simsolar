@@ -4,6 +4,7 @@ import { useRef, useMemo } from 'react'
 import { useTexture, Line } from '@react-three/drei'
 import * as THREE from 'three'
 import { EARTH_RADIUS, EARTH_AXIS_LENGTH, AXIAL_TILT_RAD } from '@/lib/constants'
+import { useAppStore } from '@/store/useAppStore'
 import earthVert from '@/lib/shaders/earth.vert'
 import earthFrag from '@/lib/shaders/earth.frag'
 
@@ -23,7 +24,7 @@ export function Earth({ groupRef, meshRef, materialRef }: EarthProps) {
     () => ({
       uDayTexture:         { value: dayTexture },
       uNightTexture:       { value: nightTexture },
-      uSunDirectionWorld:  { value: new THREE.Vector3(1, 0, 0) },
+      uSunPositionWorld:   { value: new THREE.Vector3(0, 0, 0) },
       uAtmosphereColor:    { value: new THREE.Vector3(0.3, 0.6, 1.0) },
     }),
     [dayTexture, nightTexture],
@@ -41,7 +42,12 @@ export function Earth({ groupRef, meshRef, materialRef }: EarthProps) {
   return (
     <group ref={groupRef}>
       <group rotation={[0, 0, AXIAL_TILT_RAD]}>
-        <mesh ref={meshRef}>
+        <mesh
+          ref={meshRef}
+          onClick={() => useAppStore.getState().toggleFocusTarget()}
+          onPointerOver={() => { document.body.style.cursor = 'pointer' }}
+          onPointerOut={() => { document.body.style.cursor = 'auto' }}
+        >
           <sphereGeometry args={[EARTH_RADIUS, 64, 64]} />
           <shaderMaterial
             ref={materialRef}

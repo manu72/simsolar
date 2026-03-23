@@ -1,16 +1,16 @@
 const earthFrag = /* glsl */ `
 uniform sampler2D uDayTexture;
 uniform sampler2D uNightTexture;
-uniform vec3 uSunDirectionWorld;  // world-space, matches world-space vNormal
 uniform vec3 uAtmosphereColor;
 
 varying vec2 vUv;
 varying vec3 vNormal;   // world-space
 varying vec3 vViewDir;  // world-space
+varying vec3 vSunDir;   // world-space direction to sun
 
 void main() {
   vec3 normal = normalize(vNormal);
-  vec3 sunDir = normalize(uSunDirectionWorld);
+  vec3 sunDir = normalize(vSunDir);
 
   // Dot product: 1.0 at subsolar point, -1.0 at antisolar point
   float sunDot = dot(normal, sunDir);

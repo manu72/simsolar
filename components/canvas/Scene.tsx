@@ -17,6 +17,7 @@ export function Scene() {
   const earthGroupRef    = useRef<THREE.Group>(null)
   const earthMeshRef     = useRef<THREE.Mesh>(null)
   const earthMaterialRef = useRef<THREE.ShaderMaterial>(null)
+  const worldGroupRef    = useRef<THREE.Group>(null)
 
   return (
     <Canvas
@@ -28,11 +29,15 @@ export function Scene() {
         earthGroupRef={earthGroupRef}
         earthMeshRef={earthMeshRef}
         earthMaterialRef={earthMaterialRef}
+        worldGroupRef={worldGroupRef}
       />
       <Starfield />
-      <OrbitPath />
-      <Sun />
-      <Annotations />
+      {/* World group: Sun, orbit path, annotations — offset when Earth is focused */}
+      <group ref={worldGroupRef}>
+        <OrbitPath />
+        <Sun />
+        <Annotations />
+      </group>
       <Suspense fallback={null}>
         <Earth
           groupRef={earthGroupRef}
