@@ -9,10 +9,12 @@ interface SliderProps {
   min: number
   max: number
   suffix?: string
+  inverted?: boolean
   onChange: (v: number) => void
 }
 
-function SpeedSlider({ label, value, min, max, suffix = '×', onChange }: SliderProps) {
+function SpeedSlider({ label, value, min, max, suffix = '×', inverted, onChange }: SliderProps) {
+  const sliderValue = inverted ? max + min - value : value
   return (
     <div className="flex-1">
       <div className="flex justify-between mb-1">
@@ -24,8 +26,11 @@ function SpeedSlider({ label, value, min, max, suffix = '×', onChange }: Slider
         min={min}
         max={max}
         step={1}
-        value={value}
-        onChange={e => onChange(Number(e.target.value))}
+        value={sliderValue}
+        onChange={e => {
+          const raw = Number(e.target.value)
+          onChange(inverted ? max + min - raw : raw)
+        }}
         className="w-full h-1 bg-gray-800 rounded appearance-none cursor-pointer
                    [&::-webkit-slider-thumb]:appearance-none
                    [&::-webkit-slider-thumb]:w-3
@@ -67,6 +72,7 @@ export function SpeedControls() {
         min={MIN_ZOOM_DISTANCE}
         max={MAX_ZOOM_DISTANCE}
         suffix=""
+        inverted
         onChange={setZoomDistance}
       />
     </>

@@ -22,14 +22,14 @@ export const DAYS_PER_SECOND_BASE = 1
 
 // Default control values
 export const DEFAULT_ORBIT_SPEED = 10
-export const DEFAULT_ROTATION_SPEED = 20
+export const DEFAULT_ROTATION_SPEED = 1000
 export const MAX_ORBIT_SPEED = 50
-export const MAX_ROTATION_SPEED = 1000
+export const MAX_ROTATION_SPEED = 10000
 
 // Zoom (camera distance from origin)
 export const MIN_ZOOM_DISTANCE = 50
 export const MAX_ZOOM_DISTANCE = 600
-export const DEFAULT_ZOOM_DISTANCE = 305  // ~sqrt(120² + 280²), matches initial camera pos
+export const DEFAULT_ZOOM_DISTANCE = 215
 
 // Orbit path geometry (semi-minor axis)
 // b = a * sqrt(1 - e^2)
