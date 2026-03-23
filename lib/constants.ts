@@ -21,20 +21,20 @@ export const PERIHELION_JD_2000 = 2451547.5 // Jan 3 2000 00:00 UTC (perihelion 
 export const DAYS_PER_SECOND_BASE = 1
 
 // Default control values
-export const DEFAULT_ORBIT_SPEED = 10
-export const DEFAULT_ROTATION_SPEED = 1000
+export const DEFAULT_ORBIT_SPEED = 2
+export const DEFAULT_ROTATION_SPEED = 5000
 export const MAX_ORBIT_SPEED = 50
 export const MAX_ROTATION_SPEED = 10000
 
 // Earth visual scale
 export const MIN_EARTH_SCALE = 1
 export const MAX_EARTH_SCALE = 10
-export const DEFAULT_EARTH_SCALE = 1
+export const DEFAULT_EARTH_SCALE = 5
 
 // Zoom (camera distance from origin)
 export const MIN_ZOOM_DISTANCE = 50
 export const MAX_ZOOM_DISTANCE = 600
-export const DEFAULT_ZOOM_DISTANCE = 215
+export const DEFAULT_ZOOM_DISTANCE = 400
 
 // Orbit path geometry (semi-minor axis)
 // b = a * sqrt(1 - e^2)
