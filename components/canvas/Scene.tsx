@@ -1,11 +1,8 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-// postprocessing v3.0.4 removed — Selection/Select caused infinite re-render loops
-// and EffectComposer triggers WebGL context loss under Three.js r183 + React 19.
-// Sun bloom replaced with a lightweight additive glow mesh.
 import * as THREE from 'three'
 import { Animator } from './Animator'
 import { Sun } from './Sun'
@@ -26,24 +23,22 @@ export function Scene() {
       style={{ background: '#000005' }}
       gl={{ antialias: true }}
     >
-      {/* SimulationContext is provided by ClientRoot — no Provider here */}
       <Animator
         earthGroupRef={earthGroupRef}
         earthMeshRef={earthMeshRef}
         earthMaterialRef={earthMaterialRef}
       />
-
       <Starfield />
       <OrbitPath />
-      <Annotations />
-
       <Sun />
-      <Earth
-        groupRef={earthGroupRef}
-        meshRef={earthMeshRef}
-        materialRef={earthMaterialRef}
-      />
-
+      <Annotations />
+      <Suspense fallback={null}>
+        <Earth
+          groupRef={earthGroupRef}
+          meshRef={earthMeshRef}
+          materialRef={earthMaterialRef}
+        />
+      </Suspense>
       <OrbitControls
         minDistance={50}
         maxDistance={600}

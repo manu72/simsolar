@@ -4,8 +4,8 @@ import { useRef, useMemo } from 'react'
 import { useTexture, Line } from '@react-three/drei'
 import * as THREE from 'three'
 import { EARTH_RADIUS, EARTH_AXIS_LENGTH, AXIAL_TILT_RAD } from '@/lib/constants'
-import earthVert from '@/lib/shaders/earth.vert.glsl'
-import earthFrag from '@/lib/shaders/earth.frag.glsl'
+import earthVert from '@/lib/shaders/earth.vert'
+import earthFrag from '@/lib/shaders/earth.frag'
 
 interface EarthProps {
   groupRef: React.RefObject<THREE.Group | null>
@@ -16,14 +16,14 @@ interface EarthProps {
 export function Earth({ groupRef, meshRef, materialRef }: EarthProps) {
   const [dayTexture, nightTexture] = useTexture([
     '/textures/earth-day.jpg',
-    '/textures/earth-night.png',
+    '/textures/earth-night.jpg',
   ])
 
   const uniforms = useMemo(
     () => ({
       uDayTexture:         { value: dayTexture },
       uNightTexture:       { value: nightTexture },
-      uSunDirectionWorld:  { value: new THREE.Vector3(1, 0, 0) }, // world-space, set each frame by Animator
+      uSunDirectionWorld:  { value: new THREE.Vector3(1, 0, 0) },
       uAtmosphereColor:    { value: new THREE.Vector3(0.3, 0.6, 1.0) },
     }),
     [dayTexture, nightTexture],
@@ -39,8 +39,6 @@ export function Earth({ groupRef, meshRef, materialRef }: EarthProps) {
   )
 
   return (
-    // Outer group: handles orbital position (set by Animator)
-    // Inner group: handles axial tilt (23.5° rotation on Z axis, fixed)
     <group ref={groupRef}>
       <group rotation={[0, 0, AXIAL_TILT_RAD]}>
         <mesh ref={meshRef}>
