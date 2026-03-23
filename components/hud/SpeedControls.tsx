@@ -1,7 +1,7 @@
 'use client'
 
 import { useAppStore } from '@/store/useAppStore'
-import { MAX_ORBIT_SPEED, MAX_ROTATION_SPEED, MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE } from '@/lib/constants'
+import { MAX_ORBIT_SPEED, MAX_ROTATION_SPEED, MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, MIN_EARTH_SCALE, MAX_EARTH_SCALE } from '@/lib/constants'
 
 interface SliderProps {
   label: string
@@ -46,9 +46,11 @@ export function SpeedControls() {
   const orbitSpeed    = useAppStore(s => s.orbitSpeed)
   const rotationSpeed = useAppStore(s => s.rotationSpeed)
   const zoomDistance   = useAppStore(s => s.zoomDistance)
+  const earthScale     = useAppStore(s => s.earthScale)
   const setOrbitSpeed    = useAppStore(s => s.setOrbitSpeed)
   const setRotationSpeed = useAppStore(s => s.setRotationSpeed)
   const setZoomDistance   = useAppStore(s => s.setZoomDistance)
+  const setEarthScale    = useAppStore(s => s.setEarthScale)
 
   return (
     <>
@@ -74,6 +76,14 @@ export function SpeedControls() {
         suffix=""
         inverted
         onChange={setZoomDistance}
+      />
+      <SpeedSlider
+        label="Earth Scale"
+        value={earthScale}
+        min={MIN_EARTH_SCALE}
+        max={MAX_EARTH_SCALE}
+        suffix="×"
+        onChange={setEarthScale}
       />
     </>
   )

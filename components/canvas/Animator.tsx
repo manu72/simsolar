@@ -21,7 +21,7 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef }: Anim
   const clock = useContext(SimulationContext)
 
   useFrame((_, delta) => {
-    const { isPlaying, orbitSpeed, rotationSpeed } = useAppStore.getState()
+    const { isPlaying, orbitSpeed, rotationSpeed, earthScale } = useAppStore.getState()
 
     if (isPlaying) {
       clock.julianDay   += delta * orbitSpeed * DAYS_PER_SECOND_BASE
@@ -32,6 +32,7 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef }: Anim
 
     if (earthGroupRef.current) {
       earthGroupRef.current.position.copy(earthPos)
+      earthGroupRef.current.scale.setScalar(earthScale)
     }
 
     if (earthMeshRef.current) {
