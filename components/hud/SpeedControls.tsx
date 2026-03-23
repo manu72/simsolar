@@ -15,8 +15,8 @@ function SpeedSlider({ label, value, min, max, onChange }: SliderProps) {
   return (
     <div className="flex-1">
       <div className="flex justify-between mb-1">
-        <span className="text-[8px] uppercase tracking-wider text-gray-500">{label}</span>
-        <span className="text-[8px] text-blue-300">{value}×</span>
+        <span className="text-xs uppercase tracking-wider text-gray-500">{label}</span>
+        <span className="text-xs text-blue-300">{value}×</span>
       </div>
       <input
         type="range"

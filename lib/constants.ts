@@ -24,7 +24,7 @@ export const DAYS_PER_SECOND_BASE = 1
 export const DEFAULT_ORBIT_SPEED = 10
 export const DEFAULT_ROTATION_SPEED = 20
 export const MAX_ORBIT_SPEED = 50
-export const MAX_ROTATION_SPEED = 100
+export const MAX_ROTATION_SPEED = 1000
 
 // Orbit path geometry (semi-minor axis)
 // b = a * sqrt(1 - e^2)
