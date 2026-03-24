@@ -84,7 +84,7 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldG
         MOON_ORBIT_RADIUS * Math.sin(moonOrbitalAngle),
       )
       // Tidal locking: same face always toward Earth (centre of orbit)
-      moonGroupRef.current.rotation.y = moonOrbitalAngle + Math.PI
+      moonGroupRef.current.rotation.y = -moonOrbitalAngle + Math.PI
     }
 
     // Orbital precession — ascending node rotates over 18.6-year cycle.
