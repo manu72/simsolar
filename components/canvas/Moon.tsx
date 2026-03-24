@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import '@react-three/fiber'
 import {
@@ -18,6 +19,8 @@ interface MoonProps {
 }
 
 export function Moon({ groupRef, inclinationGroupRef }: MoonProps) {
+  const moonTexture = useTexture('/textures/moon.jpg')
+
   const orbitGeometry = useMemo(() => {
     const curve = new THREE.EllipseCurve(
       0, 0,
@@ -42,7 +45,7 @@ export function Moon({ groupRef, inclinationGroupRef }: MoonProps) {
         {/* Axial tilt is visual only — does not affect orbital position */}
         <mesh rotation={[0, 0, -MOON_AXIAL_TILT_RAD]}>
           <sphereGeometry args={[MOON_RADIUS, 32, 32]} />
-          <meshStandardMaterial color="#ddd" emissive="#181818" />
+          <meshStandardMaterial map={moonTexture} emissive="#181818" />
         </mesh>
       </group>
     </group>
