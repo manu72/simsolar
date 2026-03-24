@@ -3,24 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { useOfflineStatus } from "@/lib/useOfflineStatus";
 
-const DISMISSED_KEY = "solstice_modal_dismissed";
-
 export function InfoModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [offlineChecked, setOfflineChecked] = useState(false);
   const { isCached, cacheProgress, triggerCache } = useOfflineStatus();
   const [showProgress, setShowProgress] = useState(false);
-
-  // Show modal on first visit
-  useEffect(() => {
-    if (!localStorage.getItem(DISMISSED_KEY)) {
-      requestAnimationFrame(() => {
-        setIsOpen(true);
-        requestAnimationFrame(() => setIsVisible(true));
-      });
-    }
-  }, []);
 
   const openModal = useCallback(() => {
     setIsOpen(true);
@@ -29,10 +17,7 @@ export function InfoModal() {
 
   const closeModal = useCallback(() => {
     setIsVisible(false);
-    setTimeout(() => {
-      setIsOpen(false);
-      localStorage.setItem(DISMISSED_KEY, "1");
-    }, 300);
+    setTimeout(() => setIsOpen(false), 300);
   }, []);
 
   const handleGetStarted = useCallback(() => {
@@ -80,7 +65,7 @@ export function InfoModal() {
               rounded-xl p-8 shadow-2xl transition-all duration-300
               ${isVisible ? "scale-100 translate-y-0" : "scale-95 translate-y-4"}`}
           >
-            <h1 className="text-2xl font-light tracking-wide text-white mb-2">Simsolar Animated Visual Guide</h1>
+            <h1 className="text-2xl font-light tracking-wide text-white mb-2">Simsolar Animated Solar System</h1>
             <p className="text-sm text-white/60 leading-relaxed mb-1">
               An interactive visualisation of Earth&apos;s orbit around the Sun.
             </p>
@@ -94,7 +79,7 @@ export function InfoModal() {
               <li>Scroll to zoom</li>
               <li>Use the timeline sliderto scrub through the year</li>
               <li>Adjust orbit and rotation speeds with the HUD sliders</li>
-              <li>Click the Earth to select the geocentric view</li>
+              <li>Click planets to select</li>
             </ul>
 
             <hr className="border-white/10 mb-6" />
