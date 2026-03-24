@@ -42,7 +42,7 @@ export function Moon({ groupRef, inclinationGroupRef }: MoonProps) {
         {/* Axial tilt is visual only — does not affect orbital position */}
         <mesh rotation={[0, 0, -MOON_AXIAL_TILT_RAD]}>
           <sphereGeometry args={[MOON_RADIUS, 32, 32]} />
-          <meshStandardMaterial color="#aaa" emissive="#333" />
+          <meshStandardMaterial color="#ddd" emissive="#181818" />
         </mesh>
       </group>
     </group>
