@@ -93,7 +93,7 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldG
       const moonOrbits = clock.rotationAngle / (MOON_SIDEREAL_PERIOD_DAYS * 2 * Math.PI)
       const moonYears = moonOrbits * MOON_SIDEREAL_PERIOD_DAYS / 365.25
       const precessionAngle = (2 * Math.PI * moonYears) / MOON_NODAL_PRECESSION_YEARS
-      moonInclinationGroupRef.current.rotation.set(MOON_INCLINATION_RAD, precessionAngle, 0, 'YXZ')
+      moonInclinationGroupRef.current.rotation.set(MOON_INCLINATION_RAD, -precessionAngle, 0, 'YXZ')
     }
   })
 
