@@ -79,6 +79,7 @@ ClientRoot (SimulationContext.Provider)
 - **Three.js Euler order matters for compound rotations.** Default `'XYZ'` applies X last (parent frame). For Moon nodal precession: `'YXZ'` tilts the plane first (Rx), then precesses the tilted plane (Ry). With `'XYZ'`, Ry applies to a circular orbit (no-op) before tilting.
 - **Lunar nodal precession is retrograde.** The ascending node drifts westward. Three.js positive `rotation.y` is counterclockwise from +Y (prograde), so the precession angle must be negated.
 - **Tidal locking rotation sign:** `rotation.y = -orbitalAngle + π`, not `+orbitalAngle + π`. Three.js `Ry(θ)` maps local +X to `(cos θ, 0, -sin θ)`, matching Earth direction only with the negated angle.
+- **Always guard `cache.put()` with `response.ok`.** Service worker `fetch()` resolves for 4xx/5xx — only the network failing causes rejection. Without `if (response.ok)` before caching, error pages poison the cache and are served on subsequent visits. Apply to every fetch-then-cache path: textures, static assets, navigation, and precaching.
 
 ## Technical Debt
 

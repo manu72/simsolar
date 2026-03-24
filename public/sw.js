@@ -1,4 +1,5 @@
 const CACHE_NAME = 'solstice-v1'
+// COUPLED: must match TEXTURE_CACHE_NAME in lib/useOfflineStatus.ts
 const TEXTURE_CACHE = 'solstice-textures-v1'
 const TEXTURE_FILES = [
   '/textures/earth-day.jpg',
@@ -28,18 +29,18 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url)
 
-  // Only handle same-origin requests
   if (url.origin !== self.location.origin) return
 
-  // Cache-first for textures
   if (url.pathname.startsWith('/textures/')) {
     event.respondWith(
       caches.match(event.request).then(
         (cached) =>
           cached ||
           fetch(event.request).then((response) => {
-            const clone = response.clone()
-            caches.open(TEXTURE_CACHE).then((cache) => cache.put(event.request, clone))
+            if (response.ok) {
+              const clone = response.clone()
+              caches.open(TEXTURE_CACHE).then((cache) => cache.put(event.request, clone))
+            }
             return response
           }),
       ),
@@ -47,7 +48,6 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Cache-first for static assets (JS, CSS, fonts, images)
   if (
     url.pathname.startsWith('/_next/static/') ||
     /\.(js|css|woff2?|ttf|eot|svg|png|jpg|ico)$/.test(url.pathname)
@@ -57,8 +57,10 @@ self.addEventListener('fetch', (event) => {
         (cached) =>
           cached ||
           fetch(event.request).then((response) => {
-            const clone = response.clone()
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone))
+            if (response.ok) {
+              const clone = response.clone()
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone))
+            }
             return response
           }),
       ),
@@ -66,13 +68,14 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Network-first for pages
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          const clone = response.clone()
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone))
+          if (response.ok) {
+            const clone = response.clone()
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone))
+          }
           return response
         })
         .catch(() => caches.match(event.request)),
@@ -81,7 +84,6 @@ self.addEventListener('fetch', (event) => {
   }
 })
 
-// Explicit texture pre-caching triggered by the app
 self.addEventListener('message', (event) => {
   if (event.data?.type !== 'PRECACHE_TEXTURES') return
 
@@ -100,16 +102,24 @@ self.addEventListener('message', (event) => {
               port.postMessage({ type: 'PROGRESS', completed, total })
               return
             }
-            return fetch(url).then((response) =>
-              cache.put(url, response).then(() => {
+            return fetch(url).then((response) => {
+              if (!response.ok) {
+                port.postMessage({ type: 'ERROR', error: `Failed to fetch ${url}: ${response.status}` })
+                return
+              }
+              return cache.put(url, response).then(() => {
                 completed++
                 port.postMessage({ type: 'PROGRESS', completed, total })
-              }),
-            )
+              })
+            })
           }),
         ),
       ),
     )
-    .then(() => port.postMessage({ type: 'DONE' }))
+    .then(() => {
+      if (completed === total) {
+        port.postMessage({ type: 'DONE' })
+      }
+    })
     .catch((err) => port.postMessage({ type: 'ERROR', error: err.message }))
 })

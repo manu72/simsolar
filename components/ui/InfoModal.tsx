@@ -7,7 +7,7 @@ export function InfoModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [offlineChecked, setOfflineChecked] = useState(false);
-  const { isCached, cacheProgress, triggerCache } = useOfflineStatus();
+  const { isCached, cacheProgress, cacheError, triggerCache } = useOfflineStatus();
   const [showProgress, setShowProgress] = useState(false);
 
   const openModal = useCallback(() => {
@@ -41,14 +41,17 @@ export function InfoModal() {
       </button>
 
       {/* Cache progress bar — top of viewport, outside modal */}
-      {showProgress && !isCached && cacheProgress < 100 && (
+      {showProgress && !isCached && !cacheError && cacheProgress < 100 && (
         <div className="fixed top-0 left-0 right-0 z-40 h-0.5 bg-white/10">
           <div className="h-full bg-blue-400/60 transition-all duration-300" style={{ width: `${cacheProgress}%` }} />
         </div>
       )}
 
+      {/* Cache error toast */}
+      {showProgress && cacheError && <CacheErrorToast message={cacheError} onDone={() => setShowProgress(false)} />}
+
       {/* Cache complete toast */}
-      {showProgress && isCached && <CacheCompleteToast onDone={() => setShowProgress(false)} />}
+      {showProgress && isCached && !cacheError && <CacheCompleteToast onDone={() => setShowProgress(false)} />}
 
       {/* Modal overlay */}
       {isOpen && (
@@ -138,6 +141,31 @@ function CacheCompleteToast({ onDone }: { onDone: () => void }) {
         ${visible ? "opacity-100" : "opacity-0"}`}
     >
       Available offline
+    </div>
+  );
+}
+
+function CacheErrorToast({ message, onDone }: { message: string; onDone: () => void }) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    requestAnimationFrame(() => setVisible(true));
+    const timer = setTimeout(() => {
+      setVisible(false);
+      setTimeout(onDone, 300);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [onDone]);
+
+  return (
+    <div
+      className={`fixed top-2 left-1/2 -translate-x-1/2 z-40
+        text-xs text-red-300/80 bg-gray-900/90 border border-red-400/20
+        rounded-full px-4 py-1.5 transition-opacity duration-300
+        ${visible ? "opacity-100" : "opacity-0"}`}
+      role="alert"
+    >
+      Offline caching failed{message ? `: ${message}` : ""}
     </div>
   );
 }
