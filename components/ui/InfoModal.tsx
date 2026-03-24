@@ -10,6 +10,8 @@ export function InfoModal() {
   const { isCached, cacheProgress, cacheError, triggerCache } = useOfflineStatus();
   const [showProgress, setShowProgress] = useState(false);
 
+  const hideProgress = useCallback(() => setShowProgress(false), []);
+
   const openModal = useCallback(() => {
     setIsOpen(true);
     requestAnimationFrame(() => requestAnimationFrame(() => setIsVisible(true)));
@@ -35,7 +37,7 @@ export function InfoModal() {
         onClick={openModal}
         className="fixed top-4 left-4 z-50 w-8 h-8 flex items-center justify-center
           text-white/40 hover:text-white/80 transition-opacity text-lg select-none cursor-pointer"
-        aria-label="About Simsolar"
+        aria-label="About SimSolar"
       >
         &#9432;
       </button>
@@ -48,10 +50,10 @@ export function InfoModal() {
       )}
 
       {/* Cache error toast */}
-      {showProgress && cacheError && <CacheErrorToast message={cacheError} onDone={() => setShowProgress(false)} />}
+      {showProgress && cacheError && <CacheErrorToast message={cacheError} onDone={hideProgress} />}
 
       {/* Cache complete toast */}
-      {showProgress && isCached && !cacheError && <CacheCompleteToast onDone={() => setShowProgress(false)} />}
+      {showProgress && isCached && !cacheError && <CacheCompleteToast onDone={hideProgress} />}
 
       {/* Modal overlay */}
       {isOpen && (
@@ -68,7 +70,7 @@ export function InfoModal() {
               rounded-xl p-8 shadow-2xl transition-all duration-300
               ${isVisible ? "scale-100 translate-y-0" : "scale-95 translate-y-4"}`}
           >
-            <h1 className="text-2xl font-light tracking-wide text-white mb-2">Simsolar Animated Solar System</h1>
+            <h1 className="text-2xl font-light tracking-wide text-white mb-2">SimSolar Animated Solar System</h1>
             <p className="text-sm text-white/60 leading-relaxed mb-1">
               An interactive visualisation of Earth&apos;s orbit around the Sun.
             </p>
