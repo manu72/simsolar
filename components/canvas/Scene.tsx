@@ -7,6 +7,7 @@ import * as THREE from 'three'
 import { Animator } from './Animator'
 import { Sun } from './Sun'
 import { Earth } from './Earth'
+import { Moon } from './Moon'
 import { OrbitPath } from './OrbitPath'
 import { Starfield } from './Starfield'
 import { Annotations } from './Annotations'
@@ -18,6 +19,8 @@ export function Scene() {
   const earthMeshRef     = useRef<THREE.Mesh>(null)
   const earthMaterialRef = useRef<THREE.ShaderMaterial>(null)
   const worldGroupRef    = useRef<THREE.Group>(null)
+  const moonGroupRef             = useRef<THREE.Group>(null)
+  const moonInclinationGroupRef  = useRef<THREE.Group>(null)
 
   return (
     <Canvas
@@ -30,6 +33,8 @@ export function Scene() {
         earthMeshRef={earthMeshRef}
         earthMaterialRef={earthMaterialRef}
         worldGroupRef={worldGroupRef}
+        moonGroupRef={moonGroupRef}
+        moonInclinationGroupRef={moonInclinationGroupRef}
       />
       <Starfield />
       {/* World group: Sun, orbit path, annotations — offset when Earth is focused */}
@@ -43,7 +48,12 @@ export function Scene() {
           groupRef={earthGroupRef}
           meshRef={earthMeshRef}
           materialRef={earthMaterialRef}
-        />
+        >
+          <Moon
+            groupRef={moonGroupRef}
+            inclinationGroupRef={moonInclinationGroupRef}
+          />
+        </Earth>
       </Suspense>
       <ZoomSync />
       <OrbitControls
