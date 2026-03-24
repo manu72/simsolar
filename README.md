@@ -10,6 +10,7 @@ Interactive 3D solar system visualisation for solstice and equinox education. Bu
 - Default to a southern hemisphere viewpoint (camera, labels, terminology)
 - Physically grounded: Keplerian elliptical orbit, sidereal rotation, real solstice/equinox dates
 - Accessible on desktop (optimised for 2560x1440) and usable on mobile
+- PWA-ready with optional offline caching of textures and assets
 
 ## Tech Stack
 
@@ -47,15 +48,18 @@ simsolar/
 │   │   ├── Annotations.tsx           # HTML labels at solstice/equinox positions
 │   │   ├── ZoomSync.tsx              # Bidirectional camera ↔ Zustand zoom sync
 │   │   └── ErrorBoundary.tsx         # Error boundary for texture loading
-│   └── hud/                          # 2D overlay controls
-│       ├── HUD.tsx                   # HUD container with play/pause
-│       ├── TimelineSlider.tsx        # Year scrubber with season bands and event ticks
-│       ├── SpeedControls.tsx         # Orbit speed, rotation speed, camera zoom, earth scale
-│       ├── HemisphereControl.tsx     # S/N hemisphere toggle
-│       └── PlanetSelector.tsx        # Planet selector (Earth only in Phase 1)
+│   ├── hud/                          # 2D overlay controls
+│   │   ├── HUD.tsx                   # HUD container with play/pause
+│   │   ├── TimelineSlider.tsx        # Year scrubber with season bands and event ticks
+│   │   ├── SpeedControls.tsx         # Orbit speed, rotation speed, camera zoom, earth scale
+│   │   ├── HemisphereControl.tsx     # S/N hemisphere toggle
+│   │   └── PlanetSelector.tsx        # Planet selector (Earth only in Phase 1)
+│   └── ui/
+│       └── InfoModal.tsx             # About/help modal with offline caching toggle
 ├── lib/                              # Pure logic (no React/Three dependencies)
 │   ├── constants.ts                  # Orbital, scene, Moon, and control constants
 │   ├── orbitalMechanics.ts           # Julian day, Keplerian position, rotation, seasons
+│   ├── useOfflineStatus.ts           # Hook for service worker cache state and progress
 │   └── shaders/                      # GLSL as TypeScript template literals
 │       ├── earth.vert.ts             # Earth vertex — UVs, world normals, per-vertex sun direction
 │       ├── earth.frag.ts             # Earth fragment — day/night blend, terminator, atmosphere rim
@@ -64,7 +68,10 @@ simsolar/
 ├── store/
 │   └── useAppStore.ts                # Zustand store (playing, speeds, hemisphere, zoom, scale, focus)
 ├── public/
-│   └── textures/                     # Earth day/night and Moon texture maps
+│   ├── textures/                     # Earth day/night and Moon texture maps
+│   ├── icons/                        # PWA app icons (192px, 512px)
+│   ├── manifest.json                 # PWA manifest
+│   └── sw.js                         # Service worker for offline asset caching
 ├── __tests__/
 │   └── orbitalMechanics.test.ts      # Orbital mechanics unit tests
 ├── docs/
@@ -86,7 +93,7 @@ simsolar/
 
 **Rendering loop:** `Animator` reads Zustand via `getState()` each frame (no re-renders), advances the clock, computes Earth's Keplerian position, drives Moon orbital position/tidal locking/nodal precession, updates mesh transforms and reference frame, and sets shader uniforms. `ZoomSync` keeps the camera distance and HUD zoom slider bidirectionally synchronised.
 
-**Moon orbit:** The Moon is parented under the Earth group, inheriting its position, scale, and reference frame. Lunar orbital angle is derived from `clock.rotationAngle / MOON_SIDEREAL_PERIOD_DAYS`. Tidal locking keeps the same face toward Earth. The orbital plane is tilted 5.14 degrees with an 18.6-year nodal precession cycle.
+**Moon orbit:** The Moon is parented under the Earth group, inheriting its position, scale, and reference frame. Lunar orbital angle is derived from `clock.rotationAngle / MOON_SIDEREAL_PERIOD_DAYS`. Tidal locking keeps the same face toward Earth (`rotation.y = -orbitalAngle + PI`). The orbital plane is tilted 5.14 degrees with an 18.6-year retrograde nodal precession cycle (Euler order `'YXZ'`).
 
 **Orbital mechanics:** Pure TypeScript functions with no React or Three.js dependencies — Julian day conversions, elliptical orbit position, sidereal rotation angle, season labelling, and solstice/equinox event detection.
 
@@ -148,13 +155,19 @@ pnpm lint
 - **Hemisphere toggle** — switch between southern and northern hemisphere labels and terminology
 - **Solstice/equinox annotations** — labelled positions on the orbit path, updating with hemisphere choice
 - **Starfield** — ~2000 background stars for spatial context
+- **PWA offline support** — opt-in service worker caching of textures and assets via info modal
+- **Info modal** — about/help overlay with usage instructions and offline caching toggle
 - **Vercel deployment** — production-ready with texture cache headers
 
 ## Recent Updates
 
+- Info modal with about/help content and opt-in offline caching toggle
+- PWA support with service worker, manifest, and app icons
+- Moon tidal locking sign corrected (same face now always toward Earth)
+- Moon nodal precession Euler order fixed to `'YXZ'` (precession now visually correct)
+- Moon nodal precession angle negated for astronomically correct retrograde direction
 - Moon orbiting Earth with 5.14 degree inclination, tidal locking, and 18.6-year nodal precession
 - Lunar surface texture from NASA/Solar System Scope
-- Sun PointLight decay set to 0 for consistent Moon illumination at all distances
 - Sun CSS radial-gradient glow via drei Html, inline props hoisted to module constants
 - Cursor cleanup on Sun unmount to prevent sticky pointer
 - Sun vertex shader noise fixed (trilinear interpolation replaces discontinuous hash)

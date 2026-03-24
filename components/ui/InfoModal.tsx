@@ -77,7 +77,7 @@ export function InfoModal() {
             <ul className="text-sm text-white/60 space-y-1.5 mb-6">
               <li>Drag in space to orbit the camera</li>
               <li>Scroll to zoom</li>
-              <li>Use the timeline sliderto scrub through the year</li>
+              <li>Use the timeline slider to scrub through the year</li>
               <li>Adjust orbit and rotation speeds with the HUD sliders</li>
               <li>Click planets to select</li>
             </ul>
