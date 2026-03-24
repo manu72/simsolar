@@ -9,6 +9,10 @@ import { getEarthOrbitalPosition } from '@/lib/orbitalMechanics'
 import {
   DAYS_PER_SECOND_BASE,
   TWO_PI_PER_SIDEREAL_SECOND,
+  MOON_ORBIT_RADIUS,
+  MOON_SIDEREAL_PERIOD_DAYS,
+  MOON_INCLINATION_RAD,
+  MOON_NODAL_PRECESSION_YEARS,
 } from '@/lib/constants'
 
 interface AnimatorProps {
@@ -16,9 +20,11 @@ interface AnimatorProps {
   earthMeshRef: React.RefObject<THREE.Mesh | null>
   earthMaterialRef: React.RefObject<THREE.ShaderMaterial | null>
   worldGroupRef: React.RefObject<THREE.Group | null>
+  moonGroupRef: React.RefObject<THREE.Group | null>
+  moonInclinationGroupRef: React.RefObject<THREE.Group | null>
 }
 
-export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldGroupRef }: AnimatorProps) {
+export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldGroupRef, moonGroupRef, moonInclinationGroupRef }: AnimatorProps) {
   const clock = useContext(SimulationContext)
 
   useFrame((_, delta) => {
@@ -63,6 +69,31 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldG
         ? earthPos.clone().negate()  // Sun at -earthPos when Earth is at origin
         : new THREE.Vector3(0, 0, 0) // Sun at origin in heliocentric mode
       earthMaterialRef.current.uniforms.uSunPositionWorld.value.copy(sunWorldPos)
+    }
+
+    // ── Moon ──────────────────────────────────────────────────────────────
+    // Orbital angle derived from clock.rotationAngle (world space).
+    // clock.rotationAngle encodes exactly 2π per sidereal day, so dividing
+    // by MOON_SIDEREAL_PERIOD_DAYS (27.321) gives 2π per lunar orbit.
+    const moonOrbitalAngle = clock.rotationAngle / MOON_SIDEREAL_PERIOD_DAYS
+
+    if (moonGroupRef.current) {
+      moonGroupRef.current.position.set(
+        MOON_ORBIT_RADIUS * Math.cos(moonOrbitalAngle),
+        0,
+        MOON_ORBIT_RADIUS * Math.sin(moonOrbitalAngle),
+      )
+      // Tidal locking: same face always toward Earth (centre of orbit)
+      moonGroupRef.current.rotation.y = -moonOrbitalAngle + Math.PI
+    }
+
+    // Orbital precession — ascending node rotates over 18.6-year cycle.
+    // Derived from rotationAngle so it stays synchronised with Moon motion.
+    if (moonInclinationGroupRef.current) {
+      const moonOrbits = clock.rotationAngle / (MOON_SIDEREAL_PERIOD_DAYS * 2 * Math.PI)
+      const moonYears = moonOrbits * MOON_SIDEREAL_PERIOD_DAYS / 365.25
+      const precessionAngle = (2 * Math.PI * moonYears) / MOON_NODAL_PRECESSION_YEARS
+      moonInclinationGroupRef.current.rotation.set(MOON_INCLINATION_RAD, -precessionAngle, 0, 'YXZ')
     }
   })
 

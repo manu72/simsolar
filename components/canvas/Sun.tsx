@@ -36,7 +36,7 @@ export function Sun() {
 
   return (
     <>
-      <pointLight intensity={2.5} distance={600} decay={1} color="#fff5e0" />
+      <pointLight intensity={2} distance={0} decay={0} color="#fff5e0" />
       {/* Animated sun core */}
       <mesh
         onClick={() => useAppStore.getState().toggleFocusTarget()}

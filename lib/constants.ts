@@ -39,3 +39,13 @@ export const DEFAULT_ZOOM_DISTANCE = 400
 // Orbit path geometry (semi-minor axis)
 // b = a * sqrt(1 - e^2)
 export const SEMI_MINOR_AXIS = SEMI_MAJOR_AXIS * Math.sqrt(1 - ECCENTRICITY ** 2) // ≈ 199.972
+
+// Moon
+export const MOON_RADIUS = 0.41             // visually scaled for readability (real ratio ~27% of Earth)
+export const MOON_ORBIT_RADIUS = 5          // compressed for visibility (real ≈ 60× Earth radius)
+export const MOON_SIDEREAL_PERIOD_DAYS = 27.321  // sidereal orbital period in days
+export const MOON_INCLINATION_DEG = 5.14
+export const MOON_INCLINATION_RAD = (5.14 * Math.PI) / 180
+export const MOON_AXIAL_TILT_DEG = 6.68
+export const MOON_AXIAL_TILT_RAD = (6.68 * Math.PI) / 180
+export const MOON_NODAL_PRECESSION_YEARS = 18.6  // full precession cycle of ascending node

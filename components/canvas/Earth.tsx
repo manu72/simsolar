@@ -12,9 +12,10 @@ interface EarthProps {
   groupRef: React.RefObject<THREE.Group | null>
   meshRef: React.RefObject<THREE.Mesh | null>
   materialRef: React.RefObject<THREE.ShaderMaterial | null>
+  children?: React.ReactNode
 }
 
-export function Earth({ groupRef, meshRef, materialRef }: EarthProps) {
+export function Earth({ groupRef, meshRef, materialRef, children }: EarthProps) {
   const [dayTexture, nightTexture] = useTexture([
     '/textures/earth-day.jpg',
     '/textures/earth-night.jpg',
@@ -66,6 +67,7 @@ export function Earth({ groupRef, meshRef, materialRef }: EarthProps) {
           opacity={0.4}
         />
       </group>
+      {children}
     </group>
   )
 }
