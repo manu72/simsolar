@@ -40,7 +40,7 @@ simsolar/
 │   │   ├── Scene.tsx                 # R3F Canvas, camera, controls, scene composition
 │   │   ├── Animator.tsx              # useFrame loop — orbit, rotation, Moon, shader uniforms
 │   │   ├── SimulationContext.ts      # React context for SimulationClock ref
-│   │   ├── Sun.tsx                   # Animated surface shader + pointLight + CSS glow + focus toggle
+│   │   ├── Sun.tsx                   # Animated surface shader + pointLight + CSS glow + click-to-focus
 │   │   ├── Earth.tsx                 # Shader sphere with day/night textures, axial tilt
 │   │   ├── Moon.tsx                  # Textured sphere, 5.14° inclined orbit, tidal locking, precession
 │   │   ├── OrbitPath.tsx             # Elliptical orbit line in XZ plane
@@ -89,7 +89,7 @@ simsolar/
 
 **Time model:** A `SimulationClock` ref holds `julianDay` and `rotationAngle` — mutated every frame by the `Animator` component. Zustand holds UI-level state (`isPlaying`, `orbitSpeed`, `rotationSpeed`, `hemisphere`, `zoomDistance`, `earthScale`, `focusTarget`). Display date is derived locally in `TimelineSlider` by polling the clock ref.
 
-**Dual reference frame:** Clicking the Sun toggles `focusTarget` between `'sun'` (heliocentric — Sun at origin) and `'earth'` (geocentric — Earth at origin, world group offset by `-earthPos`). The Earth shader uniform `uSunPositionWorld` is set accordingly so lighting works in both modes.
+**Triple reference frame:** Clicking any celestial body sets `focusTarget` to `'sun'` (heliocentric — Sun at origin), `'earth'` (geocentric — Earth at origin, world group offset by `-earthPos`), or `'moon'` (selenocentric — Moon at origin, Earth offset by `-moonLocalPos`, world group offset by `-(earthPos + moonLocalPos)`). Each body's click handler is idempotent and calls `event.stopPropagation()` to prevent R3F raycast propagation. The Earth shader uniform `uSunPositionWorld` is set accordingly so lighting works in all three modes.
 
 **Rendering loop:** `Animator` reads Zustand via `getState()` each frame (no re-renders), advances the clock, computes Earth's Keplerian position, drives Moon orbital position/tidal locking/nodal precession, updates mesh transforms and reference frame, and sets shader uniforms. `ZoomSync` keeps the camera distance and HUD zoom slider bidirectionally synchronised.
 
@@ -147,7 +147,7 @@ pnpm lint
 - **Animated sun** — procedural FBM noise surface shader with limb darkening and CSS radial-gradient glow
 - **Moon** — orbits Earth with 5.14 degree inclination, tidal locking, 18.6-year nodal precession, NASA texture
 - **Axial tilt** — 23.44 degrees tilt accurately represented, driving seasonal variation
-- **Geocentric view** — click the Sun to toggle between heliocentric and geocentric reference frames
+- **Click-to-focus views** — click Sun, Earth, or Moon to centre the view on that body (heliocentric, geocentric, or selenocentric)
 - **Timeline scrubber** — drag through a full year; season colour bands and solstice/equinox tick marks
 - **Playback controls** — play/pause, independent orbit and rotation speed sliders
 - **Camera zoom** — HUD slider bidirectionally synced with mouse wheel via ZoomSync
@@ -161,6 +161,8 @@ pnpm lint
 
 ## Recent Updates
 
+- Selenocentric view — click the Moon to centre the scene on it, with Earth and Sun offset accordingly
+- Focus target refactored from toggle to explicit `setFocusTarget` with `event.stopPropagation()` for reliable click handling
 - Info modal with about/help content and opt-in offline caching toggle
 - PWA support with service worker, manifest, and app icons
 - Moon tidal locking sign corrected (same face now always toward Earth)

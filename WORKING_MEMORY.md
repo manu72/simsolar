@@ -1,12 +1,12 @@
 # Working Memory
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-03-29
 
 ## Architecture
 
 ### State Model
 
-- **Zustand** (`store/useAppStore.ts`): `isPlaying`, `orbitSpeed`, `rotationSpeed`, `hemisphere`, `zoomDistance`, `earthScale`, `focusTarget` (`'sun' | 'earth'`).
+- **Zustand** (`store/useAppStore.ts`): `isPlaying`, `orbitSpeed`, `rotationSpeed`, `hemisphere`, `zoomDistance`, `earthScale`, `focusTarget` (`'sun' | 'earth' | 'moon'`).
 - **SimulationClock** (mutable ref via `SimulationContext`): `julianDay`, `rotationAngle` — written every frame by `Animator`, never in Zustand.
 - **Display date** is local state in `TimelineSlider`, polled from the clock ref via `setInterval`.
 
@@ -17,7 +17,7 @@ ClientRoot (SimulationContext.Provider)
 ├── Scene (R3F Canvas)
 │   ├── Animator          useFrame loop — advances clock, positions Earth/Moon, updates shader uniforms
 │   ├── Starfield         ~2000 instanced points (outside worldGroup — static backdrop)
-│   ├── worldGroup        moves when focusTarget='earth' (geocentric view)
+│   ├── worldGroup        moves when focusTarget='earth'|'moon' (geocentric/selenocentric view)
 │   │   ├── OrbitPath     elliptical orbit line
 │   │   ├── Sun           animated surface shader + pointLight + CSS radial-gradient glow (Html)
 │   │   └── Annotations   drei Html labels at solstice/equinox positions
@@ -35,13 +35,20 @@ ClientRoot (SimulationContext.Provider)
 
 ### Key Design Decisions
 
-- **Dual reference frame:** `focusTarget` toggles between heliocentric (Sun at origin) and geocentric (Earth at origin, `worldGroup` offset by `-earthPos`). The Earth shader uniform `uSunPositionWorld` is set accordingly.
+- **Triple reference frame:** `focusTarget` selects heliocentric (Sun at origin), geocentric (Earth at origin, `worldGroup` offset by `-earthPos`), or selenocentric (Moon at origin, Earth offset by `-moonLocalPos`, `worldGroup` offset by `-(earthPos + moonLocalPos)`). The Earth shader uniform `uSunPositionWorld` is set accordingly for all three modes. Each body's click handler calls `setFocusTarget` with its own identity (idempotent, no toggle) and `event.stopPropagation()` to prevent R3F ray propagation to meshes behind it.
 - **Shaders as TypeScript:** GLSL lives in `.ts` template literals (`lib/shaders/*.ts`), not raw `.glsl` files. No Turbopack raw loader needed; `next.config.ts` is empty.
 - **No postprocessing library:** `@react-three/postprocessing` removed from rendering due to React 19 + Three.js r183 incompatibilities. Sun glow uses CSS radial-gradient via drei `Html`.
 - **Moon parented under Earth:** Moon is a child of the Earth group, so it inherits Earth's position, scale, and reference frame automatically. Orbit angle derived from `clock.rotationAngle / MOON_SIDEREAL_PERIOD_DAYS`.
 - **PWA offline support:** Service worker (`public/sw.js`) caches textures and assets. `useOfflineStatus` hook manages cache state. `InfoModal` provides opt-in offline toggle.
 
 ## Recent Features
+
+### Focus Target Refactor + Selenocentric View (`66f8ac0`, `b07d5b2`)
+- Replaced `toggleFocusTarget()` with `setFocusTarget(target: 'sun' | 'earth' | 'moon')` in Zustand store. Each body declares its own identity on click — idempotent, no toggle. Clicking the already-focused body is a no-op.
+- Added `event.stopPropagation()` to all mesh click handlers (Earth, Sun, Moon) to prevent R3F raycast propagation to meshes further along the ray.
+- Selenocentric view: Moon at origin, `earthGroupRef` offset by `-moonLocalPos` (Moon's inclined position in Earth-local space), `worldGroupRef` offset by `-(earthPos + moonLocalPos)`.
+- Hoisted moon orbital calculations (angle, precession, inclined local position) above focus-target positioning in Animator so all three branches can use them. Pre-allocated `_moonLocalPos` and `_inclinationEuler` at module scope to avoid per-frame GC pressure.
+- Moon mesh (`Moon.tsx`): added `onClick`, `onPointerOver`, `onPointerOut` matching Earth/Sun interaction pattern.
 
 ### Info Modal + PWA Offline (`b35be68`..`fa6327f`)
 - `components/ui/InfoModal.tsx`: about/help modal with usage instructions and offline caching checkbox.
@@ -65,7 +72,7 @@ ClientRoot (SimulationContext.Provider)
 - `useEffect` cleanup resets `cursor` on unmount.
 
 ### Geocentric View, Sun Shader, HUD Controls
-- Click Sun to toggle heliocentric/geocentric. Earth shader uses `uSunPositionWorld` with per-vertex direction.
+- Click celestial body to focus (heliocentric/geocentric/selenocentric). Earth shader uses `uSunPositionWorld` with per-vertex direction.
 - Procedural FBM sun surface with 3D trilinear noise and view-space limb darkening.
 - Camera zoom (bidirectional via `ZoomSync`), Earth scale (1–10x). Defaults: orbit 2x, rotation 5000x, zoom 400, scale 5x.
 
@@ -80,6 +87,9 @@ ClientRoot (SimulationContext.Provider)
 - **Lunar nodal precession is retrograde.** The ascending node drifts westward. Three.js positive `rotation.y` is counterclockwise from +Y (prograde), so the precession angle must be negated.
 - **Tidal locking rotation sign:** `rotation.y = -orbitalAngle + π`, not `+orbitalAngle + π`. Three.js `Ry(θ)` maps local +X to `(cos θ, 0, -sin θ)`, matching Earth direction only with the negated angle.
 - **Always guard `cache.put()` with `response.ok`.** Service worker `fetch()` resolves for 4xx/5xx — only the network failing causes rejection. Without `if (response.ok)` before caching, error pages poison the cache and are served on subsequent visits. Apply to every fetch-then-cache path: textures, static assets, navigation, and precaching.
+- **R3F click events propagate through ALL intersected meshes along the ray.** When a raycast hits multiple meshes (e.g. Earth in front of Sun), `onClick` fires on every one unless `event.stopPropagation()` is called. Always call `e.stopPropagation()` in mesh click handlers to ensure only the nearest mesh responds. Without this, `setFocusTarget('earth')` fires first, then `setFocusTarget('sun')` overwrites it, making the click appear to do nothing.
+- **Use `setX(value)` not `toggleX()` for focus/selection state.** Toggle actions are fragile: dual-firing events (R3F ray propagation), double-clicks, or future multi-target scenarios all break them. Explicit `setFocusTarget('earth')` is idempotent, composable, and scales to N targets.
+- **Pre-allocate reusable `THREE.Vector3`/`THREE.Euler` at module scope for `useFrame` loops.** Allocating `new Vector3()` or calling `.clone()` every frame creates GC pressure. Declare module-level scratch objects (e.g. `const _moonLocalPos = new THREE.Vector3()`) and `.set()`/`.copy()` into them each frame.
 
 ## Technical Debt
 
