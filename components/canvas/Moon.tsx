@@ -10,6 +10,7 @@ import {
   MOON_AXIAL_TILT_RAD,
   MOON_ORBIT_RADIUS,
 } from '@/lib/constants'
+import { useAppStore } from '@/store/useAppStore'
 
 const ORBIT_SEGMENTS = 128
 
@@ -43,7 +44,12 @@ export function Moon({ groupRef, inclinationGroupRef }: MoonProps) {
       {/* groupRef controls position (orbit) and rotation.y (tidal lock) via Animator */}
       <group ref={groupRef}>
         {/* Axial tilt is visual only — does not affect orbital position */}
-        <mesh rotation={[0, 0, -MOON_AXIAL_TILT_RAD]}>
+        <mesh
+          rotation={[0, 0, -MOON_AXIAL_TILT_RAD]}
+          onClick={(e) => { e.stopPropagation(); useAppStore.getState().setFocusTarget('moon') }}
+          onPointerOver={() => { document.body.style.cursor = 'pointer' }}
+          onPointerOut={() => { document.body.style.cursor = 'auto' }}
+        >
           <sphereGeometry args={[MOON_RADIUS, 32, 32]} />
           <meshStandardMaterial map={moonTexture} emissive="#181818" />
         </mesh>

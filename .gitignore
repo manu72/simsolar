@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+.sfdx/
 
 # debug
 npm-debug.log*
