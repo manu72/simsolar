@@ -39,7 +39,7 @@ export function Sun() {
       <pointLight intensity={2} distance={0} decay={0} color="#fff5e0" />
       {/* Animated sun core */}
       <mesh
-        onClick={() => useAppStore.getState().setFocusTarget('sun')}
+        onClick={(e) => { e.stopPropagation(); useAppStore.getState().setFocusTarget('sun') }}
         onPointerOver={() => {
           document.body.style.cursor = "pointer";
         }}

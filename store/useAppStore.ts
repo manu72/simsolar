@@ -13,7 +13,7 @@ interface AppState {
   hemisphere: 'north' | 'south'
   zoomDistance: number
   earthScale: number
-  focusTarget: 'sun' | 'earth'
+  focusTarget: 'sun' | 'earth' | 'moon'
 
   setIsPlaying: (v: boolean) => void
   setOrbitSpeed: (v: number) => void
@@ -21,7 +21,7 @@ interface AppState {
   setHemisphere: (h: 'north' | 'south') => void
   setZoomDistance: (v: number) => void
   setEarthScale: (v: number) => void
-  setFocusTarget: (target: 'sun' | 'earth') => void
+  setFocusTarget: (target: 'sun' | 'earth' | 'moon') => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
