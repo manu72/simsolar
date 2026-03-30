@@ -14,80 +14,83 @@ Interactive 3D solar system visualisation for solstice and equinox education. Bu
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 16 (App Router) |
-| 3D Engine | React Three Fiber + Drei + Three.js |
-| State | Zustand |
-| Styling | Tailwind CSS v4 (dark mode) |
-| Shaders | Custom GLSL — Earth day/night terminator, atmosphere rim, animated sun surface |
-| Language | TypeScript (strict) |
-| Testing | Vitest |
-| Package Manager | pnpm |
-| Deployment | Vercel |
+| Layer | Technology | Version |
+|-------|-----------|---------|
+| Framework | Next.js (App Router) | 16.2.1 |
+| UI | React | 19.2.4 |
+| 3D Engine | React Three Fiber + Drei + Three.js | 9.5.0 / 10.7.7 / 0.183.2 |
+| State | Zustand | 5.0.12 |
+| Styling | Tailwind CSS v4 (dark mode, via `@tailwindcss/postcss`) | 4.x |
+| Shaders | Custom GLSL — Earth day/night terminator, atmosphere rim, animated sun surface | — |
+| Language | TypeScript (strict) | 5.x |
+| Testing | Vitest | 4.1.0 |
+| Linting | ESLint (flat config, next core-web-vitals + typescript) | 9.x |
+| Package Manager | pnpm | — |
+| Deployment | Vercel | — |
 
 ## Project Structure
 
 ```
 simsolar/
 ├── app/                              # Next.js App Router
-│   ├── layout.tsx                    # Root layout (dark theme, metadata)
-│   ├── page.tsx                      # Home page — renders ClientRoot
-│   └── globals.css                   # Tailwind imports, CSS variables
+│   ├── layout.tsx                    # Root layout (dark theme, metadata, PWA manifest link)
+│   ├── page.tsx                      # Home page — renders ClientRoot + InfoModal
+│   └── globals.css                   # Tailwind v4 imports, CSS custom properties
 ├── components/
-│   ├── ClientRoot.tsx                # Client entry — clock, context, canvas + HUD
-│   ├── canvas/                       # 3D scene components
-│   │   ├── Scene.tsx                 # R3F Canvas, camera, controls, scene composition
+│   ├── ClientRoot.tsx                # Client entry — SimulationClock, context, canvas + HUD
+│   ├── canvas/                       # 3D scene components (React Three Fiber)
+│   │   ├── Scene.tsx                 # R3F Canvas, camera, controls, scene graph composition
 │   │   ├── Animator.tsx              # useFrame loop — orbit, rotation, Moon, shader uniforms
-│   │   ├── SimulationContext.ts      # React context for SimulationClock ref
+│   │   ├── SimulationContext.ts      # React context for mutable SimulationClock ref
 │   │   ├── Sun.tsx                   # Animated surface shader + pointLight + CSS glow + click-to-focus
-│   │   ├── Earth.tsx                 # Shader sphere with day/night textures, axial tilt
+│   │   ├── Earth.tsx                 # Custom shader sphere with day/night textures, axial tilt
 │   │   ├── Moon.tsx                  # Textured sphere, 5.14° inclined orbit, tidal locking, precession
 │   │   ├── OrbitPath.tsx             # Elliptical orbit line in XZ plane
-│   │   ├── Starfield.tsx             # ~2000 instanced star points
-│   │   ├── Annotations.tsx           # HTML labels at solstice/equinox positions
+│   │   ├── Starfield.tsx             # ~2000 instanced star points with size variation
+│   │   ├── Annotations.tsx           # HTML labels at solstice/equinox orbital positions
 │   │   ├── ZoomSync.tsx              # Bidirectional camera ↔ Zustand zoom sync
-│   │   └── ErrorBoundary.tsx         # Error boundary for texture loading
-│   ├── hud/                          # 2D overlay controls
+│   │   └── ErrorBoundary.tsx         # Error boundary for WebGL/texture loading failures
+│   ├── hud/                          # 2D overlay controls (React DOM)
 │   │   ├── HUD.tsx                   # HUD container with play/pause
-│   │   ├── TimelineSlider.tsx        # Year scrubber with season bands and event ticks
-│   │   ├── SpeedControls.tsx         # Orbit speed, rotation speed, camera zoom, earth scale
+│   │   ├── TimelineSlider.tsx        # Year scrubber with season colour bands, date display, event ticks
+│   │   ├── SpeedControls.tsx         # Orbit speed, rotation speed, camera zoom, earth scale sliders
 │   │   ├── HemisphereControl.tsx     # S/N hemisphere toggle
 │   │   └── PlanetSelector.tsx        # Planet selector (Earth only in Phase 1)
 │   └── ui/
 │       └── InfoModal.tsx             # About/help modal with offline caching toggle
-├── lib/                              # Pure logic (no React/Three dependencies)
+├── lib/                              # Pure logic (no React/Three dependencies except Vector3)
 │   ├── constants.ts                  # Orbital, scene, Moon, and control constants
-│   ├── orbitalMechanics.ts           # Julian day, Keplerian position, rotation, seasons
-│   ├── useOfflineStatus.ts           # Hook for service worker cache state and progress
+│   ├── orbitalMechanics.ts           # Julian day, Kepler solver, Earth position, rotation, seasons
+│   ├── useOfflineStatus.ts           # React hook for service worker cache state and progress
 │   └── shaders/                      # GLSL as TypeScript template literals
 │       ├── earth.vert.ts             # Earth vertex — UVs, world normals, per-vertex sun direction
 │       ├── earth.frag.ts             # Earth fragment — day/night blend, terminator, atmosphere rim
-│       ├── sunSurface.vert.ts        # Sun vertex — 3D noise displacement, time animation
+│       ├── sunSurface.vert.ts        # Sun vertex — 3D trilinear noise displacement, time animation
 │       └── sunSurface.frag.ts        # Sun fragment — procedural FBM noise, limb darkening
 ├── store/
 │   └── useAppStore.ts                # Zustand store (playing, speeds, hemisphere, zoom, scale, focus)
 ├── public/
-│   ├── textures/                     # Earth day/night and Moon texture maps
+│   ├── textures/                     # Earth day/night and Moon texture maps (~2MB total)
 │   ├── icons/                        # PWA app icons (192px, 512px)
 │   ├── manifest.json                 # PWA manifest
 │   └── sw.js                         # Service worker for offline asset caching
 ├── __tests__/
-│   └── orbitalMechanics.test.ts      # Orbital mechanics unit tests
-├── docs/
-│   └── superpowers/
-│       ├── specs/                    # Design specifications
-│       └── plans/                    # Implementation plans
-├── vercel.json                       # Cache headers for texture assets
-├── next.config.ts                    # Next.js configuration
-├── vitest.config.ts                  # Vitest configuration with @ alias
-├── tsconfig.json                     # TypeScript strict config
+│   └── orbitalMechanics.test.ts      # Orbital mechanics unit tests (6 suites, ~20 assertions)
+├── CLAUDE.md                         # AI assistant guidance (architecture, commands, patterns)
+├── AGENTS.md                         # Agent rules (Next.js version warning)
+├── WORKING_MEMORY.md                 # Project context, decisions, lessons, tech debt
+├── vercel.json                       # Vercel config — texture cache headers (1yr immutable)
+├── next.config.ts                    # Next.js configuration (empty — no custom settings needed)
+├── vitest.config.ts                  # Vitest config with @ path alias
+├── tsconfig.json                     # TypeScript strict config with @ path alias
+├── eslint.config.mjs                 # ESLint flat config (next core-web-vitals + typescript)
+├── postcss.config.mjs                # PostCSS with @tailwindcss/postcss
 └── package.json                      # Dependencies and scripts
 ```
 
 ## Architecture
 
-**Time model:** A `SimulationClock` ref holds `julianDay` and `rotationAngle` — mutated every frame by the `Animator` component. Zustand holds UI-level state (`isPlaying`, `orbitSpeed`, `rotationSpeed`, `hemisphere`, `zoomDistance`, `earthScale`, `focusTarget`). Display date is derived locally in `TimelineSlider` by polling the clock ref.
+**Time model:** A `SimulationClock` ref holds `julianDay` and `rotationAngle` — mutated every frame by the `Animator` component. Zustand holds UI-level state (`isPlaying`, `orbitSpeed`, `rotationSpeed`, `hemisphere`, `zoomDistance`, `earthScale`, `focusTarget`). Display date is derived locally in `TimelineSlider` by polling the clock ref via `setInterval`.
 
 **Triple reference frame:** Clicking any celestial body sets `focusTarget` to `'sun'` (heliocentric — Sun at origin), `'earth'` (geocentric — Earth at origin, world group offset by `-earthPos`), or `'moon'` (selenocentric — Moon at origin, Earth offset by `-moonLocalPos`, world group offset by `-(earthPos + moonLocalPos)`). Each body's click handler is idempotent and calls `event.stopPropagation()` to prevent R3F raycast propagation. The Earth shader uniform `uSunPositionWorld` is set accordingly so lighting works in all three modes.
 
@@ -95,7 +98,7 @@ simsolar/
 
 **Moon orbit:** The Moon is parented under the Earth group, inheriting its position, scale, and reference frame. Lunar orbital angle is derived from `clock.rotationAngle / MOON_SIDEREAL_PERIOD_DAYS`. Tidal locking keeps the same face toward Earth (`rotation.y = -orbitalAngle + PI`). The orbital plane is tilted 5.14 degrees with an 18.6-year retrograde nodal precession cycle (Euler order `'YXZ'`).
 
-**Orbital mechanics:** Pure TypeScript functions with no React or Three.js dependencies — Julian day conversions, elliptical orbit position, sidereal rotation angle, season labelling, and solstice/equinox event detection.
+**Orbital mechanics:** Pure TypeScript functions with no React or Three.js dependencies — Julian day conversions, elliptical orbit position via Kepler's equation (Newton-Raphson, 1e-8 rad tolerance), sidereal rotation angle, season labelling, and solstice/equinox event detection.
 
 **Shaders:** GLSL stored as TypeScript template literals. Earth uses a custom vertex/fragment pair that blends day and night textures across a soft terminator with atmosphere rim glow, computing per-vertex sun direction from the sun's world position. Sun uses a procedural FBM noise surface shader with limb darkening, animated by `uTime`. Moon uses `meshStandardMaterial` with a NASA texture, lit by the Sun's point light.
 
@@ -178,3 +181,12 @@ pnpm lint
 - Animated sun surface shader with procedural FBM noise and limb darkening
 - Camera zoom slider with bidirectional ZoomSync component
 - Earth scale slider (1-10x) for independent detail control
+
+## Limitations and Caveats
+
+- **WebGL required** — the simulation requires a browser with WebGL support. There is no non-WebGL fallback.
+- **Desktop-optimised** — the HUD layout is designed for wide viewports. Controls wrap on narrow screens but are not fully mobile-optimised.
+- **Approximate solstice/equinox dates** — event dates are fixed approximations (e.g. March 20, June 21), not astronomically computed per year. Adequate for educational purposes.
+- **Compressed Moon orbit** — the Moon's orbital radius and size are scaled for visibility (real ratio would be invisible at Earth's scale). Constants document the compression.
+- **Unused dependency** — `@react-three/postprocessing` remains in `package.json` but is not imported. It is incompatible with React 19 + Three.js r183 and should be removed.
+- **No postprocessing** — bloom and glow effects use CSS alternatives (radial-gradient) because `@react-three/postprocessing` is incompatible with the current React/Three.js versions.
