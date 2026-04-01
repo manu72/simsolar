@@ -1,10 +1,11 @@
 'use client'
 
-import { useRef, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useTexture, Line } from '@react-three/drei'
 import * as THREE from 'three'
 import { EARTH_RADIUS, EARTH_AXIS_LENGTH, AXIAL_TILT_RAD } from '@/lib/constants'
 import { useAppStore } from '@/store/useAppStore'
+import { usePlanetDrag } from '@/lib/usePlanetDrag'
 import earthVert from '@/lib/shaders/earth.vert'
 import earthFrag from '@/lib/shaders/earth.frag'
 
@@ -16,6 +17,7 @@ interface EarthProps {
 }
 
 export function Earth({ groupRef, meshRef, materialRef, children }: EarthProps) {
+  const { onPointerDown } = usePlanetDrag('earth')
   const [dayTexture, nightTexture] = useTexture([
     '/textures/earth-day.jpg',
     '/textures/earth-night.jpg',
@@ -46,7 +48,8 @@ export function Earth({ groupRef, meshRef, materialRef, children }: EarthProps) 
         <mesh
           ref={meshRef}
           onClick={(e) => { e.stopPropagation(); useAppStore.getState().setFocusTarget('earth') }}
-          onPointerOver={() => { document.body.style.cursor = 'pointer' }}
+          onPointerDown={onPointerDown}
+          onPointerOver={() => { document.body.style.cursor = useAppStore.getState().focusTarget === 'earth' ? 'grab' : 'pointer' }}
           onPointerOut={() => { document.body.style.cursor = 'auto' }}
         >
           <sphereGeometry args={[EARTH_RADIUS, 64, 64]} />
