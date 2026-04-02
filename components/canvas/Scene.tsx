@@ -3,7 +3,6 @@
 import { useRef, Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
-import { TOUCH } from 'three'
 import type * as THREE from 'three'
 import { Animator } from './Animator'
 import { Sun } from './Sun'
@@ -65,7 +64,6 @@ export function Scene() {
         minDistance={50}
         maxDistance={600}
         enablePan
-        touches={{ TWO: TOUCH.DOLLY_PAN }}
       />
     </Canvas>
   )
