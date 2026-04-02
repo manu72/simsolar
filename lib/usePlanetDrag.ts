@@ -69,10 +69,12 @@ export function usePlanetDrag(identity: 'sun' | 'earth' | 'moon') {
       if (ctrl) ctrl.enabled = true
       document.removeEventListener('pointermove', onMove)
       document.removeEventListener('pointerup', onUp)
+      document.removeEventListener('pointercancel', onUp)
     }
 
     document.addEventListener('pointermove', onMove)
     document.addEventListener('pointerup', onUp)
+    document.addEventListener('pointercancel', onUp)
   }, [camera, identity, size])
 
   return { onPointerDown }
