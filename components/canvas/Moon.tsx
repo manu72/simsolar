@@ -11,6 +11,7 @@ import {
   MOON_ORBIT_RADIUS,
 } from '@/lib/constants'
 import { useAppStore } from '@/store/useAppStore'
+import { usePlanetDrag } from '@/lib/usePlanetDrag'
 
 const ORBIT_SEGMENTS = 128
 
@@ -20,6 +21,7 @@ interface MoonProps {
 }
 
 export function Moon({ groupRef, inclinationGroupRef }: MoonProps) {
+  const { onPointerDown } = usePlanetDrag('moon')
   const moonTexture = useTexture('/textures/moon.jpg')
 
   const orbitGeometry = useMemo(() => {
@@ -47,7 +49,8 @@ export function Moon({ groupRef, inclinationGroupRef }: MoonProps) {
         <mesh
           rotation={[0, 0, -MOON_AXIAL_TILT_RAD]}
           onClick={(e) => { e.stopPropagation(); useAppStore.getState().setFocusTarget('moon') }}
-          onPointerOver={() => { document.body.style.cursor = 'pointer' }}
+          onPointerDown={onPointerDown}
+          onPointerOver={() => { document.body.style.cursor = useAppStore.getState().focusTarget === 'moon' ? 'grab' : 'pointer' }}
           onPointerOut={() => { document.body.style.cursor = 'auto' }}
         >
           <sphereGeometry args={[MOON_RADIUS, 32, 32]} />

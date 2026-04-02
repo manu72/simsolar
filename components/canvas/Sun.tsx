@@ -6,6 +6,7 @@ import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import { SUN_RADIUS } from "@/lib/constants";
 import { useAppStore } from "@/store/useAppStore";
+import { usePlanetDrag } from "@/lib/usePlanetDrag";
 import sunSurfaceVert from "@/lib/shaders/sunSurface.vert";
 import sunSurfaceFrag from "@/lib/shaders/sunSurface.frag";
 
@@ -23,6 +24,7 @@ const GLOW_STYLE: React.CSSProperties = {
 
 export function Sun() {
   const surfaceRef = useRef<THREE.ShaderMaterial>(null);
+  const { onPointerDown } = usePlanetDrag('sun');
 
   const surfaceUniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
 
@@ -40,8 +42,9 @@ export function Sun() {
       {/* Animated sun core */}
       <mesh
         onClick={(e) => { e.stopPropagation(); useAppStore.getState().setFocusTarget('sun') }}
+        onPointerDown={onPointerDown}
         onPointerOver={() => {
-          document.body.style.cursor = "pointer";
+          document.body.style.cursor = useAppStore.getState().focusTarget === 'sun' ? 'grab' : 'pointer';
         }}
         onPointerOut={() => {
           document.body.style.cursor = "auto";

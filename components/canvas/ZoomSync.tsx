@@ -2,23 +2,37 @@
 
 import { useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
+import { Vector3 } from 'three'
 import { useAppStore } from '@/store/useAppStore'
+import { resetPanToOrigin, zoomToDistance } from '@/lib/cameraMath'
 
-export function ZoomSync() {
+interface ZoomSyncProps {
+  controlsRef: React.RefObject<{ target: Vector3; update: () => void } | null>
+}
+
+export function ZoomSync({ controlsRef }: ZoomSyncProps) {
   const camera = useThree(s => s.camera)
   const lastStoreDistance = useRef(useAppStore.getState().zoomDistance)
+  const prevFocusTarget = useRef(useAppStore.getState().focusTarget)
 
   useFrame(() => {
-    const { zoomDistance, setZoomDistance } = useAppStore.getState()
-    const cameraDistance = camera.position.length()
+    const controls = controlsRef.current
+    if (!controls) return
 
-    // If the store changed (slider moved), move the camera
+    const { zoomDistance, setZoomDistance, focusTarget } = useAppStore.getState()
+
+    if (focusTarget !== prevFocusTarget.current) {
+      resetPanToOrigin(camera.position, controls.target)
+      controls.update()
+      prevFocusTarget.current = focusTarget
+    }
+
+    const cameraDistance = camera.position.distanceTo(controls.target)
+
     if (Math.abs(zoomDistance - lastStoreDistance.current) > 0.5) {
-      const scale = zoomDistance / cameraDistance
-      camera.position.multiplyScalar(scale)
+      zoomToDistance(camera.position, controls.target, zoomDistance)
       lastStoreDistance.current = zoomDistance
     } else {
-      // Otherwise sync store from camera (mouse wheel zoom)
       const rounded = Math.round(cameraDistance)
       if (Math.abs(rounded - zoomDistance) > 1) {
         setZoomDistance(rounded)
