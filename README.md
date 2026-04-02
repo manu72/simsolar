@@ -58,9 +58,11 @@ simsolar/
 │   │   └── PlanetSelector.tsx        # Planet selector (Earth only in Phase 1)
 │   └── ui/
 │       └── InfoModal.tsx             # About/help modal with offline caching toggle
-├── lib/                              # Pure logic (no React/Three dependencies except Vector3)
+├── lib/                              # Pure logic, camera math, and React hooks
 │   ├── constants.ts                  # Orbital, scene, Moon, and control constants
 │   ├── orbitalMechanics.ts           # Julian day, Kepler solver, Earth position, rotation, seasons
+│   ├── cameraMath.ts                 # Pixel-to-world conversion, screen pan, pan reset, zoom-to-distance
+│   ├── usePlanetDrag.ts              # Hook — drag focused planet to reposition on screen
 │   ├── useOfflineStatus.ts           # React hook for service worker cache state and progress
 │   └── shaders/                      # GLSL as TypeScript template literals
 │       ├── earth.vert.ts             # Earth vertex — UVs, world normals, per-vertex sun direction
@@ -75,7 +77,8 @@ simsolar/
 │   ├── manifest.json                 # PWA manifest
 │   └── sw.js                         # Service worker for offline asset caching
 ├── __tests__/
-│   └── orbitalMechanics.test.ts      # Orbital mechanics unit tests (6 suites, ~20 assertions)
+│   ├── orbitalMechanics.test.ts      # Orbital mechanics unit tests (6 suites, 23 tests)
+│   └── cameraMath.test.ts            # Camera math unit tests — pan, reset, zoom (4 suites, 19 tests)
 ├── CLAUDE.md                         # AI assistant guidance (architecture, commands, patterns)
 ├── AGENTS.md                         # Agent rules (Next.js version warning)
 ├── WORKING_MEMORY.md                 # Project context, decisions, lessons, tech debt
@@ -151,6 +154,7 @@ pnpm lint
 - **Moon** — orbits Earth with 5.14 degree inclination, tidal locking, 18.6-year nodal precession, NASA texture
 - **Axial tilt** — 23.44 degrees tilt accurately represented, driving seasonal variation
 - **Click-to-focus views** — click Sun, Earth, or Moon to centre the view on that body (heliocentric, geocentric, or selenocentric)
+- **Drag-to-reposition** — drag the focused planet to shift it on screen, useful for smaller viewports; resets on focus change
 - **Timeline scrubber** — drag through a full year; season colour bands and solstice/equinox tick marks
 - **Playback controls** — play/pause, independent orbit and rotation speed sliders
 - **Camera zoom** — HUD slider bidirectionally synced with mouse wheel via ZoomSync
@@ -164,6 +168,7 @@ pnpm lint
 
 ## Recent Updates
 
+- Drag-to-reposition — drag the focused planet to shift its position on screen (left-click drag on desktop, single-finger drag on mobile); pan resets when switching focus
 - Selenocentric view — click the Moon to centre the scene on it, with Earth and Sun offset accordingly
 - Focus target refactored from toggle to explicit `setFocusTarget` with `event.stopPropagation()` for reliable click handling
 - Info modal with about/help content and opt-in offline caching toggle
