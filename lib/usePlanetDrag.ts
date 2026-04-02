@@ -36,6 +36,7 @@ export function usePlanetDrag(identity: 'sun' | 'earth' | 'moon') {
   const onPointerDown = useCallback((e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation()
 
+    if (e.nativeEvent.button !== 0) return
     if (useAppStore.getState().focusTarget !== identity) return
 
     dragging.current = true
