@@ -6,15 +6,13 @@ import type { ThreeEvent } from '@react-three/fiber'
 import { Vector3 } from 'three'
 import type { PerspectiveCamera } from 'three'
 import { useAppStore } from '@/store/useAppStore'
+import { pixelToWorldScale, applyScreenPan } from '@/lib/cameraMath'
 
 interface PanControls {
   target: Vector3
   enabled: boolean
   update: () => void
 }
-
-const _right = new Vector3()
-const _up = new Vector3()
 
 /**
  * Allows the user to left-click (or single-finger touch) drag the focused
@@ -36,7 +34,6 @@ export function usePlanetDrag(identity: 'sun' | 'earth' | 'moon') {
   const lastXY = useRef({ x: 0, y: 0 })
 
   const onPointerDown = useCallback((e: ThreeEvent<PointerEvent>) => {
-    // Prevent R3F from propagating to meshes behind (mirrors onClick pattern)
     e.stopPropagation()
 
     if (useAppStore.getState().focusTarget !== identity) return
@@ -58,16 +55,10 @@ export function usePlanetDrag(identity: 'sun' | 'earth' | 'moon') {
       lastXY.current = { x: ev.clientX, y: ev.clientY }
 
       const dist = camera.position.distanceTo(ctrl.target)
-      const fov = (camera as PerspectiveCamera).fov * Math.PI / 180
-      const pixelScale = (2 * dist * Math.tan(fov / 2)) / size.height
-
-      _right.setFromMatrixColumn(camera.matrixWorld, 0)
-      _up.setFromMatrixColumn(camera.matrixWorld, 1)
-
-      ctrl.target.addScaledVector(_right, -dx * pixelScale)
-      ctrl.target.addScaledVector(_up, dy * pixelScale)
-      camera.position.addScaledVector(_right, -dx * pixelScale)
-      camera.position.addScaledVector(_up, dy * pixelScale)
+      const scale = pixelToWorldScale(
+        (camera as PerspectiveCamera).fov, dist, size.height,
+      )
+      applyScreenPan(camera.position, ctrl.target, camera.matrixWorld, dx, dy, scale)
     }
 
     const onUp = () => {
