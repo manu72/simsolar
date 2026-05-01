@@ -1,9 +1,8 @@
 'use client'
 
 import { useMemo } from 'react'
-import { useTexture } from '@react-three/drei'
+import { Line, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
-import '@react-three/fiber'
 import {
   MOON_RADIUS,
   MOON_INCLINATION_RAD,
@@ -24,7 +23,7 @@ export function Moon({ groupRef, inclinationGroupRef }: MoonProps) {
   const { onPointerDown } = usePlanetDrag('moon')
   const moonTexture = useTexture('/textures/moon.jpg')
 
-  const orbitGeometry = useMemo(() => {
+  const orbitPoints = useMemo(() => {
     const curve = new THREE.EllipseCurve(
       0, 0,
       MOON_ORBIT_RADIUS, MOON_ORBIT_RADIUS,
@@ -33,16 +32,19 @@ export function Moon({ groupRef, inclinationGroupRef }: MoonProps) {
       0,
     )
     const pts = curve.getPoints(ORBIT_SEGMENTS)
-    const points = pts.map(p => new THREE.Vector3(p.x, 0, p.y))
-    return new THREE.BufferGeometry().setFromPoints(points)
+    return pts.map(p => new THREE.Vector3(p.x, 0, p.y))
   }, [])
 
   return (
     <group ref={inclinationGroupRef} rotation={[MOON_INCLINATION_RAD, 0, 0]}>
       {/* Orbital path indicator */}
-      <threeLine geometry={orbitGeometry}>
-        <lineBasicMaterial color="#666" transparent opacity={0.25} />
-      </threeLine>
+      <Line
+        points={orbitPoints}
+        color="#666"
+        lineWidth={1}
+        transparent
+        opacity={0.25}
+      />
       {/* groupRef controls position (orbit) and rotation.y (tidal lock) via Animator */}
       <group ref={groupRef}>
         {/* Axial tilt is visual only — does not affect orbital position */}
