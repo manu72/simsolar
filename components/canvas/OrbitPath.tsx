@@ -1,14 +1,14 @@
 'use client'
 
 import { useMemo } from 'react'
+import { Line } from '@react-three/drei'
 import * as THREE from 'three'
-import '@react-three/fiber' // ensures ThreeLine JSX type is in scope
 import { SEMI_MAJOR_AXIS, SEMI_MINOR_AXIS } from '@/lib/constants'
 
 const SEGMENTS = 256
 
 export function OrbitPath() {
-  const geometry = useMemo(() => {
+  const points = useMemo(() => {
     const curve = new THREE.EllipseCurve(
       0, 0,                        // center
       SEMI_MAJOR_AXIS,             // x radius (semi-major)
@@ -19,13 +19,16 @@ export function OrbitPath() {
     )
     const pts = curve.getPoints(SEGMENTS)
     // EllipseCurve returns points in XY plane; rotate to XZ (ecliptic)
-    const points = pts.map(p => new THREE.Vector3(p.x, 0, p.y))
-    return new THREE.BufferGeometry().setFromPoints(points)
+    return pts.map(p => new THREE.Vector3(p.x, 0, p.y))
   }, [])
 
   return (
-    <threeLine geometry={geometry}>
-      <lineBasicMaterial color="#4488aa" transparent opacity={0.3} />
-    </threeLine>
+    <Line
+      points={points}
+      color="#4488aa"
+      lineWidth={1}
+      transparent
+      opacity={0.3}
+    />
   )
 }
