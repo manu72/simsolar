@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SimSolar Interactive Solar System Animation",
+  title: "SolarSim Interactive Solar System Animation Simulator",
   description: "Interactive visual guide to the solar system with adjustable perspective and animation.",
   manifest: "/manifest.json",
 };

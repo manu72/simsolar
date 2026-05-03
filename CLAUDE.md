@@ -18,7 +18,7 @@ Package manager is **pnpm**. Do not use npm or yarn.
 
 ## Architecture
 
-SimSolar is a browser-based solar system simulation built with **Next.js 16**, **React Three Fiber (R3F)**, and **Zustand**. It renders an interactive 3D scene showing Earth and the Moon orbiting the Sun with accurate Keplerian orbital mechanics.
+SolarSim is a browser-based solar system simulation built with **Next.js 16**, **React Three Fiber (R3F)**, and **Zustand**. It renders an interactive 3D scene showing Earth and the Moon orbiting the Sun with accurate Keplerian orbital mechanics.
 
 ### Rendering pipeline
 
