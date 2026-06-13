@@ -28,7 +28,6 @@ export interface SeasonExplainerEvent {
 export interface SeasonExplainerScenePreset {
   isPlaying: boolean
   orbitSpeed: number
-  rotationSpeed: number
   zoomDistance: number
   earthScale: number
   focusTarget: 'earth'
@@ -47,7 +46,6 @@ const RECENT_EVENT_WINDOW_DAYS = 7
 export const SEASON_EXPLAINER_SCENE_PRESET: SeasonExplainerScenePreset = {
   isPlaying: false,
   orbitSpeed: 0,
-  rotationSpeed: 0,
   zoomDistance: 150,
   earthScale: 8,
   focusTarget: 'earth',

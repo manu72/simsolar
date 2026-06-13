@@ -19,7 +19,6 @@ import { useAppStore } from '@/store/useAppStore'
 interface SceneSnapshot {
   isPlaying: boolean
   orbitSpeed: number
-  rotationSpeed: number
   zoomDistance: number
   earthScale: number
   focusTarget: 'sun' | 'earth' | 'moon'
@@ -52,7 +51,6 @@ export function TopLeftControls() {
     snapshotRef.current = {
       isPlaying: state.isPlaying,
       orbitSpeed: state.orbitSpeed,
-      rotationSpeed: state.rotationSpeed,
       zoomDistance: state.zoomDistance,
       earthScale: state.earthScale,
       focusTarget: state.focusTarget,
@@ -67,7 +65,6 @@ export function TopLeftControls() {
 
     store.setIsPlaying(SEASON_EXPLAINER_SCENE_PRESET.isPlaying)
     store.setOrbitSpeed(SEASON_EXPLAINER_SCENE_PRESET.orbitSpeed)
-    store.setRotationSpeed(SEASON_EXPLAINER_SCENE_PRESET.rotationSpeed)
     store.setFocusTarget(SEASON_EXPLAINER_SCENE_PRESET.focusTarget)
     store.setZoomDistance(SEASON_EXPLAINER_SCENE_PRESET.zoomDistance)
     store.setEarthScale(SEASON_EXPLAINER_SCENE_PRESET.earthScale)
@@ -97,7 +94,6 @@ export function TopLeftControls() {
       const store = useAppStore.getState()
       store.setIsPlaying(snapshot.isPlaying)
       store.setOrbitSpeed(snapshot.orbitSpeed)
-      store.setRotationSpeed(snapshot.rotationSpeed)
       store.setZoomDistance(snapshot.zoomDistance || DEFAULT_ZOOM_DISTANCE)
       store.setEarthScale(snapshot.earthScale || DEFAULT_EARTH_SCALE)
       store.setFocusTarget(snapshot.focusTarget)

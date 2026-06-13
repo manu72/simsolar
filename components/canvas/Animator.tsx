@@ -32,7 +32,7 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldG
   const clock = useContext(SimulationContext)
 
   useFrame((_, delta) => {
-    const { isPlaying, orbitSpeed, rotationSpeed, earthScale, focusTarget } = useAppStore.getState()
+    const { isPlaying, orbitSpeed, rotationSpeed, earthScale, focusTarget, activeSeasonExplainer } = useAppStore.getState()
 
     if (isPlaying) {
       // The SimulationClock is intentionally a plain mutable object shared via
@@ -43,6 +43,10 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldG
       clock.julianDay   += delta * orbitSpeed * DAYS_PER_SECOND_BASE
       clock.rotationAngle += delta * rotationSpeed * TWO_PI_PER_SIDEREAL_SECOND
       /* eslint-enable react-hooks/immutability */
+    } else if (activeSeasonExplainer) {
+      // Explainers hold Earth at the selected orbital date, but the globe still
+      // spins so viewers can watch the day/night line move across the tilted Earth.
+      clock.rotationAngle += delta * rotationSpeed * TWO_PI_PER_SIDEREAL_SECOND
     }
 
     const earthPos = getEarthOrbitalPosition(clock.julianDay)

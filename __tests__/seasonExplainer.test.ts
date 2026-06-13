@@ -87,14 +87,14 @@ describe('getSeasonExplainerEvent', () => {
 })
 
 describe('SEASON_EXPLAINER_SCENE_PRESET', () => {
-  it('freezes and reframes the scene so the day/night boundary is readable', () => {
+  it('freezes orbit and reframes the scene without overriding rotation speed', () => {
     expect(SEASON_EXPLAINER_SCENE_PRESET).toEqual({
       isPlaying: false,
       orbitSpeed: 0,
-      rotationSpeed: 0,
       zoomDistance: 150,
       earthScale: 8,
       focusTarget: 'earth',
     })
+    expect(SEASON_EXPLAINER_SCENE_PRESET).not.toHaveProperty('rotationSpeed')
   })
 })
