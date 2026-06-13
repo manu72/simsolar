@@ -36,6 +36,8 @@ export function Annotations() {
     [events],
   )
 
+  if (activeExplainer) return null
+
   return (
     <>
       {eventPositions.map(event => (
@@ -45,23 +47,11 @@ export function Annotations() {
             center
             distanceFactor={80}
           >
-            <div className={getAnnotationClass(event.label === activeExplainer?.eventLabel, Boolean(activeExplainer))}>
+            <div className="text-xs text-blue-200 bg-black/40 px-2 py-1 rounded whitespace-nowrap border border-blue-900/40 pointer-events-none">
               {labels[event.label]}
             </div>
           </Html>
       ))}
     </>
   )
-}
-
-function getAnnotationClass(active: boolean, explainerActive: boolean): string {
-  if (active) {
-    return 'text-xs font-semibold text-black bg-blue-200 px-2.5 py-1.5 rounded whitespace-nowrap border border-blue-100 pointer-events-none shadow-lg shadow-blue-900/40'
-  }
-
-  if (explainerActive) {
-    return 'text-xs text-blue-200/35 bg-black/25 px-2 py-1 rounded whitespace-nowrap border border-blue-900/20 pointer-events-none'
-  }
-
-  return 'text-xs text-blue-200 bg-black/40 px-2 py-1 rounded whitespace-nowrap border border-blue-900/40 pointer-events-none'
 }
