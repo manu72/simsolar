@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useEffect } from 'react'
 import { useThree } from '@react-three/fiber'
 import type { ThreeEvent } from '@react-three/fiber'
 import { Vector3 } from 'three'
@@ -27,8 +27,13 @@ export function usePlanetDrag(identity: 'sun' | 'earth' | 'moon') {
   const camera = useThree(s => s.camera)
   const size = useThree(s => s.size)
   const controls = useThree(s => s.controls) as PanControls | null
+  // Latest-value ref so the document-level pointer handlers always see the
+  // current controls instance. Updated in an effect — refs must not be
+  // written during render.
   const controlsRef = useRef(controls)
-  controlsRef.current = controls
+  useEffect(() => {
+    controlsRef.current = controls
+  }, [controls])
 
   const dragging = useRef(false)
   const lastXY = useRef({ x: 0, y: 0 })

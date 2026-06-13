@@ -1,6 +1,6 @@
-# SimSolar
+# SolarSim
 
-Interactive 3D solar system visualisation for solstice and equinox education. Built with a southern hemisphere default perspective, SimSolar renders Keplerian orbital mechanics in the browser using WebGL shaders, letting users scrub through a full year to observe how Earth's axial tilt creates the seasons.
+Interactive 3D solar system visualisation for solstice and equinox education. Built with a southern hemisphere default perspective, SolarSim renders Keplerian orbital mechanics in the browser using WebGL shaders, letting users scrub through a full year to observe how Earth's axial tilt creates the seasons.
 
 **Phase 1** — Sun, Earth, and Moon. Additional planets planned for future phases.
 
@@ -14,19 +14,21 @@ Interactive 3D solar system visualisation for solstice and equinox education. Bu
 
 ## Tech Stack
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Framework | Next.js (App Router) | 16.2.1 |
-| UI | React | 19.2.4 |
-| 3D Engine | React Three Fiber + Drei + Three.js | 9.5.0 / 10.7.7 / 0.183.2 |
-| State | Zustand | 5.0.12 |
-| Styling | Tailwind CSS v4 (dark mode, via `@tailwindcss/postcss`) | 4.x |
-| Shaders | Custom GLSL — Earth day/night terminator, atmosphere rim, animated sun surface | — |
-| Language | TypeScript (strict) | 5.x |
-| Testing | Vitest | 4.1.0 |
-| Linting | ESLint (flat config, next core-web-vitals + typescript) | 9.x |
-| Package Manager | pnpm | — |
-| Deployment | Vercel | — |
+
+| Layer           | Technology                                                                     | Version                  |
+| --------------- | ------------------------------------------------------------------------------ | ------------------------ |
+| Framework       | Next.js (App Router)                                                           | 16.2.1                   |
+| UI              | React                                                                          | 19.2.4                   |
+| 3D Engine       | React Three Fiber + Drei + Three.js                                            | 9.5.0 / 10.7.7 / 0.183.2 |
+| State           | Zustand                                                                        | 5.0.12                   |
+| Styling         | Tailwind CSS v4 (dark mode, via `@tailwindcss/postcss`)                        | 4.x                      |
+| Shaders         | Custom GLSL — Earth day/night terminator, atmosphere rim, animated sun surface | —                        |
+| Language        | TypeScript (strict)                                                            | 5.x                      |
+| Testing         | Vitest                                                                         | 4.1.0                    |
+| Linting         | ESLint (flat config, next core-web-vitals + typescript)                        | 9.x                      |
+| Package Manager | pnpm                                                                           | —                        |
+| Deployment      | Vercel                                                                         | —                        |
+
 
 ## Project Structure
 
@@ -195,3 +197,4 @@ pnpm lint
 - **Compressed Moon orbit** — the Moon's orbital radius and size are scaled for visibility (real ratio would be invisible at Earth's scale). Constants document the compression.
 - **Unused dependency** — `@react-three/postprocessing` remains in `package.json` but is not imported. It is incompatible with React 19 + Three.js r183 and should be removed.
 - **No postprocessing** — bloom and glow effects use CSS alternatives (radial-gradient) because `@react-three/postprocessing` is incompatible with the current React/Three.js versions.
+

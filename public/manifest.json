@@ -1,6 +1,6 @@
 {
-  "name": "SimSolar Interactive Solar System Animation",
-  "short_name": "SimSolar",
+  "name": "SolarSim Interactive Solar System Animation Simulator",
+  "short_name": "SolarSim",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
