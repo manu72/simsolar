@@ -5,6 +5,13 @@
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
+  --color-explainer-surface: rgb(3 7 18 / 0.86);
+  --color-explainer-border: rgb(255 255 255 / 0.14);
+  --color-explainer-text: rgb(226 232 240 / 0.88);
+  --color-explainer-muted: rgb(203 213 225 / 0.62);
+  --color-explainer-accent: #93c5fd;
+  --color-explainer-accent-soft: rgb(37 99 235 / 0.28);
+  --color-explainer-focus: #bfdbfe;
 }
 
 @theme inline {

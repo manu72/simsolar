@@ -5,6 +5,7 @@ import { SimulationContext, SimulationClock } from '@/components/canvas/Simulati
 import { CanvasErrorBoundary } from '@/components/canvas/ErrorBoundary'
 import { Scene } from '@/components/canvas/Scene'
 import { HUD } from '@/components/hud/HUD'
+import { TopLeftControls } from '@/components/ui/TopLeftControls'
 import { dateToJulianDay } from '@/lib/orbitalMechanics'
 
 export function ClientRoot() {
@@ -29,6 +30,7 @@ export function ClientRoot() {
           <Scene />
         </Suspense>
       </CanvasErrorBoundary>
+      <TopLeftControls />
       <HUD />
     </SimulationContext.Provider>
   )

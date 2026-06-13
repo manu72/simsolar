@@ -18,6 +18,7 @@ interface EarthProps {
 
 export function Earth({ groupRef, meshRef, materialRef, children }: EarthProps) {
   const { onPointerDown } = usePlanetDrag('earth')
+  const explainerActive = useAppStore(s => Boolean(s.activeSeasonExplainer))
   const [dayTexture, nightTexture] = useTexture([
     '/textures/earth-day.jpg',
     '/textures/earth-night.jpg',
@@ -64,10 +65,10 @@ export function Earth({ groupRef, meshRef, materialRef, children }: EarthProps) 
         {/* Axis line — pole to pole, subtle */}
         <Line
           points={axisPoints}
-          color="white"
-          lineWidth={0.8}
+          color={explainerActive ? '#93c5fd' : 'white'}
+          lineWidth={explainerActive ? 2 : 0.8}
           transparent
-          opacity={0.4}
+          opacity={explainerActive ? 0.9 : 0.4}
         />
       </group>
       {children}
