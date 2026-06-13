@@ -3,6 +3,7 @@ import { Vector3, Matrix4 } from 'three'
 const _dir = new Vector3()
 const _right = new Vector3()
 const _up = new Vector3()
+const INITIAL_EARTH_VIEW_ANGLE_RAD = (75 * Math.PI) / 180
 
 /**
  * World-space distance per screen pixel at the given camera distance and FOV.
@@ -70,4 +71,23 @@ export function zoomToDistance(
 ): void {
   _dir.copy(cameraPosition).sub(target).normalize()
   cameraPosition.copy(target).addScaledVector(_dir, distance)
+}
+
+/**
+ * Places the initial heliocentric camera so the current Earth position appears
+ * slightly right of the Sun and on the near side of the orbit.
+ */
+export function getInitialHeliocentricCameraPosition(
+  earthPosition: Vector3,
+  cameraY: number,
+  horizontalDistance: number,
+): [number, number, number] {
+  const earthOrbitAngle = Math.atan2(earthPosition.z, earthPosition.x)
+  const cameraAzimuth = INITIAL_EARTH_VIEW_ANGLE_RAD - earthOrbitAngle
+
+  return [
+    horizontalDistance * Math.sin(cameraAzimuth),
+    cameraY,
+    horizontalDistance * Math.cos(cameraAzimuth),
+  ]
 }

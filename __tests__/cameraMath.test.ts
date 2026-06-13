@@ -5,6 +5,7 @@ import {
   applyScreenPan,
   resetPanToOrigin,
   zoomToDistance,
+  getInitialHeliocentricCameraPosition,
 } from '@/lib/cameraMath'
 
 // ---------------------------------------------------------------------------
@@ -243,5 +244,48 @@ describe('zoomToDistance', () => {
     expect(camPos.distanceTo(target)).toBeCloseTo(50, 6)
     // Camera should still be along +Z
     expect(camPos.z).toBeGreaterThan(0)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// getInitialHeliocentricCameraPosition
+// ---------------------------------------------------------------------------
+
+describe('getInitialHeliocentricCameraPosition', () => {
+  function getScreenProjection(earthPosition: Vector3, cameraPosition: Vector3) {
+    const horizontalDistance = Math.hypot(cameraPosition.x, cameraPosition.z)
+    const right = new Vector3(cameraPosition.z / horizontalDistance, 0, -cameraPosition.x / horizontalDistance)
+    const near = new Vector3(cameraPosition.x / horizontalDistance, 0, cameraPosition.z / horizontalDistance)
+
+    return {
+      screenX: earthPosition.dot(right),
+      nearDepth: earthPosition.dot(near),
+    }
+  }
+
+  it('places Earth slightly right of the Sun from the initial camera view', () => {
+    const earthPosition = new Vector3(-150, 0, -120)
+    const cameraPosition = new Vector3(...getInitialHeliocentricCameraPosition(earthPosition, 80, 392))
+    const { screenX } = getScreenProjection(earthPosition, cameraPosition)
+
+    expect(screenX).toBeGreaterThan(0)
+    expect(screenX).toBeLessThan(earthPosition.length() * 0.35)
+  })
+
+  it('places Earth on the near side so it crosses in front of the observer', () => {
+    const earthPosition = new Vector3(60, 0, -190)
+    const cameraPosition = new Vector3(...getInitialHeliocentricCameraPosition(earthPosition, 80, 392))
+    const { nearDepth } = getScreenProjection(earthPosition, cameraPosition)
+
+    expect(nearDepth).toBeGreaterThan(earthPosition.length() * 0.9)
+  })
+
+  it('preserves the existing initial camera height and horizontal distance', () => {
+    const cameraPosition = new Vector3(
+      ...getInitialHeliocentricCameraPosition(new Vector3(120, 0, 160), 80, 392),
+    )
+
+    expect(cameraPosition.y).toBe(80)
+    expect(Math.hypot(cameraPosition.x, cameraPosition.z)).toBeCloseTo(392, 6)
   })
 })
