@@ -35,8 +35,14 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldG
     const { isPlaying, orbitSpeed, rotationSpeed, earthScale, focusTarget } = useAppStore.getState()
 
     if (isPlaying) {
+      // The SimulationClock is intentionally a plain mutable object shared via
+      // context (see CLAUDE.md): it is advanced inside useFrame — never during
+      // render — to avoid React re-renders in the animation loop. The
+      // immutability rule cannot see that distinction, so it is disabled here.
+      /* eslint-disable react-hooks/immutability */
       clock.julianDay   += delta * orbitSpeed * DAYS_PER_SECOND_BASE
       clock.rotationAngle += delta * rotationSpeed * TWO_PI_PER_SIDEREAL_SECOND
+      /* eslint-enable react-hooks/immutability */
     }
 
     const earthPos = getEarthOrbitalPosition(clock.julianDay)

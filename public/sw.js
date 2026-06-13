@@ -1,6 +1,9 @@
-const CACHE_NAME = 'solstice-v1'
+const CACHE_NAME = 'solarsim-static-v1'
 // COUPLED: must match TEXTURE_CACHE_NAME in lib/useOfflineStatus.ts
-const TEXTURE_CACHE = 'solstice-textures-v1'
+// IMPORTANT: textures are cached cache-first under stable URLs, so this
+// version MUST be bumped whenever any file in public/textures/ changes,
+// otherwise returning visitors keep the old textures forever.
+const TEXTURE_CACHE = 'solarsim-textures-v2'
 const TEXTURE_FILES = [
   '/textures/earth-day.jpg',
   '/textures/earth-night.jpg',
@@ -48,10 +51,10 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  if (
-    url.pathname.startsWith('/_next/static/') ||
-    /\.(js|css|woff2?|ttf|eot|svg|png|jpg|ico)$/.test(url.pathname)
-  ) {
+  // Cache-first is only safe for immutable assets. Production /_next/static/
+  // URLs are content-hashed, so they qualify. Do NOT add a blanket extension
+  // match here: non-hashed scripts/styles cached this way go stale forever.
+  if (url.pathname.startsWith('/_next/static/')) {
     event.respondWith(
       caches.match(event.request).then(
         (cached) =>
