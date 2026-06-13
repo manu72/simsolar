@@ -2,7 +2,10 @@
 
 import { Component, ReactNode } from 'react'
 
-interface Props { children: ReactNode }
+interface Props {
+  children: ReactNode
+  onError?: () => void
+}
 interface State {
   hasError: boolean
   error: Error | null
@@ -13,6 +16,10 @@ export class CanvasErrorBoundary extends Component<Props, State> {
 
   static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error }
+  }
+
+  componentDidCatch() {
+    this.props.onError?.()
   }
 
   render() {

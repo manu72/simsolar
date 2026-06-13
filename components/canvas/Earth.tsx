@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTexture, Line } from '@react-three/drei'
 import * as THREE from 'three'
 import { EARTH_RADIUS, EARTH_AXIS_LENGTH, AXIAL_TILT_RAD } from '@/lib/constants'
@@ -13,10 +13,12 @@ interface EarthProps {
   groupRef: React.RefObject<THREE.Group | null>
   meshRef: React.RefObject<THREE.Mesh | null>
   materialRef: React.RefObject<THREE.ShaderMaterial | null>
+  isVisible: boolean
+  onReady: () => void
   children?: React.ReactNode
 }
 
-export function Earth({ groupRef, meshRef, materialRef, children }: EarthProps) {
+export function Earth({ groupRef, meshRef, materialRef, isVisible, onReady, children }: EarthProps) {
   const { onPointerDown } = usePlanetDrag('earth')
   const explainerActive = useAppStore(s => Boolean(s.activeSeasonExplainer))
   const [dayTexture, nightTexture] = useTexture([
@@ -34,6 +36,10 @@ export function Earth({ groupRef, meshRef, materialRef, children }: EarthProps) 
     [dayTexture, nightTexture],
   )
 
+  useEffect(() => {
+    onReady()
+  }, [onReady])
+
   // Axis line endpoints in local space (pole to pole)
   const axisPoints = useMemo<[THREE.Vector3, THREE.Vector3]>(
     () => [
@@ -44,7 +50,7 @@ export function Earth({ groupRef, meshRef, materialRef, children }: EarthProps) 
   )
 
   return (
-    <group ref={groupRef}>
+    <group ref={groupRef} visible={isVisible}>
       <group rotation={[0, 0, -AXIAL_TILT_RAD]}>
         <mesh
           ref={meshRef}

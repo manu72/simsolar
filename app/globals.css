@@ -12,6 +12,16 @@
   --color-explainer-accent: #93c5fd;
   --color-explainer-accent-soft: rgb(37 99 235 / 0.28);
   --color-explainer-focus: #bfdbfe;
+  --color-loading-surface: rgb(2 6 23 / 0.72);
+  --color-loading-border: rgb(147 197 253 / 0.26);
+  --color-loading-text: rgb(241 245 249 / 0.94);
+  --color-loading-muted: rgb(203 213 225 / 0.7);
+  --color-loading-accent: #fbbf24;
+  --color-loading-accent-soft: rgb(251 191 36 / 0.2);
+  --color-loading-backdrop-glow: rgb(37 99 235 / 0.08);
+  --color-loading-backdrop-start: rgb(0 0 5 / 0.16);
+  --color-loading-backdrop-end: rgb(0 0 5 / 0.52);
+  --color-loading-shadow: rgb(0 0 0 / 0.42);
 }
 
 @theme inline {
@@ -25,4 +35,124 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.solar-loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 32px;
+  background:
+    radial-gradient(circle at 50% 50%, var(--color-loading-backdrop-glow), transparent 42%),
+    linear-gradient(180deg, var(--color-loading-backdrop-start), var(--color-loading-backdrop-end));
+  transition: opacity 720ms ease;
+}
+
+.solar-loading-overlay--departing {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.solar-loading-rocket-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.solar-loading-rocket {
+  position: absolute;
+  top: 18%;
+  left: 12%;
+  width: 100px;
+  height: 96px;
+  filter: drop-shadow(0 0 20px var(--color-loading-accent-soft));
+  transform-origin: 50% 50%;
+  animation: solar-rocket-patrol 5.6s ease-in-out infinite;
+}
+
+.solar-loading-rocket--departing {
+  animation: solar-rocket-depart 720ms cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.solar-loading-card {
+  width: min(100%, 440px);
+  padding: 24px;
+  border: 1px solid var(--color-loading-border);
+  border-radius: 24px;
+  background: var(--color-loading-surface);
+  box-shadow: 0 24px 80px var(--color-loading-shadow);
+  text-align: center;
+  backdrop-filter: blur(16px);
+}
+
+.solar-loading-eyebrow {
+  margin: 0 0 8px;
+  color: var(--color-loading-accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.solar-loading-title {
+  margin: 0;
+  color: var(--color-loading-text);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.solar-loading-copy {
+  margin: 16px auto 0;
+  max-width: 34ch;
+  color: var(--color-loading-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+@keyframes solar-rocket-patrol {
+  0% {
+    transform: translate3d(-16vw, 46vh, 0) rotate(34deg);
+  }
+  24% {
+    transform: translate3d(22vw, 18vh, 0) rotate(42deg);
+  }
+  52% {
+    transform: translate3d(62vw, 46vh, 0) rotate(28deg);
+  }
+  76% {
+    transform: translate3d(30vw, 66vh, 0) rotate(-18deg);
+  }
+  100% {
+    transform: translate3d(-16vw, 46vh, 0) rotate(34deg);
+  }
+}
+
+@keyframes solar-rocket-depart {
+  from {
+    transform: translate3d(30vw, 52vh, 0) rotate(28deg) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(110vw, -22vh, 0) rotate(32deg) scale(0.82);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .solar-loading-overlay {
+    transition: none;
+  }
+
+  .solar-loading-rocket,
+  .solar-loading-rocket--departing {
+    animation: none;
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(18deg);
+  }
 }
