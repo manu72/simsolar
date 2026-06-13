@@ -4,6 +4,8 @@ Interactive 3D solar system visualisation for solstice and equinox education. Bu
 
 **Phase 1** — Sun, Earth, and Moon. Additional planets planned for future phases.
 
+<!-- ![SolarSim preview](docs/screenshot.png) -->
+
 ## Vision and Goals
 
 - Teach solstice and equinox concepts through interactive visualisation
@@ -114,19 +116,25 @@ simsolar/
 - Node.js 20+
 - pnpm
 
-### Install
+### Install & Run
 
 ```bash
 pnpm install
-```
-
-### Development
-
-```bash
 pnpm dev
 ```
 
-Open [http://localhost:3100](http://localhost:3100) to view the simulation.
+Open [http://localhost:3100](http://localhost:3100) to view the simulation. The dev server starts on port **3100** (not the default 3000).
+
+### What You'll See
+
+When the app loads, you'll see a 3D scene with a glowing Sun at center and Earth orbiting around it. Below the canvas:
+
+- A **timeline slider** lets you scrub through the year — watch seasons change as you drag
+- **Speed controls** let you adjust orbit speed, rotation speed, zoom, and Earth scale independently
+- Click the **Sun, Earth, or Moon** to center your view on that body (heliocentric, geocentric, or selenocentric)
+- A **hemisphere toggle** switches between southern/northern labels and terminology
+
+The simulation defaults to a southern hemisphere viewpoint — everything is calibrated for contributors and users in the AU/NZ time zone.
 
 ### Build
 
@@ -168,26 +176,34 @@ pnpm lint
 - **Info modal** — about/help overlay with usage instructions and offline caching toggle
 - **Vercel deployment** — production-ready with texture cache headers
 
-## Recent Updates
+## Contributing
 
-- Drag-to-reposition — drag the focused planet to shift its position on screen (left-click drag on desktop, single-finger drag on mobile); pan resets when switching focus
-- Selenocentric view — click the Moon to centre the scene on it, with Earth and Sun offset accordingly
-- Focus target refactored from toggle to explicit `setFocusTarget` with `event.stopPropagation()` for reliable click handling
-- Info modal with about/help content and opt-in offline caching toggle
-- PWA support with service worker, manifest, and app icons
-- Moon tidal locking sign corrected (same face now always toward Earth)
-- Moon nodal precession Euler order fixed to `'YXZ'` (precession now visually correct)
-- Moon nodal precession angle negated for astronomically correct retrograde direction
-- Moon orbiting Earth with 5.14 degree inclination, tidal locking, and 18.6-year nodal precession
-- Lunar surface texture from NASA/Solar System Scope
-- Sun CSS radial-gradient glow via drei Html, inline props hoisted to module constants
-- Cursor cleanup on Sun unmount to prevent sticky pointer
-- Sun vertex shader noise fixed (trilinear interpolation replaces discontinuous hash)
-- Axial tilt negated so June solstice correctly darkens Antarctica
-- Geocentric view with per-vertex sun lighting in both reference frames
-- Animated sun surface shader with procedural FBM noise and limb darkening
-- Camera zoom slider with bidirectional ZoomSync component
-- Earth scale slider (1-10x) for independent detail control
+### Where to Start
+
+If you're new to this codebase, here's a suggested entry path:
+
+1. **Understand the core math** — Read [`lib/orbitalMechanics.ts`](lib/orbitalMechanics.ts) (Julian day, Kepler solver, seasons) and its tests in [`__tests__/orbitalMechanics.test.ts`](__tests__/orbitalMechanics.test.ts). This is pure TypeScript with no React/Three.js dependencies — the easiest entry point.
+2. **Follow the rendering loop** — Read [`components/canvas/Animator.tsx`](components/canvas/Animator.tsx) to see how `useFrame` advances the simulation clock each frame and drives all visual updates.
+3. **Try a small task first** — Good starting points include:
+   - Removing the unused `@react-three/postprocessing` dependency (noted in Limitations)
+   - Adding Phase 2 planet selector infrastructure (stub out `PlanetSelector.tsx` with a placeholder for Mars/Jupiter)
+   - Adding texture resolution variants (webp/avif fallbacks for `public/textures/`)
+
+### Code Conventions
+
+- All GLSL shaders live as TypeScript template literals in `lib/shaders/` — never separate `.glsl` files
+- Pure logic functions go in `lib/` with no React/Three.js imports (keeps them testable)
+- Zustand holds all mutable state; avoid React `useState` for simulation data
+- Tests mirror the lib structure: `lib/orbitalMechanics.ts` → `__tests__/orbitalMechanics.test.ts`
+- For deeper patterns and architecture, see [`CLAUDE.md`](CLAUDE.md)
+
+### Running the Full Suite
+
+```bash
+pnpm test          # run all tests
+pnpm lint          # check code style
+pnpm build         # production build
+```
 
 ## Limitations and Caveats
 
