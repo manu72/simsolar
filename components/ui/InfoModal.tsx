@@ -1,25 +1,44 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useOfflineStatus } from "@/lib/useOfflineStatus";
 
-export function InfoModal() {
+interface InfoModalProps {
+  triggerClassName?: string;
+  triggerLabel?: string;
+}
+
+const DEFAULT_TRIGGER_CLASS_NAME = `fixed top-4 left-4 z-50 rounded-full border border-white/10 bg-black/60 px-3 py-1.5
+  text-xs uppercase tracking-wider text-white/60 transition-colors hover:text-white
+  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300
+  motion-reduce:transition-none`;
+
+export function InfoModal({ triggerClassName = DEFAULT_TRIGGER_CLASS_NAME, triggerLabel = "Info" }: InfoModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [offlineChecked, setOfflineChecked] = useState(false);
   const { isCached, cacheProgress, cacheError, triggerCache } = useOfflineStatus();
   const [showProgress, setShowProgress] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const hideProgress = useCallback(() => setShowProgress(false), []);
 
   const openModal = useCallback(() => {
+    previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setIsOpen(true);
     requestAnimationFrame(() => requestAnimationFrame(() => setIsVisible(true)));
   }, []);
 
   const closeModal = useCallback(() => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
     setIsVisible(false);
-    setTimeout(() => setIsOpen(false), 300);
+    closeTimerRef.current = setTimeout(() => {
+      setIsOpen(false);
+      previousFocusRef.current?.focus();
+      previousFocusRef.current = null;
+    }, 300);
   }, []);
 
   const handleGetStarted = useCallback(() => {
@@ -30,16 +49,61 @@ export function InfoModal() {
     closeModal();
   }, [offlineChecked, isCached, triggerCache, closeModal]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const focusDialog = requestAnimationFrame(() => {
+      getFocusableElements(dialogRef.current)[0]?.focus();
+    });
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeModal();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = getFocusableElements(dialogRef.current);
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      } else if (!dialogRef.current?.contains(document.activeElement)) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      cancelAnimationFrame(focusDialog);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [closeModal, isOpen]);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+  }, []);
+
   return (
     <>
-      {/* Info button — persistent top-left */}
       <button
+        type="button"
         onClick={openModal}
-        className="fixed top-4 left-4 z-50 w-8 h-8 flex items-center justify-center
-          text-white/40 hover:text-white/80 transition-opacity text-lg select-none cursor-pointer"
+        className={triggerClassName}
         aria-label="About SolarSim"
       >
-        &#9432;
+        {triggerLabel}
       </button>
 
       {/* Cache progress bar — top of viewport, outside modal */}
@@ -59,18 +123,23 @@ export function InfoModal() {
       {isOpen && (
         <div
           className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300
-            ${isVisible ? "opacity-100" : "opacity-0"}`}
+            motion-reduce:transition-none ${isVisible ? "opacity-100" : "opacity-0"}`}
         >
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={closeModal} />
 
           {/* Content */}
           <div
+            ref={dialogRef}
             className={`relative max-w-md w-full mx-4 bg-gray-950/95 border border-white/10
               rounded-xl p-8 shadow-2xl transition-all duration-300
-              ${isVisible ? "scale-100 translate-y-0" : "scale-95 translate-y-4"}`}
+              motion-reduce:transition-none ${isVisible ? "scale-100 translate-y-0" : "scale-95 translate-y-4"}`}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="solar-sim-info-title"
+            tabIndex={-1}
           >
-            <h1 className="text-2xl font-light tracking-wide text-white mb-2">
+            <h1 id="solar-sim-info-title" className="text-2xl font-light tracking-wide text-white mb-2">
               SolarSim Interactive Solar System Simulator
             </h1>
             <p className="text-sm text-white/60 leading-relaxed mb-1">
@@ -87,6 +156,14 @@ export function InfoModal() {
               <li>Use the timeline slider to scrub through the year</li>
               <li>Adjust orbit and rotation speeds with the HUD sliders</li>
               <li>Click planets to select</li>
+            </ul>
+
+            <h2 className="text-xs uppercase tracking-widest text-white/50 mb-3">Why seasons happen</h2>
+            <ul className="text-sm text-white/60 space-y-1.5 mb-6">
+              <li>Earth orbits the Sun once each year</li>
+              <li>Earth spins around a tilted axis</li>
+              <li>The tilt changes how many daylight hours each hemisphere gets</li>
+              <li>Summer is about tilt and daylight, not being closer to the Sun</li>
             </ul>
 
             <hr className="border-white/10 mb-6" />
@@ -172,4 +249,14 @@ function CacheErrorToast({ message, onDone }: { message: string; onDone: () => v
       Offline caching failed{message ? `: ${message}` : ""}
     </div>
   );
+}
+
+function getFocusableElements(container: HTMLElement | null): HTMLElement[] {
+  if (!container) return [];
+
+  return Array.from(
+    container.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    ),
+  ).filter(element => !element.hasAttribute("disabled") && element.tabIndex !== -1);
 }

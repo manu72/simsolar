@@ -5,6 +5,12 @@ import {
   MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, DEFAULT_ZOOM_DISTANCE,
   MIN_EARTH_SCALE, MAX_EARTH_SCALE, DEFAULT_EARTH_SCALE,
 } from '@/lib/constants'
+import type { SeasonExplainerMode, SolarEventLabel } from '@/lib/seasonExplainer'
+
+interface ActiveSeasonExplainer {
+  mode: SeasonExplainerMode
+  eventLabel: SolarEventLabel
+}
 
 interface AppState {
   isPlaying: boolean
@@ -14,6 +20,7 @@ interface AppState {
   zoomDistance: number
   earthScale: number
   focusTarget: 'sun' | 'earth' | 'moon'
+  activeSeasonExplainer: ActiveSeasonExplainer | null
 
   setIsPlaying: (v: boolean) => void
   setOrbitSpeed: (v: number) => void
@@ -22,6 +29,8 @@ interface AppState {
   setZoomDistance: (v: number) => void
   setEarthScale: (v: number) => void
   setFocusTarget: (target: 'sun' | 'earth' | 'moon') => void
+  setActiveSeasonExplainer: (explainer: ActiveSeasonExplainer) => void
+  clearActiveSeasonExplainer: () => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -32,6 +41,7 @@ export const useAppStore = create<AppState>((set) => ({
   zoomDistance: DEFAULT_ZOOM_DISTANCE,
   earthScale: DEFAULT_EARTH_SCALE,
   focusTarget: 'sun',
+  activeSeasonExplainer: null,
 
   setIsPlaying: (v) => set({ isPlaying: v }),
   setOrbitSpeed: (v) => set({ orbitSpeed: Math.max(0, Math.min(MAX_ORBIT_SPEED, v)) }),
@@ -40,4 +50,6 @@ export const useAppStore = create<AppState>((set) => ({
   setZoomDistance: (v) => set({ zoomDistance: Math.max(MIN_ZOOM_DISTANCE, Math.min(MAX_ZOOM_DISTANCE, v)) }),
   setEarthScale: (v) => set({ earthScale: Math.max(MIN_EARTH_SCALE, Math.min(MAX_EARTH_SCALE, v)) }),
   setFocusTarget: (target) => set(s => s.focusTarget === target ? {} : { focusTarget: target }),
+  setActiveSeasonExplainer: (explainer) => set({ activeSeasonExplainer: explainer }),
+  clearActiveSeasonExplainer: () => set({ activeSeasonExplainer: null }),
 }))
