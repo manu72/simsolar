@@ -3,6 +3,12 @@ import { dateToJulianDay, getSeasonLabel } from "./orbitalMechanics";
 export type Hemisphere = "north" | "south";
 export type SeasonExplainerMode = "solstice" | "equinox";
 export type SolarEventLabel = "March Equinox" | "June Solstice" | "September Equinox" | "December Solstice";
+export type SeasonExplainerCameraKind = "solstice-north-pole" | "solstice-south-pole" | "equinox-side";
+
+export interface SeasonExplainerViewPreset {
+  rotationAngle: number;
+  cameraKind: SeasonExplainerCameraKind;
+}
 
 export interface SeasonExplainerEvent {
   label: SolarEventLabel;
@@ -18,6 +24,7 @@ export interface SeasonExplainerEvent {
   daylightPrompt: string;
   axisPrompt: string;
   comparisonLabel: string;
+  viewPreset: SeasonExplainerViewPreset;
   misconceptionPrompt?: string;
 }
 
@@ -37,8 +44,6 @@ interface SolarEventDefinition {
   selectorLabel: string;
 }
 
-const RECENT_EVENT_WINDOW_DAYS = 7;
-
 export const SEASON_EXPLAINER_SCENE_PRESET: SeasonExplainerScenePreset = {
   isPlaying: false,
   orbitSpeed: 0,
@@ -53,6 +58,13 @@ const EVENT_DEFINITIONS: readonly SolarEventDefinition[] = [
   { label: "September Equinox", mode: "equinox", month: 8, day: 23, selectorLabel: "September" },
   { label: "December Solstice", mode: "solstice", month: 11, day: 21, selectorLabel: "December" },
 ] as const;
+
+const EVENT_ROTATION_ANGLES: Record<SolarEventLabel, number> = {
+  "March Equinox": Math.PI * 0.1,
+  "June Solstice": Math.PI * 1.15,
+  "September Equinox": Math.PI * 1.1,
+  "December Solstice": Math.PI * 0.15,
+};
 
 export const SOLSTICE_EVENT_LABELS: readonly SolarEventLabel[] = ["June Solstice", "December Solstice"];
 export const EQUINOX_EVENT_LABELS: readonly SolarEventLabel[] = ["March Equinox", "September Equinox"];
@@ -93,6 +105,7 @@ export function getSeasonExplainerEvent(
     daylightPrompt: getDaylightPrompt(label, hemisphere),
     axisPrompt: "The highlighted line is Earth's tilted axis. It keeps pointing the same way as Earth orbits the Sun.",
     comparisonLabel: getComparisonLabel(label),
+    viewPreset: getViewPreset(label, hemisphere),
     misconceptionPrompt:
       definition.mode === "solstice"
         ? "Summer and Winter are not an effect of distance to the Sun. The relative tilt of the Earth to the Sun changes the angle of light hitting the surface, and how many hours of daylight each place gets."
@@ -111,19 +124,18 @@ export function getTodayAwareExplainerEvent(
     getSeasonExplainerEvents(mode, hemisphere, year),
   );
 
-  const recent = candidates
-    .map((event) => ({ event, daysSince: todayJD - event.jd }))
-    .filter(({ daysSince }) => daysSince >= 0 && daysSince <= RECENT_EVENT_WINDOW_DAYS)
-    .sort((a, b) => a.daysSince - b.daysSince);
-
-  if (recent[0]) return recent[0].event;
-
-  const upcoming = candidates
-    .map((event) => ({ event, daysUntil: event.jd - todayJD }))
-    .filter(({ daysUntil }) => daysUntil >= 0)
-    .sort((a, b) => a.daysUntil - b.daysUntil);
-
-  return upcoming[0]?.event ?? getSeasonExplainerEvents(mode, hemisphere, baseYear + 1)[0];
+  return candidates
+    .map((event) => ({
+      event,
+      distance: Math.abs(event.jd - todayJD),
+      isFutureOrToday: event.jd >= todayJD,
+    }))
+    .sort((a, b) => {
+      const distanceDelta = a.distance - b.distance;
+      if (Math.abs(distanceDelta) > Number.EPSILON) return distanceDelta;
+      if (a.isFutureOrToday !== b.isFutureOrToday) return a.isFutureOrToday ? -1 : 1;
+      return a.event.jd - b.event.jd;
+    })[0].event;
 }
 
 function getDefinition(label: SolarEventLabel): SolarEventDefinition {
@@ -134,6 +146,17 @@ function getDefinition(label: SolarEventLabel): SolarEventDefinition {
 
 function startOfUtcDay(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+}
+
+function getViewPreset(label: SolarEventLabel, hemisphere: Hemisphere): SeasonExplainerViewPreset {
+  return {
+    rotationAngle: EVENT_ROTATION_ANGLES[label],
+    cameraKind: label.includes("Equinox")
+      ? "equinox-side"
+      : hemisphere === "south"
+        ? "solstice-south-pole"
+        : "solstice-north-pole",
+  };
 }
 
 function getTitle(label: SolarEventLabel, hemisphere: Hemisphere): string {

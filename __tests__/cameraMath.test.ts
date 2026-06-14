@@ -6,6 +6,7 @@ import {
   resetPanToOrigin,
   zoomToDistance,
   getInitialHeliocentricCameraPosition,
+  getSeasonExplainerCameraPosition,
 } from '@/lib/cameraMath'
 
 // ---------------------------------------------------------------------------
@@ -287,5 +288,53 @@ describe('getInitialHeliocentricCameraPosition', () => {
 
     expect(cameraPosition.y).toBe(80)
     expect(Math.hypot(cameraPosition.x, cameraPosition.z)).toBeCloseTo(392, 6)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// getSeasonExplainerCameraPosition
+// ---------------------------------------------------------------------------
+
+describe('getSeasonExplainerCameraPosition', () => {
+  const earthPosition = new Vector3(120, 0, -180)
+  const distance = 150
+
+  it('returns finite coordinates at the requested distance', () => {
+    const cameraPosition = new Vector3(
+      ...getSeasonExplainerCameraPosition('solstice-north-pole', earthPosition, distance),
+    )
+
+    expect(cameraPosition.distanceTo(new Vector3(0, 0, 0))).toBeCloseTo(distance, 6)
+    expect(cameraPosition.toArray().every(Number.isFinite)).toBe(true)
+  })
+
+  it('returns stable output for the same preset and Earth position', () => {
+    const first = getSeasonExplainerCameraPosition('equinox-side', earthPosition, distance)
+    const second = getSeasonExplainerCameraPosition('equinox-side', earthPosition, distance)
+
+    expect(second).toEqual(first)
+  })
+
+  it('uses distinct directions for solstice and equinox teaching views', () => {
+    const solstice = new Vector3(
+      ...getSeasonExplainerCameraPosition('solstice-north-pole', earthPosition, distance),
+    ).normalize()
+    const equinox = new Vector3(
+      ...getSeasonExplainerCameraPosition('equinox-side', earthPosition, distance),
+    ).normalize()
+
+    expect(solstice.dot(equinox)).toBeLessThan(0.98)
+  })
+
+  it('mirrors the vertical emphasis between north and south pole solstice views', () => {
+    const northPole = new Vector3(
+      ...getSeasonExplainerCameraPosition('solstice-north-pole', earthPosition, distance),
+    )
+    const southPole = new Vector3(
+      ...getSeasonExplainerCameraPosition('solstice-south-pole', earthPosition, distance),
+    )
+
+    expect(northPole.y).toBeGreaterThan(0)
+    expect(southPole.y).toBeLessThan(0)
   })
 })

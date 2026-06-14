@@ -38,9 +38,20 @@ describe("getTodayAwareExplainerEvent", () => {
     expect(event.label).toBe("June Solstice");
   });
 
-  it("selects the next solstice after the recent-event window has passed", () => {
+  it("keeps the June solstice selected while it is still the closest solstice", () => {
     const event = getTodayAwareExplainerEvent("solstice", "south", new Date("2026-06-29T10:00:00Z"));
+    expect(event.label).toBe("June Solstice");
+  });
+
+  it("selects the December solstice once it becomes closer than June", () => {
+    const event = getTodayAwareExplainerEvent("solstice", "south", new Date("2026-09-25T10:00:00Z"));
     expect(event.label).toBe("December Solstice");
+  });
+
+  it("prefers the upcoming event when two solstices are equally close", () => {
+    const event = getTodayAwareExplainerEvent("solstice", "south", new Date("2026-03-22T10:00:00Z"));
+    expect(event.label).toBe("June Solstice");
+    expect(event.date.getUTCFullYear()).toBe(2026);
   });
 
   it("selects the March equinox on the day it happens", () => {
@@ -48,8 +59,13 @@ describe("getTodayAwareExplainerEvent", () => {
     expect(event.label).toBe("March Equinox");
   });
 
-  it("selects the next equinox after the recent-event window has passed", () => {
+  it("keeps the March equinox selected while it is still the closest equinox", () => {
     const event = getTodayAwareExplainerEvent("equinox", "south", new Date("2026-03-28T10:00:00Z"));
+    expect(event.label).toBe("March Equinox");
+  });
+
+  it("selects the September equinox once it becomes closer than March", () => {
+    const event = getTodayAwareExplainerEvent("equinox", "south", new Date("2026-06-25T10:00:00Z"));
     expect(event.label).toBe("September Equinox");
   });
 });
@@ -87,6 +103,36 @@ describe("getSeasonExplainerEvent", () => {
   it("uses visual wording that matches the highlighted axis cue", () => {
     const event = getSeasonExplainerEvent("June Solstice", "south", 2026);
     expect(event.axisPrompt).toContain("highlighted line");
+  });
+
+  it("exposes deterministic view presets for equinox events", () => {
+    const events = [
+      getSeasonExplainerEvent("March Equinox", "south", 2026),
+      getSeasonExplainerEvent("September Equinox", "south", 2026),
+    ];
+
+    expect(events.map((event) => event.viewPreset.cameraKind)).toEqual([
+      "equinox-side",
+      "equinox-side",
+    ]);
+    for (const event of events) {
+      expect(Number.isFinite(event.viewPreset.rotationAngle)).toBe(true);
+    }
+  });
+
+  it("uses hemisphere-specific solstice view presets for all four teaching cases", () => {
+    expect(getSeasonExplainerEvent("June Solstice", "south", 2026).viewPreset.cameraKind).toBe(
+      "solstice-south-pole",
+    );
+    expect(getSeasonExplainerEvent("June Solstice", "north", 2026).viewPreset.cameraKind).toBe(
+      "solstice-north-pole",
+    );
+    expect(getSeasonExplainerEvent("December Solstice", "south", 2026).viewPreset.cameraKind).toBe(
+      "solstice-south-pole",
+    );
+    expect(getSeasonExplainerEvent("December Solstice", "north", 2026).viewPreset.cameraKind).toBe(
+      "solstice-north-pole",
+    );
   });
 });
 

@@ -1,8 +1,12 @@
 import { Vector3, Matrix4 } from 'three'
+import type { SeasonExplainerCameraKind } from './seasonExplainer'
 
 const _dir = new Vector3()
 const _right = new Vector3()
 const _up = new Vector3()
+const _sunDirection = new Vector3()
+const _sideDirection = new Vector3()
+const _teachingDirection = new Vector3()
 const INITIAL_EARTH_VIEW_ANGLE_RAD = (75 * Math.PI) / 180
 
 /**
@@ -90,4 +94,44 @@ export function getInitialHeliocentricCameraPosition(
     cameraY,
     horizontalDistance * Math.cos(cameraAzimuth),
   ]
+}
+
+/**
+ * Returns an earth-centric teaching camera position for explainer events.
+ * The Sun-relative azimuth comes from Earth's orbital position, while the
+ * preset controls whether the view emphasizes a pole or the equinox terminator.
+ */
+export function getSeasonExplainerCameraPosition(
+  cameraKind: SeasonExplainerCameraKind,
+  earthPosition: Vector3,
+  distance: number,
+): [number, number, number] {
+  _sunDirection.copy(earthPosition).multiplyScalar(-1)
+  _sunDirection.y = 0
+
+  if (_sunDirection.lengthSq() === 0) {
+    _sunDirection.set(0, 0, 1)
+  } else {
+    _sunDirection.normalize()
+  }
+
+  _sideDirection.set(-_sunDirection.z, 0, _sunDirection.x).normalize()
+
+  if (cameraKind === 'equinox-side') {
+    _teachingDirection
+      .copy(_sideDirection)
+      .multiplyScalar(0.9)
+      .addScaledVector(_sunDirection, 0.3)
+      .addScaledVector(_up.set(0, 1, 0), 0.12)
+  } else {
+    const verticalSign = cameraKind === 'solstice-north-pole' ? 1 : -1
+    _teachingDirection
+      .copy(_sunDirection)
+      .multiplyScalar(0.78)
+      .addScaledVector(_sideDirection, 0.36)
+      .addScaledVector(_up.set(0, verticalSign, 0), 0.5)
+  }
+
+  _teachingDirection.normalize().multiplyScalar(distance)
+  return [_teachingDirection.x, _teachingDirection.y, _teachingDirection.z]
 }

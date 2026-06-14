@@ -13,7 +13,6 @@ import {
   type SeasonExplainerMode,
   type SolarEventLabel,
 } from '@/lib/seasonExplainer'
-import { getSiderealRotationAngle } from '@/lib/orbitalMechanics'
 import { useAppStore } from '@/store/useAppStore'
 
 interface SceneSnapshot {
@@ -103,7 +102,7 @@ export function TopLeftControls() {
     // SimulationClock is intentionally mutable shared state; see ClientRoot and Animator.
     /* eslint-disable react-hooks/immutability */
     clock.julianDay = event.jd
-    clock.rotationAngle = getSiderealRotationAngle(event.jd)
+    clock.rotationAngle = event.viewPreset.rotationAngle
     /* eslint-enable react-hooks/immutability */
     setSelectedYear(event.date.getUTCFullYear())
   }, [captureSnapshot, clock])
