@@ -21,6 +21,7 @@ interface AppState {
   earthScale: number
   focusTarget: 'sun' | 'earth' | 'moon'
   activeSeasonExplainer: ActiveSeasonExplainer | null
+  showOrbitalLabels: boolean
 
   setIsPlaying: (v: boolean) => void
   setOrbitSpeed: (v: number) => void
@@ -31,6 +32,7 @@ interface AppState {
   setFocusTarget: (target: 'sun' | 'earth' | 'moon') => void
   setActiveSeasonExplainer: (explainer: ActiveSeasonExplainer) => void
   clearActiveSeasonExplainer: () => void
+  setShowOrbitalLabels: (v: boolean) => void
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -42,6 +44,7 @@ export const useAppStore = create<AppState>((set) => ({
   earthScale: DEFAULT_EARTH_SCALE,
   focusTarget: 'sun',
   activeSeasonExplainer: null,
+  showOrbitalLabels: true,
 
   setIsPlaying: (v) => set({ isPlaying: v }),
   setOrbitSpeed: (v) => set({ orbitSpeed: Math.max(0, Math.min(MAX_ORBIT_SPEED, v)) }),
@@ -52,4 +55,5 @@ export const useAppStore = create<AppState>((set) => ({
   setFocusTarget: (target) => set(s => s.focusTarget === target ? {} : { focusTarget: target }),
   setActiveSeasonExplainer: (explainer) => set({ activeSeasonExplainer: explainer }),
   clearActiveSeasonExplainer: () => set({ activeSeasonExplainer: null }),
+  setShowOrbitalLabels: (v) => set({ showOrbitalLabels: v }),
 }))

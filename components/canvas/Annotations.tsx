@@ -22,6 +22,7 @@ const NORTH_LABELS: Record<string, string> = {
 export function Annotations() {
   const hemisphere = useAppStore(s => s.hemisphere)
   const activeExplainer = useAppStore(s => s.activeSeasonExplainer)
+  const showOrbitalLabels = useAppStore(s => s.showOrbitalLabels)
   const labels = hemisphere === 'south' ? SOUTH_LABELS : NORTH_LABELS
 
   const events = useMemo(() => getSolsticeEquinoxEvents(), [])
@@ -36,7 +37,7 @@ export function Annotations() {
     [events],
   )
 
-  if (activeExplainer) return null
+  if (activeExplainer || !showOrbitalLabels) return null
 
   return (
     <>
