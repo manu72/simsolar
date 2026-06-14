@@ -49,7 +49,7 @@ export const SEASON_EXPLAINER_SCENE_PRESET: SeasonExplainerScenePreset = {
   isPlaying: false,
   orbitSpeed: 0,
   zoomDistance: 150,
-  earthScale: 8,
+  earthScale: 20,
   focusTarget: "earth",
 };
 
