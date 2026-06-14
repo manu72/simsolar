@@ -97,17 +97,42 @@ simsolar/
 
 ## Architecture
 
-**Time model:** A `SimulationClock` ref holds `julianDay` and `rotationAngle` — mutated every frame by the `Animator` component. Zustand holds UI-level state (`isPlaying`, `orbitSpeed`, `rotationSpeed`, `hemisphere`, `zoomDistance`, `earthScale`, `focusTarget`). Display date is derived locally in `TimelineSlider` by polling the clock ref via `setInterval`.
+### Data Flow
 
-**Triple reference frame:** Clicking any celestial body sets `focusTarget` to `'sun'` (heliocentric — Sun at origin), `'earth'` (geocentric — Earth at origin, world group offset by `-earthPos`), or `'moon'` (selenocentric — Moon at origin, Earth offset by `-moonLocalPos`, world group offset by `-(earthPos + moonLocalPos)`). Each body's click handler is idempotent and calls `event.stopPropagation()` to prevent R3F raycast propagation. The Earth shader uniform `uSunPositionWorld` is set accordingly so lighting works in all three modes.
+```
+SimulationClock (mutable ref — { julianDay, rotationAngle })
+  └─ Animator.tsx (useFrame per-frame loop)
+       ├─ reads Zustand via getState() (no React re-renders)
+       ├─ advances julianDay / rotationAngle
+       ├─ calls lib/orbitalMechanics.ts (pure functions)
+       ├─ updates mesh transforms & shader uniforms
+       └─ parents Moon under Earth group (inherits position/scale/ref frame)
 
-**Rendering loop:** `Animator` reads Zustand via `getState()` each frame (no re-renders), advances the clock, computes Earth's Keplerian position, drives Moon orbital position/tidal locking/nodal precession, updates mesh transforms and reference frame, and sets shader uniforms. `ZoomSync` keeps the camera distance and HUD zoom slider bidirectionally synchronised.
+User Input (HUD sliders, buttons, clicks)
+  └─ Zustand store (store/useAppStore.ts)
+       ├─ isPlaying, orbitSpeed, rotationSpeed
+       ├─ hemisphere, zoomDistance, earthScale, focusTarget
+       └─ UI components read via useState(true) for reactivity
 
-**Moon orbit:** The Moon is parented under the Earth group, inheriting its position, scale, and reference frame. Lunar orbital angle is derived from `clock.rotationAngle / MOON_SIDEREAL_PERIOD_DAYS`. Tidal locking keeps the same face toward Earth (`rotation.y = -orbitalAngle + PI`). The orbital plane is tilted 5.14 degrees with an 18.6-year retrograde nodal precession cycle (Euler order `'YXZ'`).
+Date Display
+  └─ TimelineSlider polls SimulationClock ref via setInterval
+```
 
-**Orbital mechanics:** Pure TypeScript functions with no React or Three.js dependencies — Julian day conversions, elliptical orbit position via Kepler's equation (Newton-Raphson, 1e-8 rad tolerance), sidereal rotation angle, season labelling, and solstice/equinox event detection.
+### Triple Reference Frame
 
-**Shaders:** GLSL stored as TypeScript template literals. Earth uses a custom vertex/fragment pair that blends day and night textures across a soft terminator with atmosphere rim glow, computing per-vertex sun direction from the sun's world position. Sun uses a procedural FBM noise surface shader with limb darkening, animated by `uTime`. Moon uses `meshStandardMaterial` with a NASA texture, lit by the Sun's point light.
+Clicking any celestial body sets `focusTarget` to `'sun'` (heliocentric — Sun at origin), `'earth'` (geocentric — Earth at origin), or `'moon'` (selenocentric — Moon at origin). Each click handler is idempotent and calls `event.stopPropagation()`. The Earth shader uniform `uSunPositionWorld` updates accordingly so lighting works in all three modes.
+
+### Rendering Loop
+
+`Animator` reads Zustand via `getState()` each frame (no re-renders), advances the clock, computes Earth's Keplerian position, drives Moon orbital position/tidal locking/nodal precession, updates mesh transforms and reference frame, and sets shader uniforms. `ZoomSync` keeps the camera distance and HUD zoom slider bidirectionally synchronised.
+
+### Orbital Mechanics
+
+Pure TypeScript functions with no React or Three.js dependencies — Julian day conversions, elliptical orbit position via Kepler's equation (Newton-Raphson, 1e-8 rad tolerance), sidereal rotation angle, season labelling, and solstice/equinox event detection.
+
+### Shaders
+
+GLSL stored as TypeScript template literals in `lib/shaders/`. Earth blends day and night textures across a soft terminator with atmosphere rim glow. Sun uses procedural FBM noise surface shader with limb darkening, animated by `uTime`. Moon uses `meshStandardMaterial` lit by the Sun's point light.
 
 ## Getting Started
 
@@ -156,6 +181,28 @@ pnpm test:watch    # watch mode
 pnpm lint
 ```
 
+### Verify Your Setup
+
+Run these checks before starting development to confirm everything is working:
+
+```bash
+# 1. All tests pass — validates core math and camera logic
+pnpm test
+
+# 2. No lint issues
+pnpm lint
+
+# 3. Production build succeeds
+pnpm build
+```
+
+If all three pass, your environment is ready for contributing. If `pnpm dev` fails to start on port 3100, check that no other process is binding to it:
+
+```bash
+lsof -i :3100   # find the process
+kill <pid>       # free the port
+```
+
 ## Features
 
 - **Keplerian orbit** — Earth follows a real elliptical path with correct eccentricity and perihelion longitude
@@ -178,16 +225,25 @@ pnpm lint
 
 ## Contributing
 
-### Where to Start
+### Quick Tasks for New Contributors
 
-If you're new to this codebase, here's a suggested entry path:
+If you're new to this codebase, pick any task below and start:
+
+| Task | Files to Touch | Effort | What You'll Learn |
+|------|---------------|--------|-------------------|
+| Remove unused `@react-three/postprocessing` dependency | [`package.json`](package.json), verify no imports across the codebase | 15 min | Dependency cleanup, audit patterns |
+| Add webp/avif texture fallbacks for Earth/Moon textures | [`public/textures/`](public/textures/), shader texture loading code | 1-2 hrs | Asset pipeline, format detection |
+| Write a `docs/contributing.md` deep-dive guide | New file | 30 min | Documentation, project architecture |
+| Improve solstice/equinox date precision (per-year computation) | [`lib/orbitalMechanics.ts`](lib/orbitalMechanics.ts), [`__tests__/orbitalMechanics.test.ts`](__tests__/orbitalMechanics.test.ts) | 2-3 hrs | Orbital mechanics, pure function testing |
+| Add snapshot tests for shader output values | [`__tests__/`](__tests__/), [`lib/shaders/`](lib/shaders/) | 2-4 hrs | Testing patterns, GLSL debugging |
+
+### Where to Start (Deep Dive)
+
+If you'd rather explore the codebase top-to-bottom:
 
 1. **Understand the core math** — Read [`lib/orbitalMechanics.ts`](lib/orbitalMechanics.ts) (Julian day, Kepler solver, seasons) and its tests in [`__tests__/orbitalMechanics.test.ts`](__tests__/orbitalMechanics.test.ts). This is pure TypeScript with no React/Three.js dependencies — the easiest entry point.
 2. **Follow the rendering loop** — Read [`components/canvas/Animator.tsx`](components/canvas/Animator.tsx) to see how `useFrame` advances the simulation clock each frame and drives all visual updates.
-3. **Try a small task first** — Good starting points include:
-   - Removing the unused `@react-three/postprocessing` dependency (noted in Limitations)
-   - Adding Phase 2 planet selector infrastructure (stub out `PlanetSelector.tsx` with a placeholder for Mars/Jupiter)
-   - Adding texture resolution variants (webp/avif fallbacks for `public/textures/`)
+3. **Trace data flow** — Follow from Zustand's [`store/useAppStore.ts`](store/useAppStore.ts) → `Animator` (reader) → HUD components (writers).
 
 ### Code Conventions
 
@@ -213,4 +269,3 @@ pnpm build         # production build
 - **Compressed Moon orbit** — the Moon's orbital radius and size are scaled for visibility (real ratio would be invisible at Earth's scale). Constants document the compression.
 - **Unused dependency** — `@react-three/postprocessing` remains in `package.json` but is not imported. It is incompatible with React 19 + Three.js r183 and should be removed.
 - **No postprocessing** — bloom and glow effects use CSS alternatives (radial-gradient) because `@react-three/postprocessing` is incompatible with the current React/Three.js versions.
-
