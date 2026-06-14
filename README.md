@@ -4,8 +4,6 @@ Interactive 3D solar system visualisation for solstice and equinox education. Bu
 
 **Phase 1** — Sun, Earth, and Moon. Additional planets planned for future phases.
 
-<!-- ![SolarSim preview](docs/screenshot.png) -->
-
 ## Vision and Goals
 
 - Teach solstice and equinox concepts through interactive visualisation
@@ -38,10 +36,10 @@ Interactive 3D solar system visualisation for solstice and equinox education. Bu
 simsolar/
 ├── app/                              # Next.js App Router
 │   ├── layout.tsx                    # Root layout (dark theme, metadata, PWA manifest link)
-│   ├── page.tsx                      # Home page — renders ClientRoot + InfoModal
+│   ├── page.tsx                      # Home page — renders ClientRoot only
 │   └── globals.css                   # Tailwind v4 imports, CSS custom properties
 ├── components/
-│   ├── ClientRoot.tsx                # Client entry — SimulationClock, context, canvas + HUD
+│   ├── ClientRoot.tsx                # Client entry — SimulationClock, Scene, gated HUD, loading overlay
 │   ├── canvas/                       # 3D scene components (React Three Fiber)
 │   │   ├── Scene.tsx                 # R3F Canvas, camera, controls, scene graph composition
 │   │   ├── Animator.tsx              # useFrame loop — orbit, rotation, Moon, shader uniforms
@@ -61,10 +59,13 @@ simsolar/
 │   │   ├── HemisphereControl.tsx     # S/N hemisphere toggle
 │   │   └── PlanetSelector.tsx        # Planet selector (Earth only in Phase 1)
 │   └── ui/
-│       └── InfoModal.tsx             # About/help modal with offline caching toggle
+│       ├── TopLeftControls.tsx       # Info button, season explainer picker (embeds InfoModal)
+│       ├── InfoModal.tsx             # About/help modal with offline caching toggle
+│       └── LoadingOverlay.tsx        # Shown until WebGL scene is ready or fails
 ├── lib/                              # Pure logic, camera math, and React hooks
 │   ├── constants.ts                  # Orbital, scene, Moon, and control constants
 │   ├── orbitalMechanics.ts           # Julian day, Kepler solver, Earth position, rotation, seasons
+│   ├── seasonExplainer.ts            # Solstice/equinox explainer copy, events, scene presets
 │   ├── cameraMath.ts                 # Pixel-to-world conversion, screen pan, pan reset, zoom-to-distance
 │   ├── usePlanetDrag.ts              # Hook — drag focused planet to reposition on screen
 │   ├── useOfflineStatus.ts           # React hook for service worker cache state and progress
@@ -74,15 +75,17 @@ simsolar/
 │       ├── sunSurface.vert.ts        # Sun vertex — 3D trilinear noise displacement, time animation
 │       └── sunSurface.frag.ts        # Sun fragment — procedural FBM noise, limb darkening
 ├── store/
-│   └── useAppStore.ts                # Zustand store (playing, speeds, hemisphere, zoom, scale, focus)
+│   └── useAppStore.ts                # Zustand (playback, speeds, hemisphere, zoom, scale, focus, season explainer)
 ├── public/
 │   ├── textures/                     # Earth day/night and Moon texture maps (~2MB total)
 │   ├── icons/                        # PWA app icons (192px, 512px)
 │   ├── manifest.json                 # PWA manifest
 │   └── sw.js                         # Service worker for offline asset caching
-├── __tests__/
-│   ├── orbitalMechanics.test.ts      # Orbital mechanics unit tests (6 suites, 23 tests)
-│   └── cameraMath.test.ts            # Camera math unit tests — pan, reset, zoom (4 suites, 19 tests)
+├── __tests__/                        # Vitest — run `pnpm test` for current counts (4 files, 60 tests)
+│   ├── orbitalMechanics.test.ts      # Julian day, Kepler orbit, seasons, solstice/equinox events
+│   ├── cameraMath.test.ts            # Pixel-to-world, screen pan, zoom-to-distance
+│   ├── seasonExplainer.test.ts       # Explainer events, presets, today-aware selection
+│   └── swCacheNames.test.ts          # Service worker cache name coupling with public/sw.js
 ├── CLAUDE.md                         # AI assistant guidance (architecture, commands, patterns)
 ├── AGENTS.md                         # Agent rules (Next.js version warning)
 ├── WORKING_MEMORY.md                 # Project context, decisions, lessons, tech debt
@@ -97,26 +100,56 @@ simsolar/
 
 ## Architecture
 
+### Component Tree
+
+```
+ClientRoot (SimulationContext.Provider)
+├── Scene (R3F Canvas — loads textures; calls onReady when ready)
+├── TopLeftControls + HUD          shown only after sceneReady (not on WebGL failure)
+│   ├── TopLeftControls            season explainer picker; embeds InfoModal
+│   └── HUD                        TimelineSlider, SpeedControls, HemisphereControl, PlanetSelector
+└── LoadingOverlay                 hidden when sceneReady or sceneFailed
+
+Scene (inside Canvas)
+├── Animator                       useFrame — advances clock, positions bodies, shader uniforms
+├── Starfield                      static backdrop (outside worldGroup)
+├── worldGroup                     Sun, OrbitPath, Annotations — offset in geocentric/selenocentric modes
+├── Earth group (+ Moon nested)    day/night shader, axial tilt, inclined lunar orbit
+├── ZoomSync                       camera ↔ Zustand zoomDistance
+└── OrbitControls                  mouse orbit/zoom
+```
+
 ### Data Flow
 
 ```
 SimulationClock (mutable ref — { julianDay, rotationAngle })
   └─ Animator.tsx (useFrame per-frame loop)
        ├─ reads Zustand via getState() (no React re-renders)
-       ├─ advances julianDay / rotationAngle
+       ├─ advances julianDay / rotationAngle (unless season explainer overrides clock)
        ├─ calls lib/orbitalMechanics.ts (pure functions)
        ├─ updates mesh transforms & shader uniforms
        └─ parents Moon under Earth group (inherits position/scale/ref frame)
 
-User Input (HUD sliders, buttons, clicks)
+User Input (HUD sliders, buttons, clicks, season explainer)
   └─ Zustand store (store/useAppStore.ts)
        ├─ isPlaying, orbitSpeed, rotationSpeed
        ├─ hemisphere, zoomDistance, earthScale, focusTarget
-       └─ UI components read via useState(true) for reactivity
+       ├─ activeSeasonExplainer (mode + event label, or null)
+       └─ HUD / TopLeftControls read via useAppStore() for reactivity
 
 Date Display
   └─ TimelineSlider polls SimulationClock ref via setInterval
+
+Season Explainer (guided solstice/equinox tours)
+  └─ TopLeftControls → setActiveSeasonExplainer()
+       ├─ Animator snaps/advances clock to event Julian day; applies scene preset
+       ├─ Annotations highlights the active event label
+       └─ clearActiveSeasonExplainer() restores prior playback snapshot
 ```
+
+### Season Explainer
+
+Educational guided tours for solstice and equinox events. Copy and event metadata live in [`lib/seasonExplainer.ts`](lib/seasonExplainer.ts). [`TopLeftControls`](components/ui/TopLeftControls.tsx) sets `activeSeasonExplainer` in Zustand; [`Animator`](components/canvas/Animator.tsx) drives the clock and scene preset; [`Annotations`](components/canvas/Annotations.tsx) highlights the active event. Pure logic is covered by [`__tests__/seasonExplainer.test.ts`](__tests__/seasonExplainer.test.ts).
 
 ### Triple Reference Frame
 
@@ -158,6 +191,7 @@ When the app loads, you'll see a 3D scene with a glowing Sun at center and Earth
 - **Speed controls** let you adjust orbit speed, rotation speed, zoom, and Earth scale independently
 - Click the **Sun, Earth, or Moon** to center your view on that body (heliocentric, geocentric, or selenocentric)
 - A **hemisphere toggle** switches between southern/northern labels and terminology
+- **Season explainer** tours (top-left) walk through solstice and equinox events with guided copy and scene presets
 
 The simulation defaults to a southern hemisphere viewpoint — everything is calibrated for contributors and users in the AU/NZ time zone.
 
@@ -196,7 +230,7 @@ pnpm lint
 pnpm build
 ```
 
-If all three pass, your environment is ready for contributing. If `pnpm dev` fails to start on port 3100, check that no other process is binding to it:
+If all three pass, your environment is ready for contributing. Re-run the same checks before submitting a pull request (there is no CI workflow in this repo). If `pnpm dev` fails to start on port 3100, check that no other process is binding to it:
 
 ```bash
 lsof -i :3100   # find the process
@@ -217,6 +251,7 @@ kill <pid>       # free the port
 - **Camera zoom** — HUD slider bidirectionally synced with mouse wheel via ZoomSync
 - **Earth scale** — enlarge Earth (1-10x) independently of camera zoom for detail viewing
 - **Hemisphere toggle** — switch between southern and northern hemisphere labels and terminology
+- **Season explainer** — guided solstice/equinox tours with educational copy, scene presets, and orbit annotations
 - **Solstice/equinox annotations** — labelled positions on the orbit path, updating with hemisphere choice
 - **Starfield** — ~2000 background stars for spatial context
 - **PWA offline support** — opt-in service worker caching of textures and assets via info modal
@@ -232,10 +267,10 @@ If you're new to this codebase, pick any task below and start:
 | Task | Files to Touch | Effort | What You'll Learn |
 |------|---------------|--------|-------------------|
 | Remove unused `@react-three/postprocessing` dependency | [`package.json`](package.json), verify no imports across the codebase | 15 min | Dependency cleanup, audit patterns |
+| Add Mars orbit rendering for Phase 2 | [`PlanetSelector.tsx`](components/hud/PlanetSelector.tsx), new canvas component, [`lib/constants.ts`](lib/constants.ts) | 4+ hrs | Orbital mechanics, scene graph |
+| Extend season explainer copy or add a new event preset | [`lib/seasonExplainer.ts`](lib/seasonExplainer.ts), [`__tests__/seasonExplainer.test.ts`](__tests__/seasonExplainer.test.ts) | 1-2 hrs | Pure functions, educational content |
 | Add webp/avif texture fallbacks for Earth/Moon textures | [`public/textures/`](public/textures/), shader texture loading code | 1-2 hrs | Asset pipeline, format detection |
-| Write a `docs/contributing.md` deep-dive guide | New file | 30 min | Documentation, project architecture |
 | Improve solstice/equinox date precision (per-year computation) | [`lib/orbitalMechanics.ts`](lib/orbitalMechanics.ts), [`__tests__/orbitalMechanics.test.ts`](__tests__/orbitalMechanics.test.ts) | 2-3 hrs | Orbital mechanics, pure function testing |
-| Add snapshot tests for shader output values | [`__tests__/`](__tests__/), [`lib/shaders/`](lib/shaders/) | 2-4 hrs | Testing patterns, GLSL debugging |
 
 ### Where to Start (Deep Dive)
 
@@ -243,15 +278,34 @@ If you'd rather explore the codebase top-to-bottom:
 
 1. **Understand the core math** — Read [`lib/orbitalMechanics.ts`](lib/orbitalMechanics.ts) (Julian day, Kepler solver, seasons) and its tests in [`__tests__/orbitalMechanics.test.ts`](__tests__/orbitalMechanics.test.ts). This is pure TypeScript with no React/Three.js dependencies — the easiest entry point.
 2. **Follow the rendering loop** — Read [`components/canvas/Animator.tsx`](components/canvas/Animator.tsx) to see how `useFrame` advances the simulation clock each frame and drives all visual updates.
-3. **Trace data flow** — Follow from Zustand's [`store/useAppStore.ts`](store/useAppStore.ts) → `Animator` (reader) → HUD components (writers).
+3. **Trace data flow** — Follow from Zustand's [`store/useAppStore.ts`](store/useAppStore.ts) → `Animator` (reader) → HUD / TopLeftControls (writers).
+
+### Documentation Map
+
+| Doc | When to read |
+| --- | --- |
+| README | Product context, commands, file structure, onboarding |
+| [`CLAUDE.md`](CLAUDE.md) | Render loop, focus modes, file roles, key patterns |
+| [`WORKING_MEMORY.md`](WORKING_MEMORY.md) | Pitfalls, recent decisions, tech debt, lessons learned |
+| [`AGENTS.md`](AGENTS.md) | Next.js 16 API caveats (only if touching App Router) |
+
+### Common Pitfalls
+
+Full detail lives in [`WORKING_MEMORY.md`](WORKING_MEMORY.md) § Lessons. Highest-impact rules when touching canvas or simulation code:
+
+- Do not call Zustand `set()` from `useFrame` for high-frequency updates — keep simulation time in the `SimulationClock` ref; poll it from HUD components (see `TimelineSlider`)
+- Always `event.stopPropagation()` on mesh click handlers — R3F fires `onClick` on every intersected mesh along the ray
+- Moon compound rotations: Euler order `'YXZ'`, negated nodal precession, tidal lock `rotation.y = -orbitalAngle + π`
+
+Before submitting changes, re-run the checks in [Verify Your Setup](#verify-your-setup).
 
 ### Code Conventions
 
 - All GLSL shaders live as TypeScript template literals in `lib/shaders/` — never separate `.glsl` files
 - Pure logic functions go in `lib/` with no React/Three.js imports (keeps them testable)
-- Zustand holds all mutable state; avoid React `useState` for simulation data
+- Simulation time lives in the `SimulationClock` ref and Zustand UI state — not React `useState` (UI gates such as `sceneReady` in `ClientRoot` are fine)
 - Tests mirror the lib structure: `lib/orbitalMechanics.ts` → `__tests__/orbitalMechanics.test.ts`
-- For deeper patterns and architecture, see [`CLAUDE.md`](CLAUDE.md)
+- For deeper patterns and architecture, see [`CLAUDE.md`](CLAUDE.md) and [`WORKING_MEMORY.md`](WORKING_MEMORY.md)
 
 ### Running the Full Suite
 
