@@ -3,11 +3,12 @@ import { dateToJulianDay, getSeasonLabel } from "./orbitalMechanics";
 export type Hemisphere = "north" | "south";
 export type SeasonExplainerMode = "solstice" | "equinox";
 export type SolarEventLabel = "March Equinox" | "June Solstice" | "September Equinox" | "December Solstice";
-export type SeasonExplainerCameraKind = "solstice-north-pole" | "solstice-south-pole" | "equinox-side";
+export type SeasonExplainerCameraKind = "solstice-fixed" | "equinox-side";
 
 export interface SeasonExplainerViewPreset {
   rotationAngle: number;
   cameraKind: SeasonExplainerCameraKind;
+  zoomDistance: number;
 }
 
 export interface SeasonExplainerEvent {
@@ -66,6 +67,8 @@ const EVENT_ROTATION_ANGLES: Record<SolarEventLabel, number> = {
   "December Solstice": Math.PI * 0.15,
 };
 
+const SOLSTICE_EXPLAINER_ZOOM_DISTANCE = 420;
+
 export const SOLSTICE_EVENT_LABELS: readonly SolarEventLabel[] = ["June Solstice", "December Solstice"];
 export const EQUINOX_EVENT_LABELS: readonly SolarEventLabel[] = ["March Equinox", "September Equinox"];
 
@@ -105,7 +108,7 @@ export function getSeasonExplainerEvent(
     daylightPrompt: getDaylightPrompt(label, hemisphere),
     axisPrompt: "The highlighted line is Earth's tilted axis. It keeps pointing the same way as Earth orbits the Sun.",
     comparisonLabel: getComparisonLabel(label),
-    viewPreset: getViewPreset(label, hemisphere),
+    viewPreset: getViewPreset(label),
     misconceptionPrompt:
       definition.mode === "solstice"
         ? "Summer and Winter are not an effect of distance to the Sun. The relative tilt of the Earth to the Sun changes the angle of light hitting the surface, and how many hours of daylight each place gets."
@@ -148,14 +151,13 @@ function startOfUtcDay(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
 
-function getViewPreset(label: SolarEventLabel, hemisphere: Hemisphere): SeasonExplainerViewPreset {
+function getViewPreset(label: SolarEventLabel): SeasonExplainerViewPreset {
+  const isEquinox = label.includes("Equinox");
+
   return {
     rotationAngle: EVENT_ROTATION_ANGLES[label],
-    cameraKind: label.includes("Equinox")
-      ? "equinox-side"
-      : hemisphere === "south"
-        ? "solstice-south-pole"
-        : "solstice-north-pole",
+    cameraKind: isEquinox ? "equinox-side" : "solstice-fixed",
+    zoomDistance: isEquinox ? SEASON_EXPLAINER_SCENE_PRESET.zoomDistance : SOLSTICE_EXPLAINER_ZOOM_DISTANCE,
   };
 }
 

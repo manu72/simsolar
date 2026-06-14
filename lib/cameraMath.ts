@@ -98,14 +98,21 @@ export function getInitialHeliocentricCameraPosition(
 
 /**
  * Returns an earth-centric teaching camera position for explainer events.
- * The Sun-relative azimuth comes from Earth's orbital position, while the
- * preset controls whether the view emphasizes a pole or the equinox terminator.
+ * Solstice views use a fixed world-space direction so Earth's projected axis
+ * keeps the same teaching orientation across June and December. Equinox views
+ * stay Sun-relative so the day/night balance reads side-on.
  */
 export function getSeasonExplainerCameraPosition(
   cameraKind: SeasonExplainerCameraKind,
   earthPosition: Vector3,
   distance: number,
 ): [number, number, number] {
+  if (cameraKind === 'solstice-fixed') {
+    _teachingDirection.set(0, 0, -1)
+    _teachingDirection.normalize().multiplyScalar(distance)
+    return [_teachingDirection.x, _teachingDirection.y, _teachingDirection.z]
+  }
+
   _sunDirection.copy(earthPosition).multiplyScalar(-1)
   _sunDirection.y = 0
 
@@ -117,20 +124,11 @@ export function getSeasonExplainerCameraPosition(
 
   _sideDirection.set(-_sunDirection.z, 0, _sunDirection.x).normalize()
 
-  if (cameraKind === 'equinox-side') {
-    _teachingDirection
-      .copy(_sideDirection)
-      .multiplyScalar(0.9)
-      .addScaledVector(_sunDirection, 0.3)
-      .addScaledVector(_up.set(0, 1, 0), 0.12)
-  } else {
-    const verticalSign = cameraKind === 'solstice-north-pole' ? 1 : -1
-    _teachingDirection
-      .copy(_sunDirection)
-      .multiplyScalar(0.78)
-      .addScaledVector(_sideDirection, 0.36)
-      .addScaledVector(_up.set(0, verticalSign, 0), 0.5)
-  }
+  _teachingDirection
+    .copy(_sideDirection)
+    .multiplyScalar(0.9)
+    .addScaledVector(_sunDirection, 0.3)
+    .addScaledVector(_up.set(0, 1, 0), 0.12)
 
   _teachingDirection.normalize().multiplyScalar(distance)
   return [_teachingDirection.x, _teachingDirection.y, _teachingDirection.z]

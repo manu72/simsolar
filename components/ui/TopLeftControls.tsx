@@ -95,7 +95,7 @@ export function TopLeftControls() {
     store.setIsPlaying(SEASON_EXPLAINER_SCENE_PRESET.isPlaying)
     store.setOrbitSpeed(SEASON_EXPLAINER_SCENE_PRESET.orbitSpeed)
     store.setFocusTarget(SEASON_EXPLAINER_SCENE_PRESET.focusTarget)
-    store.setZoomDistance(SEASON_EXPLAINER_SCENE_PRESET.zoomDistance)
+    store.setZoomDistance(event.viewPreset.zoomDistance)
     store.setEarthScale(SEASON_EXPLAINER_SCENE_PRESET.earthScale)
     store.setActiveSeasonExplainer({ mode: event.mode, eventLabel: event.label })
 

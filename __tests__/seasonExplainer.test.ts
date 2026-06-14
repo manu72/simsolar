@@ -117,22 +117,22 @@ describe("getSeasonExplainerEvent", () => {
     ]);
     for (const event of events) {
       expect(Number.isFinite(event.viewPreset.rotationAngle)).toBe(true);
+      expect(event.viewPreset.zoomDistance).toBe(SEASON_EXPLAINER_SCENE_PRESET.zoomDistance);
     }
   });
 
-  it("uses hemisphere-specific solstice view presets for all four teaching cases", () => {
-    expect(getSeasonExplainerEvent("June Solstice", "south", 2026).viewPreset.cameraKind).toBe(
-      "solstice-south-pole",
-    );
-    expect(getSeasonExplainerEvent("June Solstice", "north", 2026).viewPreset.cameraKind).toBe(
-      "solstice-north-pole",
-    );
-    expect(getSeasonExplainerEvent("December Solstice", "south", 2026).viewPreset.cameraKind).toBe(
-      "solstice-south-pole",
-    );
-    expect(getSeasonExplainerEvent("December Solstice", "north", 2026).viewPreset.cameraKind).toBe(
-      "solstice-north-pole",
-    );
+  it("uses the same fixed solstice view preset across hemispheres and solstices", () => {
+    const events = [
+      getSeasonExplainerEvent("June Solstice", "south", 2026),
+      getSeasonExplainerEvent("June Solstice", "north", 2026),
+      getSeasonExplainerEvent("December Solstice", "south", 2026),
+      getSeasonExplainerEvent("December Solstice", "north", 2026),
+    ];
+
+    for (const event of events) {
+      expect(event.viewPreset.cameraKind).toBe("solstice-fixed");
+      expect(event.viewPreset.zoomDistance).toBeGreaterThan(SEASON_EXPLAINER_SCENE_PRESET.zoomDistance);
+    }
   });
 });
 
