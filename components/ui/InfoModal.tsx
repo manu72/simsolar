@@ -139,6 +139,16 @@ export function InfoModal({ triggerClassName = DEFAULT_TRIGGER_CLASS_NAME, trigg
             aria-labelledby="solar-sim-info-title"
             tabIndex={-1}
           >
+            <button
+              type="button"
+              onClick={closeModal}
+              className="absolute top-3 right-3 p-1 rounded-full text-white/40 hover:text-white/80
+                hover:bg-white/10 transition-colors focus-visible:outline-2
+                focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+              aria-label="Close dialog"
+            >
+              ×
+            </button>
             <h1 id="solar-sim-info-title" className="text-2xl font-light tracking-wide text-white mb-2">
               SolarSim Interactive Solar System Simulator
             </h1>

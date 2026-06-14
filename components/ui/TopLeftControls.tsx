@@ -141,11 +141,21 @@ export function TopLeftControls() {
 
       {selectedEvent && (
         <section
-          className="mt-1 w-[min(23rem,calc(100vw-1.5rem))] rounded-2xl border border-(--color-explainer-border)
+          className="mt-1 relative w-[min(23rem,calc(100vw-1.5rem))] rounded-2xl border border-(--color-explainer-border)
             bg-(--color-explainer-surface) p-4 text-(--color-explainer-text) shadow-2xl shadow-black/40
             backdrop-blur-md sm:p-5"
           aria-labelledby="season-explainer-title"
         >
+          <button
+            type="button"
+            onClick={closeExplainer}
+            className="absolute top-2 right-2 z-10 p-1 rounded-full text-(--color-explainer-muted)/60 hover:text-(--color-explainer-text)
+              hover:bg-white/10 transition-colors focus-visible:outline-2
+              focus-visible:outline-offset-2 focus-visible:outline-(--color-explainer-focus)"
+            aria-label="Close explainer"
+          >
+            ×
+          </button>
           <div className="mb-3 flex flex-wrap gap-2" role="group" aria-label="Choose event to compare">
             {selectableEvents.map(event => (
               <button

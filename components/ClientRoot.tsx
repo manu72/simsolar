@@ -27,7 +27,7 @@ export function ClientRoot() {
   return (
     <SimulationContext.Provider value={clock}>
       <CanvasErrorBoundary onError={handleSceneError}>
-        <Suspense fallback={<LoadingOverlay isReady={false} />}>
+        <Suspense fallback={null}>
           <Scene isReady={sceneReady} onReady={handleSceneReady} />
         </Suspense>
       </CanvasErrorBoundary>

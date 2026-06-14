@@ -5,6 +5,7 @@ import { TimelineSlider } from './TimelineSlider'
 import { SpeedControls } from './SpeedControls'
 import { PlanetSelector } from './PlanetSelector'
 import { HemisphereControl } from './HemisphereControl'
+import { LabelsControl } from './LabelsControl'
 
 export function HUD() {
   const isPlaying  = useAppStore(s => s.isPlaying)
@@ -43,6 +44,7 @@ export function HUD() {
 
         <SpeedControls />
         <HemisphereControl />
+        <LabelsControl />
         <PlanetSelector />
       </div>
     </div>
