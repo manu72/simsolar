@@ -238,10 +238,7 @@ def risk_tags(config: dict, paths: list[str]) -> list[str]:
 def glob_match_simple(pattern: str, path: str) -> bool:
     norm = path.replace("\\", "/")
     pat = pattern.replace("\\", "/")
-    if "**" in pat:
-        prefix = pat.split("**", 1)[0].rstrip("/")
-        return norm.startswith(prefix) or fnmatch.fnmatch(norm, pat.replace("**", "*"))
-    return fnmatch.fnmatch(norm, pat)
+    return fnmatch.fnmatch(norm, pat.replace("**", "*"))
 
 
 def filesystem_fallback(root: Path, terms: list[str], limit: int) -> list[tuple[str, str]]:
