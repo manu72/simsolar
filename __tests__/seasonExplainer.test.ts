@@ -142,7 +142,7 @@ describe("SEASON_EXPLAINER_SCENE_PRESET", () => {
       isPlaying: false,
       orbitSpeed: 0,
       zoomDistance: 150,
-      earthScale: 8,
+      earthScale: 20,
       focusTarget: "earth",
     });
     expect(SEASON_EXPLAINER_SCENE_PRESET).not.toHaveProperty("rotationSpeed");

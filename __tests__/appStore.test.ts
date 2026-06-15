@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useAppStore } from '@/store/useAppStore'
 import {
   DEFAULT_ORBIT_SPEED,
@@ -264,8 +264,14 @@ describe('setFocusTarget — idempotency', () => {
 
   it('is a no-op when setting the already-focused target (sun → sun)', () => {
     const before = useAppStore.getState().focusTarget
+    const listener = vi.fn()
+    const unsub = useAppStore.subscribe(listener)
+
     useAppStore.getState().setFocusTarget('sun')
+
     expect(useAppStore.getState().focusTarget).toBe(before)
+    expect(listener).not.toHaveBeenCalled()
+    unsub()
   })
 
   it('changes target when switching from sun to earth', () => {
@@ -288,15 +294,27 @@ describe('setFocusTarget — idempotency', () => {
   it('is a no-op when setting the already-focused target (earth → earth)', () => {
     useAppStore.getState().setFocusTarget('earth')
     const before = useAppStore.getState().focusTarget
+    const listener = vi.fn()
+    const unsub = useAppStore.subscribe(listener)
+
     useAppStore.getState().setFocusTarget('earth')
+
     expect(useAppStore.getState().focusTarget).toBe(before)
+    expect(listener).not.toHaveBeenCalled()
+    unsub()
   })
 
   it('is a no-op when setting the already-focused target (moon → moon)', () => {
     useAppStore.getState().setFocusTarget('moon')
     const before = useAppStore.getState().focusTarget
+    const listener = vi.fn()
+    const unsub = useAppStore.subscribe(listener)
+
     useAppStore.getState().setFocusTarget('moon')
+
     expect(useAppStore.getState().focusTarget).toBe(before)
+    expect(listener).not.toHaveBeenCalled()
+    unsub()
   })
 })
 
