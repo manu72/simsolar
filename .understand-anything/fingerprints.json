@@ -1,0 +1,2304 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "d442a367bada2df8ce8ce1cd63ec03544089d997",
+  "generatedAt": "2026-06-15T00:37:35.738Z",
+  "files": {
+    "__tests__/appStore.test.ts": {
+      "filePath": "__tests__/appStore.test.ts",
+      "contentHash": "ced8988fd409fc23a24f5096399f0489fdd445716e241505e1990a9efdb84738",
+      "functions": [
+        {
+          "name": "resetStore",
+          "params": [],
+          "exported": false,
+          "lineCount": 13
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect",
+            "beforeEach",
+            "vi"
+          ]
+        },
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        },
+        {
+          "source": "@/lib/constants",
+          "specifiers": [
+            "DEFAULT_ORBIT_SPEED",
+            "DEFAULT_ROTATION_SPEED",
+            "MAX_ORBIT_SPEED",
+            "MAX_ROTATION_SPEED",
+            "MIN_ZOOM_DISTANCE",
+            "MAX_ZOOM_DISTANCE",
+            "DEFAULT_ZOOM_DISTANCE",
+            "MIN_EARTH_SCALE",
+            "MAX_EARTH_SCALE",
+            "DEFAULT_EARTH_SCALE"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 407,
+      "hasStructuralAnalysis": true
+    },
+    "__tests__/cameraMath.test.ts": {
+      "filePath": "__tests__/cameraMath.test.ts",
+      "contentHash": "83d16c1d992745201d8b2e6c3e0189ab5ba89035cab5eea3e4487684f15f23ea",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect"
+          ]
+        },
+        {
+          "source": "three",
+          "specifiers": [
+            "Vector3",
+            "PerspectiveCamera"
+          ]
+        },
+        {
+          "source": "@/lib/constants",
+          "specifiers": [
+            "AXIAL_TILT_RAD"
+          ]
+        },
+        {
+          "source": "@/lib/orbitalMechanics",
+          "specifiers": [
+            "getEarthOrbitalPosition"
+          ]
+        },
+        {
+          "source": "@/lib/seasonExplainer",
+          "specifiers": [
+            "SEASON_EXPLAINER_SCENE_PRESET",
+            "getSeasonExplainerEvent"
+          ]
+        },
+        {
+          "source": "@/lib/cameraMath",
+          "specifiers": [
+            "pixelToWorldScale",
+            "applyScreenPan",
+            "resetPanToOrigin",
+            "zoomToDistance",
+            "getInitialHeliocentricCameraPosition",
+            "getSeasonExplainerCameraPosition"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 399,
+      "hasStructuralAnalysis": true
+    },
+    "__tests__/orbitalMechanics.test.ts": {
+      "filePath": "__tests__/orbitalMechanics.test.ts",
+      "contentHash": "1788cbd4ade4ca5a688e92c33bdd2758b47984be31dfc275a20cfc00e871c6e0",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect"
+          ]
+        },
+        {
+          "source": "@/lib/constants",
+          "specifiers": [
+            "SEMI_MAJOR_AXIS",
+            "SIDEREAL_DAY_DAYS"
+          ]
+        },
+        {
+          "source": "@/lib/orbitalMechanics",
+          "specifiers": [
+            "dateToJulianDay",
+            "julianDayToDate",
+            "getEarthOrbitalPosition",
+            "getSiderealRotationAngle",
+            "getSeasonLabel",
+            "getSolsticeEquinoxEvents"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 172,
+      "hasStructuralAnalysis": true
+    },
+    "__tests__/seasonExplainer.test.ts": {
+      "filePath": "__tests__/seasonExplainer.test.ts",
+      "contentHash": "1b14a7cd1249d2831a844c1e82884ccf458ef0f6bf6c1d50b26e9206cab27a95",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "expect",
+            "it"
+          ]
+        },
+        {
+          "source": "@/lib/seasonExplainer",
+          "specifiers": [
+            "EQUINOX_EVENT_LABELS",
+            "SEASON_EXPLAINER_SCENE_PRESET",
+            "SOLSTICE_EVENT_LABELS",
+            "getSeasonExplainerEvent",
+            "getSeasonExplainerEvents",
+            "getTodayAwareExplainerEvent"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 151,
+      "hasStructuralAnalysis": true
+    },
+    "__tests__/swCacheNames.test.ts": {
+      "filePath": "__tests__/swCacheNames.test.ts",
+      "contentHash": "00a612909b1721f43c203b791671453ee5a8c30d7f2606eead3323839c2980d3",
+      "functions": [
+        {
+          "name": "extractConstant",
+          "params": [
+            "source",
+            "name",
+            "file"
+          ],
+          "returnType": "string",
+          "exported": false,
+          "lineCount": 5
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest",
+          "specifiers": [
+            "describe",
+            "it",
+            "expect"
+          ]
+        },
+        {
+          "source": "node:fs",
+          "specifiers": [
+            "readFileSync"
+          ]
+        },
+        {
+          "source": "node:path",
+          "specifiers": [
+            "resolve"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 41,
+      "hasStructuralAnalysis": true
+    },
+    ".claude/settings.local.json": {
+      "filePath": ".claude/settings.local.json",
+      "contentHash": "2ea32af80d69deeb501ce62acad3b8cfd3867001bed70002dbcb2c3b5ccab69a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 17,
+      "hasStructuralAnalysis": true
+    },
+    ".cursor/plans/explainer_overlay_scroll_bba43f33.plan.md": {
+      "filePath": ".cursor/plans/explainer_overlay_scroll_bba43f33.plan.md",
+      "contentHash": "23022304e50ead666a9703780e693f6f6fb6a6e41b68b9b9d64f1fb4605374d7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 217,
+      "hasStructuralAnalysis": true
+    },
+    ".cursor/plans/fix_stale_service_worker_caching_6a107926.plan.md": {
+      "filePath": ".cursor/plans/fix_stale_service_worker_caching_6a107926.plan.md",
+      "contentHash": "3a0323e1648defaff8af5b1612528afe1c9f21b25b082d977df915e60a453873",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 81,
+      "hasStructuralAnalysis": true
+    },
+    ".cursor/plans/pedagogical_explainer_views_6913a24f.plan.md": {
+      "filePath": ".cursor/plans/pedagogical_explainer_views_6913a24f.plan.md",
+      "contentHash": "5b8ff0936d80e40464d1b4d7e1648bdd91a25e4ec44519a73ede5cb459f0cc15",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 158,
+      "hasStructuralAnalysis": true
+    },
+    ".understand-anything/.understandignore": {
+      "filePath": ".understand-anything/.understandignore",
+      "contentHash": "4ab8ae93bf56192059c99bd75c752dbc34d07a77e4c71c94402cb7b25219b491",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 48,
+      "hasStructuralAnalysis": false
+    },
+    "AGENTS.md": {
+      "filePath": "AGENTS.md",
+      "contentHash": "e3447d84251880fb34cfae09131cb4c57471529bbfe60976a3245793cf621627",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 6,
+      "hasStructuralAnalysis": true
+    },
+    "app/globals.css": {
+      "filePath": "app/globals.css",
+      "contentHash": "accb294e3e5133b5f1a481942ef35736e9b0e90be556055a5c14beec70afa845",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 192,
+      "hasStructuralAnalysis": false
+    },
+    "app/layout.tsx": {
+      "filePath": "app/layout.tsx",
+      "contentHash": "2b950bdcba43336c912ea54762c7356a02c3fc018b0f6311ce71a9950b3bdcbc",
+      "functions": [
+        {
+          "name": "RootLayout",
+          "params": [
+            "{ children }"
+          ],
+          "exported": true,
+          "lineCount": 7
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "next",
+          "specifiers": [
+            "Metadata"
+          ]
+        },
+        {
+          "source": "./globals.css",
+          "specifiers": []
+        }
+      ],
+      "exports": [
+        "metadata",
+        "RootLayout"
+      ],
+      "totalLines": 17,
+      "hasStructuralAnalysis": true
+    },
+    "app/page.tsx": {
+      "filePath": "app/page.tsx",
+      "contentHash": "c4603499ed22286f7a3d629c9dab571e25d763e8c87d5dab4a8d2f7308d5c08c",
+      "functions": [
+        {
+          "name": "Home",
+          "params": [],
+          "exported": true,
+          "lineCount": 7
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "@/components/ClientRoot",
+          "specifiers": [
+            "ClientRoot"
+          ]
+        }
+      ],
+      "exports": [
+        "Home"
+      ],
+      "totalLines": 10,
+      "hasStructuralAnalysis": true
+    },
+    "CLAUDE.md": {
+      "filePath": "CLAUDE.md",
+      "contentHash": "8677874526a4498ee41c6e38e776550c8712d5483e85bb3790398e93e5532df8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 57,
+      "hasStructuralAnalysis": true
+    },
+    "components/canvas/Animator.tsx": {
+      "filePath": "components/canvas/Animator.tsx",
+      "contentHash": "c5d0475d2004194d1c25e97e0c2b2b9bcbae46ff6037e39f28aff05f13587eab",
+      "functions": [
+        {
+          "name": "Animator",
+          "params": [
+            "{ earthGroupRef, earthMeshRef, earthMaterialRef, worldGroupRef, moonGroupRef, moonInclinationGroupRef }"
+          ],
+          "exported": true,
+          "lineCount": 105
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useContext"
+          ]
+        },
+        {
+          "source": "@react-three/fiber",
+          "specifiers": [
+            "useFrame"
+          ]
+        },
+        {
+          "source": "three",
+          "specifiers": [
+            "* as THREE"
+          ]
+        },
+        {
+          "source": "./SimulationContext",
+          "specifiers": [
+            "SimulationContext"
+          ]
+        },
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        },
+        {
+          "source": "@/lib/orbitalMechanics",
+          "specifiers": [
+            "getEarthOrbitalPosition"
+          ]
+        },
+        {
+          "source": "@/lib/constants",
+          "specifiers": [
+            "DAYS_PER_SECOND_BASE",
+            "TWO_PI_PER_SIDEREAL_SECOND",
+            "MOON_ORBIT_RADIUS",
+            "MOON_SIDEREAL_PERIOD_DAYS",
+            "MOON_INCLINATION_RAD",
+            "MOON_NODAL_PRECESSION_YEARS"
+          ]
+        }
+      ],
+      "exports": [
+        "Animator"
+      ],
+      "totalLines": 136,
+      "hasStructuralAnalysis": true
+    },
+    "components/canvas/Annotations.tsx": {
+      "filePath": "components/canvas/Annotations.tsx",
+      "contentHash": "c453a316eda53f1f75d9b7f26013fa8dbe624a2b31b89e8c5f83ddd0131c3a4f",
+      "functions": [
+        {
+          "name": "Annotations",
+          "params": [],
+          "exported": true,
+          "lineCount": 37
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "@react-three/drei",
+          "specifiers": [
+            "Html"
+          ]
+        },
+        {
+          "source": "react",
+          "specifiers": [
+            "useMemo"
+          ]
+        },
+        {
+          "source": "@/lib/orbitalMechanics",
+          "specifiers": [
+            "getSolsticeEquinoxEvents",
+            "getEarthOrbitalPosition"
+          ]
+        },
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        }
+      ],
+      "exports": [
+        "Annotations"
+      ],
+      "totalLines": 59,
+      "hasStructuralAnalysis": true
+    },
+    "components/canvas/Earth.tsx": {
+      "filePath": "components/canvas/Earth.tsx",
+      "contentHash": "4d66353414f43c36f84b0f9b21e2a6641a359cbf4ac23cd4aa810ac187fb16e2",
+      "functions": [
+        {
+          "name": "Earth",
+          "params": [
+            "{ groupRef, meshRef, materialRef, isVisible, onReady, children }"
+          ],
+          "exported": true,
+          "lineCount": 63
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useEffect",
+            "useMemo"
+          ]
+        },
+        {
+          "source": "@react-three/drei",
+          "specifiers": [
+            "useTexture",
+            "Line"
+          ]
+        },
+        {
+          "source": "three",
+          "specifiers": [
+            "* as THREE"
+          ]
+        },
+        {
+          "source": "@/lib/constants",
+          "specifiers": [
+            "EARTH_RADIUS",
+            "EARTH_AXIS_LENGTH",
+            "AXIAL_TILT_RAD"
+          ]
+        },
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        },
+        {
+          "source": "@/lib/usePlanetDrag",
+          "specifiers": [
+            "usePlanetDrag"
+          ]
+        },
+        {
+          "source": "@/lib/shaders/earth.vert",
+          "specifiers": [
+            "earthVert"
+          ]
+        },
+        {
+          "source": "@/lib/shaders/earth.frag",
+          "specifiers": [
+            "earthFrag"
+          ]
+        }
+      ],
+      "exports": [
+        "Earth"
+      ],
+      "totalLines": 84,
+      "hasStructuralAnalysis": true
+    },
+    "components/canvas/ErrorBoundary.tsx": {
+      "filePath": "components/canvas/ErrorBoundary.tsx",
+      "contentHash": "b847f39d92d50e50a3e4bd0ec81807f95eaae329181a40edac989dd8ea5ac8e3",
+      "functions": [],
+      "classes": [
+        {
+          "name": "CanvasErrorBoundary",
+          "methods": [
+            "getDerivedStateFromError",
+            "componentDidCatch",
+            "render"
+          ],
+          "properties": [
+            "state"
+          ],
+          "exported": true,
+          "lineCount": 32
+        }
+      ],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "Component",
+            "ReactNode"
+          ]
+        }
+      ],
+      "exports": [
+        "CanvasErrorBoundary"
+      ],
+      "totalLines": 46,
+      "hasStructuralAnalysis": true
+    },
+    "components/canvas/Moon.tsx": {
+      "filePath": "components/canvas/Moon.tsx",
+      "contentHash": "e1a0b1574198e40a9dec34d6fb77c702a1eaa61f5ab8d8e0ea462c478cd83969",
+      "functions": [
+        {
+          "name": "Moon",
+          "params": [
+            "{ groupRef, inclinationGroupRef }"
+          ],
+          "exported": true,
+          "lineCount": 43
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useMemo"
+          ]
+        },
+        {
+          "source": "@react-three/drei",
+          "specifiers": [
+            "Line",
+            "useTexture"
+          ]
+        },
+        {
+          "source": "three",
+          "specifiers": [
+            "* as THREE"
+          ]
+        },
+        {
+          "source": "@/lib/constants",
+          "specifiers": [
+            "MOON_RADIUS",
+            "MOON_INCLINATION_RAD",
+            "MOON_AXIAL_TILT_RAD",
+            "MOON_ORBIT_RADIUS"
+          ]
+        },
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        },
+        {
+          "source": "@/lib/usePlanetDrag",
+          "specifiers": [
+            "usePlanetDrag"
+          ]
+        }
+      ],
+      "exports": [
+        "Moon"
+      ],
+      "totalLines": 65,
+      "hasStructuralAnalysis": true
+    },
+    "components/canvas/OrbitPath.tsx": {
+      "filePath": "components/canvas/OrbitPath.tsx",
+      "contentHash": "f9d2da75d8c99de055dd71b884432b78adaa6ce5c97e77036b18a15dd738a271",
+      "functions": [
+        {
+          "name": "OrbitPath",
+          "params": [],
+          "exported": true,
+          "lineCount": 25
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useMemo"
+          ]
+        },
+        {
+          "source": "@react-three/drei",
+          "specifiers": [
+            "Line"
+          ]
+        },
+        {
+          "source": "three",
+          "specifiers": [
+            "* as THREE"
+          ]
+        },
+        {
+          "source": "@/lib/constants",
+          "specifiers": [
+            "SEMI_MAJOR_AXIS",
+            "SEMI_MINOR_AXIS"
+          ]
+        }
+      ],
+      "exports": [
+        "OrbitPath"
+      ],
+      "totalLines": 35,
+      "hasStructuralAnalysis": true
+    },
+    "components/canvas/Scene.tsx": {
+      "filePath": "components/canvas/Scene.tsx",
+      "contentHash": "f210249d5d186d079cf815ce5bad59fda71a29a07ef441b145a416ded263b7d3",
+      "functions": [
+        {
+          "name": "Scene",
+          "params": [
+            "{ isReady, onReady }"
+          ],
+          "exported": true,
+          "lineCount": 64
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useContext",
+            "useMemo",
+            "useRef",
+            "Suspense"
+          ]
+        },
+        {
+          "source": "@react-three/fiber",
+          "specifiers": [
+            "Canvas"
+          ]
+        },
+        {
+          "source": "@react-three/drei",
+          "specifiers": [
+            "OrbitControls"
+          ]
+        },
+        {
+          "source": "three",
+          "specifiers": [
+            "* as THREE"
+          ]
+        },
+        {
+          "source": "@/lib/cameraMath",
+          "specifiers": [
+            "getInitialHeliocentricCameraPosition"
+          ]
+        },
+        {
+          "source": "@/lib/orbitalMechanics",
+          "specifiers": [
+            "getEarthOrbitalPosition"
+          ]
+        },
+        {
+          "source": "./SimulationContext",
+          "specifiers": [
+            "SimulationContext"
+          ]
+        },
+        {
+          "source": "./Animator",
+          "specifiers": [
+            "Animator"
+          ]
+        },
+        {
+          "source": "./Sun",
+          "specifiers": [
+            "Sun"
+          ]
+        },
+        {
+          "source": "./Earth",
+          "specifiers": [
+            "Earth"
+          ]
+        },
+        {
+          "source": "./Moon",
+          "specifiers": [
+            "Moon"
+          ]
+        },
+        {
+          "source": "./OrbitPath",
+          "specifiers": [
+            "OrbitPath"
+          ]
+        },
+        {
+          "source": "./Starfield",
+          "specifiers": [
+            "Starfield"
+          ]
+        },
+        {
+          "source": "./Annotations",
+          "specifiers": [
+            "Annotations"
+          ]
+        },
+        {
+          "source": "./ZoomSync",
+          "specifiers": [
+            "ZoomSync"
+          ]
+        }
+      ],
+      "exports": [
+        "Scene"
+      ],
+      "totalLines": 90,
+      "hasStructuralAnalysis": true
+    },
+    "components/canvas/SimulationContext.ts": {
+      "filePath": "components/canvas/SimulationContext.ts",
+      "contentHash": "abc4e20558263392d23166ee8fcff5015a15b00dd961d985cfa69573aa91d6e2",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "createContext"
+          ]
+        },
+        {
+          "source": "@/lib/orbitalMechanics",
+          "specifiers": [
+            "dateToJulianDay"
+          ]
+        }
+      ],
+      "exports": [
+        "SimulationContext"
+      ],
+      "totalLines": 14,
+      "hasStructuralAnalysis": true
+    },
+    "components/canvas/Starfield.tsx": {
+      "filePath": "components/canvas/Starfield.tsx",
+      "contentHash": "1ab2eb33d1c5ba1e66f8046b66d3625752e8bcaa95069ed8ea587e61a5edbdb4",
+      "functions": [
+        {
+          "name": "mulberry32",
+          "params": [
+            "seed"
+          ],
+          "exported": false,
+          "lineCount": 10
+        },
+        {
+          "name": "Starfield",
+          "params": [],
+          "exported": true,
+          "lineCount": 35
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useMemo"
+          ]
+        }
+      ],
+      "exports": [
+        "Starfield"
+      ],
+      "totalLines": 78,
+      "hasStructuralAnalysis": true
+    },
+    "components/canvas/Sun.tsx": {
+      "filePath": "components/canvas/Sun.tsx",
+      "contentHash": "44afbcd8583bab0aa0c8ec09820db5b60f19cd8dced8030a5063b483be33bfdd",
+      "functions": [
+        {
+          "name": "Sun",
+          "params": [],
+          "exported": true,
+          "lineCount": 43
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useRef",
+            "useMemo",
+            "useEffect"
+          ]
+        },
+        {
+          "source": "@react-three/fiber",
+          "specifiers": [
+            "useFrame"
+          ]
+        },
+        {
+          "source": "@react-three/drei",
+          "specifiers": [
+            "Html"
+          ]
+        },
+        {
+          "source": "three",
+          "specifiers": [
+            "* as THREE"
+          ]
+        },
+        {
+          "source": "@/lib/constants",
+          "specifiers": [
+            "SUN_RADIUS"
+          ]
+        },
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        },
+        {
+          "source": "@/lib/usePlanetDrag",
+          "specifiers": [
+            "usePlanetDrag"
+          ]
+        },
+        {
+          "source": "@/lib/shaders/sunSurface.vert",
+          "specifiers": [
+            "sunSurfaceVert"
+          ]
+        },
+        {
+          "source": "@/lib/shaders/sunSurface.frag",
+          "specifiers": [
+            "sunSurfaceFrag"
+          ]
+        }
+      ],
+      "exports": [
+        "Sun"
+      ],
+      "totalLines": 68,
+      "hasStructuralAnalysis": true
+    },
+    "components/canvas/ZoomSync.tsx": {
+      "filePath": "components/canvas/ZoomSync.tsx",
+      "contentHash": "af9a8a31c99ad377e84439d71a97649ae008ac4e8ba40a4c3f6fa1877e896720",
+      "functions": [
+        {
+          "name": "ZoomSync",
+          "params": [
+            "{ controlsRef }"
+          ],
+          "exported": true,
+          "lineCount": 72
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useContext",
+            "useRef"
+          ]
+        },
+        {
+          "source": "@react-three/fiber",
+          "specifiers": [
+            "useFrame",
+            "useThree"
+          ]
+        },
+        {
+          "source": "three",
+          "specifiers": [
+            "Vector3"
+          ]
+        },
+        {
+          "source": "@/components/canvas/SimulationContext",
+          "specifiers": [
+            "SimulationContext"
+          ]
+        },
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        },
+        {
+          "source": "@/lib/cameraMath",
+          "specifiers": [
+            "getSeasonExplainerCameraPosition",
+            "resetPanToOrigin",
+            "zoomToDistance"
+          ]
+        },
+        {
+          "source": "@/lib/orbitalMechanics",
+          "specifiers": [
+            "getEarthOrbitalPosition"
+          ]
+        },
+        {
+          "source": "@/lib/seasonExplainer",
+          "specifiers": [
+            "getSeasonExplainerEvent"
+          ]
+        }
+      ],
+      "exports": [
+        "ZoomSync"
+      ],
+      "totalLines": 93,
+      "hasStructuralAnalysis": true
+    },
+    "components/ClientRoot.tsx": {
+      "filePath": "components/ClientRoot.tsx",
+      "contentHash": "3456b67453d6eb2686d47044559e6b2a14f1b5a78a5870ccd2adfec26cfd889d",
+      "functions": [
+        {
+          "name": "ClientRoot",
+          "params": [],
+          "exported": true,
+          "lineCount": 32
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useCallback",
+            "useMemo",
+            "useState",
+            "Suspense"
+          ]
+        },
+        {
+          "source": "@/components/canvas/SimulationContext",
+          "specifiers": [
+            "SimulationContext",
+            "SimulationClock"
+          ]
+        },
+        {
+          "source": "@/components/canvas/ErrorBoundary",
+          "specifiers": [
+            "CanvasErrorBoundary"
+          ]
+        },
+        {
+          "source": "@/components/canvas/Scene",
+          "specifiers": [
+            "Scene"
+          ]
+        },
+        {
+          "source": "@/components/hud/HUD",
+          "specifiers": [
+            "HUD"
+          ]
+        },
+        {
+          "source": "@/components/ui/LoadingOverlay",
+          "specifiers": [
+            "LoadingOverlay"
+          ]
+        },
+        {
+          "source": "@/components/ui/TopLeftControls",
+          "specifiers": [
+            "TopLeftControls"
+          ]
+        },
+        {
+          "source": "@/lib/orbitalMechanics",
+          "specifiers": [
+            "dateToJulianDay"
+          ]
+        }
+      ],
+      "exports": [
+        "ClientRoot"
+      ],
+      "totalLines": 44,
+      "hasStructuralAnalysis": true
+    },
+    "components/hud/HemisphereControl.tsx": {
+      "filePath": "components/hud/HemisphereControl.tsx",
+      "contentHash": "42fbd43c3867c85e7ab42ae7f2d2bb440316f3f3e657e9b31d6d8e24e0cab381",
+      "functions": [
+        {
+          "name": "HemisphereControl",
+          "params": [],
+          "exported": true,
+          "lineCount": 32
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        }
+      ],
+      "exports": [
+        "HemisphereControl"
+      ],
+      "totalLines": 37,
+      "hasStructuralAnalysis": true
+    },
+    "components/hud/HUD.tsx": {
+      "filePath": "components/hud/HUD.tsx",
+      "contentHash": "683674f73d4825aed76821942ceca8b4ba72500b5fe90a73fc14a50617c2e4ac",
+      "functions": [
+        {
+          "name": "HUD",
+          "params": [],
+          "exported": true,
+          "lineCount": 66
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useEffect",
+            "useRef"
+          ]
+        },
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        },
+        {
+          "source": "./TimelineSlider",
+          "specifiers": [
+            "TimelineSlider"
+          ]
+        },
+        {
+          "source": "./SpeedControls",
+          "specifiers": [
+            "SpeedControls"
+          ]
+        },
+        {
+          "source": "./PlanetSelector",
+          "specifiers": [
+            "PlanetSelector"
+          ]
+        },
+        {
+          "source": "./HemisphereControl",
+          "specifiers": [
+            "HemisphereControl"
+          ]
+        },
+        {
+          "source": "./LabelsControl",
+          "specifiers": [
+            "LabelsControl"
+          ]
+        }
+      ],
+      "exports": [
+        "HUD"
+      ],
+      "totalLines": 77,
+      "hasStructuralAnalysis": true
+    },
+    "components/hud/LabelsControl.tsx": {
+      "filePath": "components/hud/LabelsControl.tsx",
+      "contentHash": "5770b4191d4317f700473c48547e0c38fa02334d52f952ca3c79420b544f90b7",
+      "functions": [
+        {
+          "name": "LabelsControl",
+          "params": [],
+          "exported": true,
+          "lineCount": 36
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        }
+      ],
+      "exports": [
+        "LabelsControl"
+      ],
+      "totalLines": 41,
+      "hasStructuralAnalysis": true
+    },
+    "components/hud/PlanetSelector.tsx": {
+      "filePath": "components/hud/PlanetSelector.tsx",
+      "contentHash": "5bf7dfadd931e2a74090dea2aa6edcb57b591a2267d0b9aaa112339edd1c8e84",
+      "functions": [
+        {
+          "name": "PlanetSelector",
+          "params": [],
+          "exported": true,
+          "lineCount": 26
+        }
+      ],
+      "classes": [],
+      "imports": [],
+      "exports": [
+        "PlanetSelector"
+      ],
+      "totalLines": 40,
+      "hasStructuralAnalysis": true
+    },
+    "components/hud/SpeedControls.tsx": {
+      "filePath": "components/hud/SpeedControls.tsx",
+      "contentHash": "912656265ae550147543bef1bd016fdb39a214fc221dbc210ef6cfd4fc417fe3",
+      "functions": [
+        {
+          "name": "SpeedSlider",
+          "params": [
+            "{ label, value, min, max, suffix = \"×\", inverted, onChange }"
+          ],
+          "exported": false,
+          "lineCount": 31
+        },
+        {
+          "name": "SpeedControls",
+          "params": [],
+          "exported": true,
+          "lineCount": 40
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        },
+        {
+          "source": "@/lib/constants",
+          "specifiers": [
+            "MAX_ORBIT_SPEED",
+            "MAX_ROTATION_SPEED",
+            "MIN_ZOOM_DISTANCE",
+            "MAX_ZOOM_DISTANCE",
+            "MIN_EARTH_SCALE",
+            "MAX_EARTH_SCALE"
+          ]
+        }
+      ],
+      "exports": [
+        "SpeedControls"
+      ],
+      "totalLines": 95,
+      "hasStructuralAnalysis": true
+    },
+    "components/hud/TimelineSlider.tsx": {
+      "filePath": "components/hud/TimelineSlider.tsx",
+      "contentHash": "8f04a74bfed32bbc19837ce908c136ac1494a669efc823077f5672a930903b5b",
+      "functions": [
+        {
+          "name": "getYearBounds",
+          "params": [],
+          "exported": false,
+          "lineCount": 6
+        },
+        {
+          "name": "TimelineSlider",
+          "params": [],
+          "exported": true,
+          "lineCount": 138
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useRef",
+            "useContext",
+            "useMemo",
+            "useState",
+            "useEffect",
+            "useCallback"
+          ]
+        },
+        {
+          "source": "@/components/canvas/SimulationContext",
+          "specifiers": [
+            "SimulationContext"
+          ]
+        },
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        },
+        {
+          "source": "@/lib/orbitalMechanics",
+          "specifiers": [
+            "dateToJulianDay",
+            "julianDayToDate",
+            "getSolsticeEquinoxEvents"
+          ]
+        }
+      ],
+      "exports": [
+        "TimelineSlider"
+      ],
+      "totalLines": 155,
+      "hasStructuralAnalysis": true
+    },
+    "components/ui/InfoModal.tsx": {
+      "filePath": "components/ui/InfoModal.tsx",
+      "contentHash": "2c9c00d5e7a8131912f3eb2f9d0b3efb8c913de5f11fb5d5ca41797f57109cb8",
+      "functions": [
+        {
+          "name": "InfoModal",
+          "params": [
+            "{ triggerClassName = DEFAULT_TRIGGER_CLASS_NAME, triggerLabel = \"Info\" }"
+          ],
+          "exported": true,
+          "lineCount": 198
+        },
+        {
+          "name": "CacheCompleteToast",
+          "params": [
+            "{ onDone }"
+          ],
+          "exported": false,
+          "lineCount": 23
+        },
+        {
+          "name": "CacheErrorToast",
+          "params": [
+            "{ message, onDone }"
+          ],
+          "exported": false,
+          "lineCount": 24
+        },
+        {
+          "name": "getFocusableElements",
+          "params": [
+            "container"
+          ],
+          "returnType": "HTMLElement[]",
+          "exported": false,
+          "lineCount": 9
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useState",
+            "useEffect",
+            "useCallback",
+            "useRef"
+          ]
+        },
+        {
+          "source": "@/lib/useOfflineStatus",
+          "specifiers": [
+            "useOfflineStatus"
+          ]
+        }
+      ],
+      "exports": [
+        "InfoModal"
+      ],
+      "totalLines": 273,
+      "hasStructuralAnalysis": true
+    },
+    "components/ui/LoadingOverlay.tsx": {
+      "filePath": "components/ui/LoadingOverlay.tsx",
+      "contentHash": "9a3fd4868059694ef66ebdeece82e573b484888c46ac96eeea319edf7459dd3e",
+      "functions": [
+        {
+          "name": "LoadingOverlay",
+          "params": [
+            "{ isReady }"
+          ],
+          "exported": true,
+          "lineCount": 32
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "next/image",
+          "specifiers": [
+            "Image"
+          ]
+        }
+      ],
+      "exports": [
+        "LoadingOverlay"
+      ],
+      "totalLines": 41,
+      "hasStructuralAnalysis": true
+    },
+    "components/ui/TopLeftControls.tsx": {
+      "filePath": "components/ui/TopLeftControls.tsx",
+      "contentHash": "b99b8f03151c10891ae0a5a8e5c5a5fc03cd40266618dc91033048ab884b3d0a",
+      "functions": [
+        {
+          "name": "readHudHeight",
+          "params": [],
+          "returnType": "number",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "isMobileViewport",
+          "params": [],
+          "returnType": "boolean",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "calcExplainerMaxHeight",
+          "params": [
+            "panelEl"
+          ],
+          "returnType": "number",
+          "exported": false,
+          "lineCount": 16
+        },
+        {
+          "name": "TopLeftControls",
+          "params": [],
+          "exported": true,
+          "lineCount": 325
+        },
+        {
+          "name": "getControlButtonClass",
+          "params": [
+            "active"
+          ],
+          "returnType": "string",
+          "exported": false,
+          "lineCount": 9
+        },
+        {
+          "name": "getEventButtonClass",
+          "params": [
+            "active"
+          ],
+          "returnType": "string",
+          "exported": false,
+          "lineCount": 9
+        },
+        {
+          "name": "formatDate",
+          "params": [
+            "date"
+          ],
+          "returnType": "string",
+          "exported": false,
+          "lineCount": 8
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useCallback",
+            "useContext",
+            "useEffect",
+            "useLayoutEffect",
+            "useMemo",
+            "useRef",
+            "useState"
+          ]
+        },
+        {
+          "source": "@/components/canvas/SimulationContext",
+          "specifiers": [
+            "SimulationContext"
+          ]
+        },
+        {
+          "source": "@/components/ui/InfoModal",
+          "specifiers": [
+            "InfoModal"
+          ]
+        },
+        {
+          "source": "@/lib/constants",
+          "specifiers": [
+            "DEFAULT_EARTH_SCALE",
+            "DEFAULT_ZOOM_DISTANCE"
+          ]
+        },
+        {
+          "source": "@/lib/seasonExplainer",
+          "specifiers": [
+            "SEASON_EXPLAINER_SCENE_PRESET",
+            "getSeasonExplainerEvent",
+            "getSeasonExplainerEvents",
+            "getTodayAwareExplainerEvent",
+            "SeasonExplainerEvent",
+            "SeasonExplainerMode",
+            "SolarEventLabel"
+          ]
+        },
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        }
+      ],
+      "exports": [
+        "TopLeftControls"
+      ],
+      "totalLines": 412,
+      "hasStructuralAnalysis": true
+    },
+    "eslint.config.mjs": {
+      "filePath": "eslint.config.mjs",
+      "contentHash": "870f1adccecf3051cbcd9fd307cef51d7633cf510979c181a81f4b1797273493",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "eslint/config",
+          "specifiers": [
+            "defineConfig",
+            "globalIgnores"
+          ]
+        },
+        {
+          "source": "eslint-config-next/core-web-vitals",
+          "specifiers": [
+            "nextVitals"
+          ]
+        },
+        {
+          "source": "eslint-config-next/typescript",
+          "specifiers": [
+            "nextTs"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 19,
+      "hasStructuralAnalysis": true
+    },
+    "lib/cameraMath.ts": {
+      "filePath": "lib/cameraMath.ts",
+      "contentHash": "b76dfe8c4c4ce473fd21521a95d04e67fc73aa8c66b02cb3fc62f800ee0019fb",
+      "functions": [
+        {
+          "name": "pixelToWorldScale",
+          "params": [
+            "fovDeg",
+            "distance",
+            "viewportHeight"
+          ],
+          "returnType": "number",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "applyScreenPan",
+          "params": [
+            "cameraPosition",
+            "target",
+            "cameraMatrixWorld",
+            "dx",
+            "dy",
+            "pixelScale"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "resetPanToOrigin",
+          "params": [
+            "cameraPosition",
+            "target"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "zoomToDistance",
+          "params": [
+            "cameraPosition",
+            "target",
+            "distance"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "getInitialHeliocentricCameraPosition",
+          "params": [
+            "earthPosition",
+            "cameraY",
+            "horizontalDistance"
+          ],
+          "returnType": "[number, number, number]",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "getSeasonExplainerCameraPosition",
+          "params": [
+            "cameraKind",
+            "earthPosition",
+            "distance"
+          ],
+          "returnType": "[number, number, number]",
+          "exported": true,
+          "lineCount": 31
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "three",
+          "specifiers": [
+            "Vector3",
+            "Matrix4"
+          ]
+        },
+        {
+          "source": "./seasonExplainer",
+          "specifiers": [
+            "SeasonExplainerCameraKind"
+          ]
+        }
+      ],
+      "exports": [
+        "pixelToWorldScale",
+        "applyScreenPan",
+        "resetPanToOrigin",
+        "zoomToDistance",
+        "getInitialHeliocentricCameraPosition",
+        "getSeasonExplainerCameraPosition"
+      ],
+      "totalLines": 136,
+      "hasStructuralAnalysis": true
+    },
+    "lib/constants.ts": {
+      "filePath": "lib/constants.ts",
+      "contentHash": "8d38864d418dc2d9bddb1f08f68a4e5462186d657ad1b80e3722a4a64107a80f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [
+        "ECCENTRICITY",
+        "AXIAL_TILT_DEG",
+        "AXIAL_TILT_RAD",
+        "SEMI_MAJOR_AXIS",
+        "SUN_RADIUS",
+        "EARTH_RADIUS",
+        "EARTH_AXIS_LENGTH",
+        "ORBITAL_PERIOD_DAYS",
+        "SIDEREAL_DAY_DAYS",
+        "SIDEREAL_DAY_SECONDS",
+        "TWO_PI_PER_SIDEREAL_SECOND",
+        "PERIHELION_JD_2000",
+        "DAYS_PER_SECOND_BASE",
+        "DEFAULT_ORBIT_SPEED",
+        "DEFAULT_ROTATION_SPEED",
+        "MAX_ORBIT_SPEED",
+        "MAX_ROTATION_SPEED",
+        "MIN_EARTH_SCALE",
+        "MAX_EARTH_SCALE",
+        "DEFAULT_EARTH_SCALE",
+        "MIN_ZOOM_DISTANCE",
+        "MAX_ZOOM_DISTANCE",
+        "DEFAULT_ZOOM_DISTANCE",
+        "SEMI_MINOR_AXIS",
+        "MOON_RADIUS",
+        "MOON_ORBIT_RADIUS",
+        "MOON_SIDEREAL_PERIOD_DAYS",
+        "MOON_INCLINATION_DEG",
+        "MOON_INCLINATION_RAD",
+        "MOON_AXIAL_TILT_DEG",
+        "MOON_AXIAL_TILT_RAD",
+        "MOON_NODAL_PRECESSION_YEARS"
+      ],
+      "totalLines": 52,
+      "hasStructuralAnalysis": true
+    },
+    "lib/orbitalMechanics.ts": {
+      "filePath": "lib/orbitalMechanics.ts",
+      "contentHash": "f3d985091c6a0a05bd1b8681346b4336eed420cbf53099f0f64208af937738b0",
+      "functions": [
+        {
+          "name": "dateToJulianDay",
+          "params": [
+            "date"
+          ],
+          "returnType": "number",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "julianDayToDate",
+          "params": [
+            "jd"
+          ],
+          "returnType": "Date",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "solveKepler",
+          "params": [
+            "M",
+            "e"
+          ],
+          "returnType": "number",
+          "exported": false,
+          "lineCount": 9
+        },
+        {
+          "name": "getEarthOrbitalPosition",
+          "params": [
+            "jd"
+          ],
+          "returnType": "Vector3",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "getSiderealRotationAngle",
+          "params": [
+            "jd"
+          ],
+          "returnType": "number",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "getSolsticeEquinoxEvents",
+          "params": [],
+          "returnType": "{ label: string; jd: number; date: Date }[]",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "getSeasonLabel",
+          "params": [
+            "jd",
+            "hemisphere"
+          ],
+          "returnType": "string",
+          "exported": true,
+          "lineCount": 24
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "three",
+          "specifiers": [
+            "Vector3"
+          ]
+        },
+        {
+          "source": "./constants",
+          "specifiers": [
+            "ECCENTRICITY",
+            "SEMI_MAJOR_AXIS",
+            "ORBITAL_PERIOD_DAYS",
+            "PERIHELION_JD_2000",
+            "SIDEREAL_DAY_DAYS"
+          ]
+        }
+      ],
+      "exports": [
+        "dateToJulianDay",
+        "julianDayToDate",
+        "getEarthOrbitalPosition",
+        "getSiderealRotationAngle",
+        "getSolsticeEquinoxEvents",
+        "getSeasonLabel"
+      ],
+      "totalLines": 113,
+      "hasStructuralAnalysis": true
+    },
+    "lib/seasonExplainer.ts": {
+      "filePath": "lib/seasonExplainer.ts",
+      "contentHash": "f78c34cdcbf7240e3ecce3c6c5199dd307cf6f5c94596c18abae1c3c1a4566a8",
+      "functions": [
+        {
+          "name": "getExplainerEventLabels",
+          "params": [
+            "mode"
+          ],
+          "returnType": "readonly SolarEventLabel[]",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "getSeasonExplainerEvents",
+          "params": [
+            "mode",
+            "hemisphere",
+            "year"
+          ],
+          "returnType": "SeasonExplainerEvent[]",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "getSeasonExplainerEvent",
+          "params": [
+            "label",
+            "hemisphere",
+            "year"
+          ],
+          "returnType": "SeasonExplainerEvent",
+          "exported": true,
+          "lineCount": 31
+        },
+        {
+          "name": "getTodayAwareExplainerEvent",
+          "params": [
+            "mode",
+            "hemisphere",
+            "today"
+          ],
+          "returnType": "SeasonExplainerEvent",
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "getDefinition",
+          "params": [
+            "label"
+          ],
+          "returnType": "SolarEventDefinition",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "startOfUtcDay",
+          "params": [
+            "date"
+          ],
+          "returnType": "Date",
+          "exported": false,
+          "lineCount": 3
+        },
+        {
+          "name": "getViewPreset",
+          "params": [
+            "label"
+          ],
+          "returnType": "SeasonExplainerViewPreset",
+          "exported": false,
+          "lineCount": 9
+        },
+        {
+          "name": "getTitle",
+          "params": [
+            "label",
+            "hemisphere"
+          ],
+          "returnType": "string",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "getSeasonName",
+          "params": [
+            "label",
+            "hemisphere"
+          ],
+          "returnType": "string",
+          "exported": false,
+          "lineCount": 15
+        },
+        {
+          "name": "getSummary",
+          "params": [
+            "label",
+            "hemisphere"
+          ],
+          "returnType": "string",
+          "exported": false,
+          "lineCount": 15
+        },
+        {
+          "name": "getOrbitPrompt",
+          "params": [
+            "label"
+          ],
+          "returnType": "string",
+          "exported": false,
+          "lineCount": 6
+        },
+        {
+          "name": "getTiltPrompt",
+          "params": [
+            "label",
+            "hemisphere"
+          ],
+          "returnType": "string",
+          "exported": false,
+          "lineCount": 15
+        },
+        {
+          "name": "getDaylightPrompt",
+          "params": [
+            "label",
+            "hemisphere"
+          ],
+          "returnType": "string",
+          "exported": false,
+          "lineCount": 15
+        },
+        {
+          "name": "getComparisonLabel",
+          "params": [
+            "label"
+          ],
+          "returnType": "string",
+          "exported": false,
+          "lineCount": 9
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "./orbitalMechanics",
+          "specifiers": [
+            "dateToJulianDay",
+            "getSeasonLabel"
+          ]
+        }
+      ],
+      "exports": [
+        "SEASON_EXPLAINER_SCENE_PRESET",
+        "SOLSTICE_EVENT_LABELS",
+        "EQUINOX_EVENT_LABELS",
+        "getExplainerEventLabels",
+        "getSeasonExplainerEvents",
+        "getSeasonExplainerEvent",
+        "getTodayAwareExplainerEvent"
+      ],
+      "totalLines": 249,
+      "hasStructuralAnalysis": true
+    },
+    "lib/shaders/earth.frag.ts": {
+      "filePath": "lib/shaders/earth.frag.ts",
+      "contentHash": "bff29a8994d0b9a0bbfced3de74e9fe700548e0a209bfd3e22b15163ee15eef6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 40,
+      "hasStructuralAnalysis": true
+    },
+    "lib/shaders/earth.vert.ts": {
+      "filePath": "lib/shaders/earth.vert.ts",
+      "contentHash": "e4ae83dbfde2b16761b6fa559ef7d139d05e0ebce3d68f376af02c028ccfd91b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 29,
+      "hasStructuralAnalysis": true
+    },
+    "lib/shaders/sunSurface.frag.ts": {
+      "filePath": "lib/shaders/sunSurface.frag.ts",
+      "contentHash": "ee707478db3adbba8864e726b7e183b78d089ff3897b7028cc44d06110022958",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 66,
+      "hasStructuralAnalysis": true
+    },
+    "lib/shaders/sunSurface.vert.ts": {
+      "filePath": "lib/shaders/sunSurface.vert.ts",
+      "contentHash": "4dcd77f8784d0c49cc135206573e1f6bff33fc69c82ad71322cbbeb35fafec92",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 48,
+      "hasStructuralAnalysis": true
+    },
+    "lib/useOfflineStatus.ts": {
+      "filePath": "lib/useOfflineStatus.ts",
+      "contentHash": "926c9bde03c46132f14df5de1d0dffef3abdd5df18ae87f96f77052d00a09d67",
+      "functions": [
+        {
+          "name": "subscribeOnline",
+          "params": [
+            "callback"
+          ],
+          "exported": false,
+          "lineCount": 8
+        },
+        {
+          "name": "getOnlineSnapshot",
+          "params": [],
+          "exported": false,
+          "lineCount": 1
+        },
+        {
+          "name": "getServerSnapshot",
+          "params": [],
+          "exported": false,
+          "lineCount": 1
+        },
+        {
+          "name": "useOfflineStatus",
+          "params": [],
+          "returnType": "OfflineStatus",
+          "exported": true,
+          "lineCount": 77
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useState",
+            "useCallback",
+            "useEffect",
+            "useSyncExternalStore"
+          ]
+        }
+      ],
+      "exports": [
+        "useOfflineStatus"
+      ],
+      "totalLines": 110,
+      "hasStructuralAnalysis": true
+    },
+    "lib/usePlanetDrag.ts": {
+      "filePath": "lib/usePlanetDrag.ts",
+      "contentHash": "8fea8038a7957718da7052604a639968ff4b153fbe6505c088eae8dd4e02e657",
+      "functions": [
+        {
+          "name": "usePlanetDrag",
+          "params": [
+            "identity"
+          ],
+          "exported": true,
+          "lineCount": 61
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "react",
+          "specifiers": [
+            "useRef",
+            "useCallback",
+            "useEffect"
+          ]
+        },
+        {
+          "source": "@react-three/fiber",
+          "specifiers": [
+            "useThree"
+          ]
+        },
+        {
+          "source": "@react-three/fiber",
+          "specifiers": [
+            "ThreeEvent"
+          ]
+        },
+        {
+          "source": "three",
+          "specifiers": [
+            "Vector3"
+          ]
+        },
+        {
+          "source": "three",
+          "specifiers": [
+            "PerspectiveCamera"
+          ]
+        },
+        {
+          "source": "@/store/useAppStore",
+          "specifiers": [
+            "useAppStore"
+          ]
+        },
+        {
+          "source": "@/lib/cameraMath",
+          "specifiers": [
+            "pixelToWorldScale",
+            "applyScreenPan"
+          ]
+        }
+      ],
+      "exports": [
+        "usePlanetDrag"
+      ],
+      "totalLines": 87,
+      "hasStructuralAnalysis": true
+    },
+    "next.config.ts": {
+      "filePath": "next.config.ts",
+      "contentHash": "eb339f94d0df2637b42be74fe39f37934c11d8c677a31bfe8b16cc4f0b74c95a",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "next",
+          "specifiers": [
+            "NextConfig"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 6,
+      "hasStructuralAnalysis": true
+    },
+    "package.json": {
+      "filePath": "package.json",
+      "contentHash": "db31e1121536710313f01aa250172e067303679f5d51e215a8a21f9400779652",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 36,
+      "hasStructuralAnalysis": true
+    },
+    "pnpm-workspace.yaml": {
+      "filePath": "pnpm-workspace.yaml",
+      "contentHash": "6f096f437a72ffe947829a23631ecb9992533a8b307f4978e4ebfa27b2318be6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": true
+    },
+    "postcss.config.mjs": {
+      "filePath": "postcss.config.mjs",
+      "contentHash": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 8,
+      "hasStructuralAnalysis": true
+    },
+    "public/manifest.json": {
+      "filePath": "public/manifest.json",
+      "contentHash": "5ec4d3b881f87ab1b9d6a5b8dfcce0788d1bb7e8e42ace9af899047c72156afd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 21,
+      "hasStructuralAnalysis": true
+    },
+    "public/sw.js": {
+      "filePath": "public/sw.js",
+      "contentHash": "082e8502cc1484fb8080dfb3bc2f4a58df1e14b104d3cd57470a0e97f4915136",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 129,
+      "hasStructuralAnalysis": true
+    },
+    "public/textures/.gitkeep": {
+      "filePath": "public/textures/.gitkeep",
+      "contentHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": false
+    },
+    "README.md": {
+      "filePath": "README.md",
+      "contentHash": "8ae99116498665d548021168ae811f161f09ff137a84a4dc3505fae65bb26ccf",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 325,
+      "hasStructuralAnalysis": true
+    },
+    "store/useAppStore.ts": {
+      "filePath": "store/useAppStore.ts",
+      "contentHash": "d7f6ba1917d96f244ebf41d0bb4aed586a3db22353185fc11f7dd29918feca22",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "zustand",
+          "specifiers": [
+            "create"
+          ]
+        },
+        {
+          "source": "@/lib/constants",
+          "specifiers": [
+            "DEFAULT_ORBIT_SPEED",
+            "DEFAULT_ROTATION_SPEED",
+            "MAX_ORBIT_SPEED",
+            "MAX_ROTATION_SPEED",
+            "MIN_ZOOM_DISTANCE",
+            "MAX_ZOOM_DISTANCE",
+            "DEFAULT_ZOOM_DISTANCE",
+            "MIN_EARTH_SCALE",
+            "MAX_EARTH_SCALE",
+            "DEFAULT_EARTH_SCALE"
+          ]
+        },
+        {
+          "source": "@/lib/seasonExplainer",
+          "specifiers": [
+            "SeasonExplainerMode",
+            "SolarEventLabel"
+          ]
+        }
+      ],
+      "exports": [
+        "useAppStore"
+      ],
+      "totalLines": 60,
+      "hasStructuralAnalysis": true
+    },
+    "tsconfig.json": {
+      "filePath": "tsconfig.json",
+      "contentHash": "cece4b208429ddb90cb60f8e47cd9c1fafd1c502d76beed649ce61138e48e1d7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 36,
+      "hasStructuralAnalysis": true
+    },
+    "vercel.json": {
+      "filePath": "vercel.json",
+      "contentHash": "65e52b59d62b318c5a11c8c298834d01d800ee15f898ef6b281ec0a06c0f46ec",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 14,
+      "hasStructuralAnalysis": true
+    },
+    "vitest.config.ts": {
+      "filePath": "vitest.config.ts",
+      "contentHash": "f241d92ae63fac8260cef35274cea36d2e4ce175a9f2ac0738e17f202e256e8c",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "vitest/config",
+          "specifiers": [
+            "defineConfig"
+          ]
+        },
+        {
+          "source": "path",
+          "specifiers": [
+            "path"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 15,
+      "hasStructuralAnalysis": true
+    },
+    "WORKING_MEMORY.md": {
+      "filePath": "WORKING_MEMORY.md",
+      "contentHash": "75480cbdbc5dfbe770c3b22f2a686787b02e8a5cb83066be9b9dd7ee4212c825",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 99,
+      "hasStructuralAnalysis": true
+    }
+  }
+}

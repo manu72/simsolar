@@ -49,3 +49,7 @@ next-env.d.ts
 .superpowers/
 docs/superpowers/
 /docs/*
+
+# understand-anything analysis artifacts (ephemeral)
+.understand-anything/intermediate/
+.understand-anything/tmp/
