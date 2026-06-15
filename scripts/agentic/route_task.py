@@ -284,7 +284,9 @@ def build_bundle(
         add_path(p, "user-named")
 
     terms = task_terms(task)
-    if graph and graph_available:
+    if graph and (graph_available or fallback_active):
+        search_reason = "graph search" if graph_available else "codemap search"
+        anchor_reason = "graph anchor" if graph_available else "codemap anchor"
         by_id, adjacency, file_by_path = index_graph(graph)
         if explicit:
             for p in explicit:
@@ -293,8 +295,8 @@ def build_bundle(
                     graph_nodes.append(nid)
             for p, reason in expand_dependencies(explicit, by_id, adjacency, file_by_path, MAX_PATHS):
                 add_path(p, reason)
-        for p, reason, _score in graph_search(graph, terms, MAX_PATHS):
-            add_path(p, reason)
+        for p, _reason, _score in graph_search(graph, terms, MAX_PATHS):
+            add_path(p, search_reason)
             nid = file_by_path.get(p)
             if nid and nid not in graph_nodes:
                 graph_nodes.append(nid)
@@ -303,7 +305,7 @@ def build_bundle(
                 if node.get("name") == sym or sym in str(node.get("id", "")):
                     fp = node_to_path(node)
                     if fp:
-                        add_path(fp, "graph anchor")
+                        add_path(fp, anchor_reason)
                         nid = node.get("id")
                         if isinstance(nid, str) and nid not in graph_nodes:
                             graph_nodes.append(nid)
