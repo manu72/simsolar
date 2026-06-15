@@ -216,7 +216,7 @@ export function TopLeftControls() {
 
   // ── Mobile panel classes ────────────────────────────────────────────
   const mobilePanelClasses = selectedEvent
-    ? 'fixed inset-x-3 top-3 bottom-[calc(var(--hud-height,8rem)+0.75rem)] z-60 rounded-t-2xl w-auto sm:relative sm:top-auto sm:bottom-auto sm:left-auto sm:right-auto sm:z-50 sm:w-[min(23rem,calc(100vw-1.5rem))]'
+    ? 'fixed inset-x-3 top-3 bottom-[calc(var(--hud-height,8rem)+0.75rem)] z-60 rounded-t-2xl w-auto sm:relative sm:mt-1 sm:top-auto sm:bottom-auto sm:left-auto sm:right-auto sm:z-50 sm:w-[min(23rem,calc(100vw-1.5rem))]'
     : ''
 
   // Button visibility when drawer is open on mobile — only wrap buttons, not the panel
@@ -261,7 +261,7 @@ export function TopLeftControls() {
           {/* Panel */}
           <div
             ref={panelRef}
-            className={`mt-1 relative flex flex-col min-h-0 overflow-hidden w-[min(23rem,calc(100vw-1.5rem))] rounded-2xl border border-(--color-explainer-border)
+            className={`flex flex-col min-h-0 overflow-hidden rounded-2xl border border-(--color-explainer-border)
               bg-(--color-explainer-surface) text-(--color-explainer-text) shadow-2xl shadow-black/40
               backdrop-blur-md sm:p-5 ${mobilePanelClasses}`}
             aria-labelledby="season-explainer-title"
