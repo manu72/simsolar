@@ -1,11 +1,17 @@
 import { describe, it, expect } from 'vitest'
 import { Vector3, PerspectiveCamera } from 'three'
 import {
+  AXIAL_TILT_RAD,
+} from '@/lib/constants'
+import { getEarthOrbitalPosition } from '@/lib/orbitalMechanics'
+import { SEASON_EXPLAINER_SCENE_PRESET, getSeasonExplainerEvent } from '@/lib/seasonExplainer'
+import {
   pixelToWorldScale,
   applyScreenPan,
   resetPanToOrigin,
   zoomToDistance,
   getInitialHeliocentricCameraPosition,
+  getSeasonExplainerCameraPosition,
 } from '@/lib/cameraMath'
 
 // ---------------------------------------------------------------------------
@@ -287,5 +293,106 @@ describe('getInitialHeliocentricCameraPosition', () => {
 
     expect(cameraPosition.y).toBe(80)
     expect(Math.hypot(cameraPosition.x, cameraPosition.z)).toBeCloseTo(392, 6)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// getSeasonExplainerCameraPosition
+// ---------------------------------------------------------------------------
+
+describe('getSeasonExplainerCameraPosition', () => {
+  const earthPosition = new Vector3(120, 0, -180)
+  const distance = 150
+
+  function makeExplainerCamera(cameraPosition: Vector3, aspect = 16 / 9) {
+    const camera = new PerspectiveCamera(45, aspect, 0.1, 1000)
+    camera.position.copy(cameraPosition)
+    camera.lookAt(0, 0, 0)
+    camera.updateMatrixWorld(true)
+    camera.updateProjectionMatrix()
+    return camera
+  }
+
+  it('returns finite coordinates at the requested distance', () => {
+    const cameraPosition = new Vector3(
+      ...getSeasonExplainerCameraPosition('solstice-fixed', earthPosition, distance),
+    )
+
+    expect(cameraPosition.distanceTo(new Vector3(0, 0, 0))).toBeCloseTo(distance, 6)
+    expect(cameraPosition.toArray().every(Number.isFinite)).toBe(true)
+  })
+
+  it('returns stable output for the same preset and Earth position', () => {
+    const first = getSeasonExplainerCameraPosition('equinox-side', earthPosition, distance)
+    const second = getSeasonExplainerCameraPosition('equinox-side', earthPosition, distance)
+
+    expect(second).toEqual(first)
+  })
+
+  it('uses distinct directions for solstice and equinox teaching views', () => {
+    const solstice = new Vector3(
+      ...getSeasonExplainerCameraPosition('solstice-fixed', earthPosition, distance),
+    ).normalize()
+    const equinox = new Vector3(
+      ...getSeasonExplainerCameraPosition('equinox-side', earthPosition, distance),
+    ).normalize()
+
+    expect(solstice.dot(equinox)).toBeLessThan(0.98)
+  })
+
+  it('keeps the solstice camera direction fixed across opposite Earth positions', () => {
+    const juneDirection = getSeasonExplainerCameraPosition('solstice-fixed', new Vector3(-200, 0, 45), distance)
+    const decemberDirection = getSeasonExplainerCameraPosition('solstice-fixed', new Vector3(200, 0, -45), distance)
+
+    expect(decemberDirection).toEqual(juneDirection)
+  })
+
+  it('places June and December solstice Suns on opposite sides of the centered Earth', () => {
+    const june = getSeasonExplainerEvent('June Solstice', 'south', 2026)
+    const december = getSeasonExplainerEvent('December Solstice', 'south', 2026)
+    const juneEarthPosition = getEarthOrbitalPosition(june.jd)
+    const decemberEarthPosition = getEarthOrbitalPosition(december.jd)
+    const juneCameraPosition = new Vector3(
+      ...getSeasonExplainerCameraPosition(
+        june.viewPreset.cameraKind,
+        juneEarthPosition,
+        june.viewPreset.zoomDistance,
+      ),
+    )
+    const decemberCameraPosition = new Vector3(
+      ...getSeasonExplainerCameraPosition(
+        december.viewPreset.cameraKind,
+        decemberEarthPosition,
+        december.viewPreset.zoomDistance,
+      ),
+    )
+    const juneCamera = makeExplainerCamera(juneCameraPosition)
+    const decemberCamera = makeExplainerCamera(decemberCameraPosition)
+    const juneSunProjection = juneEarthPosition.clone().negate().project(juneCamera)
+    const decemberSunProjection = decemberEarthPosition.clone().negate().project(decemberCamera)
+
+    expect(juneSunProjection.x).toBeLessThan(0)
+    expect(decemberSunProjection.x).toBeGreaterThan(0)
+    expect(juneSunProjection.y).toBeCloseTo(0, 6)
+    expect(decemberSunProjection.y).toBeCloseTo(0, 6)
+  })
+
+  it('projects the solstice axis with the north pole leaning left at the axial tilt angle', () => {
+    const cameraPosition = new Vector3(
+      ...getSeasonExplainerCameraPosition(
+        'solstice-fixed',
+        earthPosition,
+        SEASON_EXPLAINER_SCENE_PRESET.zoomDistance,
+      ),
+    )
+    const aspect = 16 / 9
+    const camera = makeExplainerCamera(cameraPosition, aspect)
+    const northPole = new Vector3(Math.sin(AXIAL_TILT_RAD), Math.cos(AXIAL_TILT_RAD), 0).project(camera)
+    const southPole = new Vector3(-Math.sin(AXIAL_TILT_RAD), -Math.cos(AXIAL_TILT_RAD), 0).project(camera)
+    const dx = (southPole.x - northPole.x) * aspect
+    const dy = northPole.y - southPole.y
+
+    expect(northPole.x).toBeLessThan(southPole.x)
+    expect(Math.atan2(Math.abs(dx), Math.abs(dy))).toBeCloseTo(AXIAL_TILT_RAD, 3)
   })
 })

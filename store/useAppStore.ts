@@ -52,7 +52,7 @@ export const useAppStore = create<AppState>((set) => ({
   setHemisphere: (h) => set({ hemisphere: h }),
   setZoomDistance: (v) => set({ zoomDistance: Math.max(MIN_ZOOM_DISTANCE, Math.min(MAX_ZOOM_DISTANCE, v)) }),
   setEarthScale: (v) => set({ earthScale: Math.max(MIN_EARTH_SCALE, Math.min(MAX_EARTH_SCALE, v)) }),
-  setFocusTarget: (target) => set(s => s.focusTarget === target ? {} : { focusTarget: target }),
+  setFocusTarget: (target) => set(s => s.focusTarget === target ? s : { focusTarget: target }),
   setActiveSeasonExplainer: (explainer) => set({ activeSeasonExplainer: explainer }),
   clearActiveSeasonExplainer: () => set({ activeSeasonExplainer: null }),
   setShowOrbitalLabels: (v) => set({ showOrbitalLabels: v }),

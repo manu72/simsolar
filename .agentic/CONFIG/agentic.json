@@ -1,0 +1,64 @@
+{
+  "version": 2,
+  "graph": {
+    "provider": "understand-anything",
+    "path": ".agentic/GRAPH/knowledge-graph.json",
+    "required": true,
+    "fallback": "codemap"
+  },
+  "paths": {
+    "memory_root": ".agentic",
+    "scripts_root": "scripts/agentic",
+    "context_cache": ".agentic/CONTEXT/last_context.json"
+  },
+  "ignore_globs": [
+    "**/node_modules/**",
+    "**/.venv/**",
+    "**/venv/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/.cache/**",
+    "**/.git/**",
+    "**/__pycache__/**",
+    "**/*.lock",
+    "**/coverage/**",
+    "**/.pnpm-store/**",
+    "**/.pnpm/**",
+    "**/vendor/**",
+    "**/.parcel-cache/**",
+    "**/.vite/**",
+    "**/.pytest_cache/**",
+    "**/.mypy_cache/**",
+    "**/.ruff_cache/**",
+    "**/.DS_Store"
+  ],
+  "test_discovery": [
+    "**/tests/**",
+    "**/__tests__/**",
+    "**/*.test.*",
+    "**/*_test.*",
+    "**/test_*.py"
+  ],
+  "high_risk_patterns": [
+    { "match": "**/auth/**", "tags": ["security", "authn"] },
+    { "match": "**/billing/**", "tags": ["money", "compliance"] },
+    { "match": "**/payments/**", "tags": ["money", "compliance"] },
+    { "match": "**/migrations/**", "tags": ["data-integrity"] },
+    { "match": "**/alembic/**", "tags": ["data-integrity"] },
+    { "match": "**/secrets/**", "tags": ["secrets"] },
+    { "match": "**/infra/**", "tags": ["infra"] }
+  ],
+  "freshness_rules": {
+    "graph_max_age_hours": 168,
+    "memory_max_age_days": 30
+  },
+  "validation": {
+    "require_region_markers": true,
+    "sample_path_check_count": 5
+  },
+  "generated_artifacts": [
+    ".agentic/CONTEXT/last_context.json"
+  ]
+}

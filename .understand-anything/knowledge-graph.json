@@ -1,0 +1,3342 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "solarsim",
+    "languages": [
+      "css",
+      "javascript",
+      "json",
+      "markdown",
+      "typescript",
+      "unknown",
+      "yaml"
+    ],
+    "frameworks": [
+      "Next.js",
+      "React",
+      "Tailwind CSS",
+      "Vitest",
+      "Zustand"
+    ],
+    "description": "Interactive 3D solar system visualisation for solstice and equinox education. Built with a southern hemisphere default perspective, SolarSim renders Keplerian orbital mechanics in the browser using WebGL shaders, letting users scrub through a full year to observe how Earth's axial tilt creates the seasons.",
+    "analyzedAt": "2026-06-15T00:37:20.614Z",
+    "gitCommitHash": "d442a367bada2df8ce8ce1cd63ec03544089d997"
+  },
+  "nodes": [
+    {
+      "id": "file:components/canvas/Animator.tsx",
+      "type": "file",
+      "name": "Animator.tsx",
+      "filePath": "components/canvas/Animator.tsx",
+      "summary": "R3F useFrame driver that advances the shared SimulationClock, positions Earth and Moon for all three focus modes, and updates Earth shader sun-direction uniforms each frame.",
+      "tags": [
+        "component",
+        "animation",
+        "orbital-mechanics",
+        "react-three-fiber"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Reads Zustand state via getState() inside useFrame to avoid React re-renders in the render loop."
+    },
+    {
+      "id": "function:components/canvas/Animator.tsx:Animator",
+      "type": "function",
+      "name": "Animator",
+      "filePath": "components/canvas/Animator.tsx",
+      "lineRange": [
+        31,
+        135
+      ],
+      "summary": "Per-frame animation hook that integrates orbital and rotation speeds, switches reference frames for sun/earth/moon focus, and drives Moon nodal precession and tidal locking.",
+      "tags": [
+        "component",
+        "animation",
+        "hook",
+        "orbital-mechanics"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:components/canvas/Annotations.tsx",
+      "type": "file",
+      "name": "Annotations.tsx",
+      "filePath": "components/canvas/Annotations.tsx",
+      "summary": "Renders solstice and equinox event markers along Earth's orbital path, positioned from the active simulation year in the Zustand store.",
+      "tags": [
+        "component",
+        "annotation",
+        "seasons",
+        "react-three-fiber"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/canvas/Annotations.tsx:Annotations",
+      "type": "function",
+      "name": "Annotations",
+      "filePath": "components/canvas/Annotations.tsx",
+      "lineRange": [
+        22,
+        58
+      ],
+      "summary": "Memoizes solstice/equinox events for the current year and draws labeled markers at corresponding orbital positions in the 3D scene.",
+      "tags": [
+        "component",
+        "annotation",
+        "seasons"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/canvas/Earth.tsx",
+      "type": "file",
+      "name": "Earth.tsx",
+      "filePath": "components/canvas/Earth.tsx",
+      "summary": "Three.js Earth body with custom day/night shader material, texture loading, click-to-focus interaction, and optional drag repositioning.",
+      "tags": [
+        "component",
+        "planet",
+        "shader",
+        "react-three-fiber"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/canvas/Earth.tsx:Earth",
+      "type": "function",
+      "name": "Earth",
+      "filePath": "components/canvas/Earth.tsx",
+      "lineRange": [
+        21,
+        83
+      ],
+      "summary": "Builds the Earth mesh group with ShaderMaterial uniforms, handles pointer focus selection, and exposes refs for the Animator to drive position and rotation.",
+      "tags": [
+        "component",
+        "planet",
+        "shader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/canvas/Moon.tsx",
+      "type": "file",
+      "name": "Moon.tsx",
+      "filePath": "components/canvas/Moon.tsx",
+      "summary": "Renders the Moon mesh with a local orbit-path guide, click-to-focus handling, and drag support via shared planet-drag hook.",
+      "tags": [
+        "component",
+        "planet",
+        "moon",
+        "react-three-fiber"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/canvas/Moon.tsx:Moon",
+      "type": "function",
+      "name": "Moon",
+      "filePath": "components/canvas/Moon.tsx",
+      "lineRange": [
+        22,
+        64
+      ],
+      "summary": "Creates the Moon sphere with texture and a faint elliptical path line, wiring pointer events to switch focus target to the Moon.",
+      "tags": [
+        "component",
+        "planet",
+        "moon"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/canvas/OrbitPath.tsx",
+      "type": "file",
+      "name": "OrbitPath.tsx",
+      "filePath": "components/canvas/OrbitPath.tsx",
+      "summary": "Draws Earth's elliptical orbital path as a semi-transparent line loop derived from Keplerian orbital constants.",
+      "tags": [
+        "component",
+        "visualization",
+        "orbit",
+        "react-three-fiber"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/canvas/OrbitPath.tsx:OrbitPath",
+      "type": "function",
+      "name": "OrbitPath",
+      "filePath": "components/canvas/OrbitPath.tsx",
+      "lineRange": [
+        10,
+        34
+      ],
+      "summary": "Memoizes elliptical curve sample points and renders them as a Line geometry for Earth's heliocentric orbit visualization.",
+      "tags": [
+        "component",
+        "visualization",
+        "orbit"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/canvas/Scene.tsx",
+      "type": "file",
+      "name": "Scene.tsx",
+      "filePath": "components/canvas/Scene.tsx",
+      "summary": "Root React Three Fiber Canvas that composes the solar-system bodies, orbit annotations, starfield, Animator, and camera zoom sync into the interactive 3D scene.",
+      "tags": [
+        "component",
+        "entry-point",
+        "scene",
+        "react-three-fiber"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/canvas/Scene.tsx:Scene",
+      "type": "function",
+      "name": "Scene",
+      "filePath": "components/canvas/Scene.tsx",
+      "lineRange": [
+        26,
+        89
+      ],
+      "summary": "Sets up shared Three.js refs, OrbitControls, lighting, and nests Sun, Earth, Moon, and helper components inside the simulation context provider.",
+      "tags": [
+        "component",
+        "scene",
+        "composition"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/canvas/SimulationContext.ts",
+      "type": "file",
+      "name": "SimulationContext.ts",
+      "filePath": "components/canvas/SimulationContext.ts",
+      "summary": "Defines and exports the React context that holds the mutable SimulationClock (Julian day and rotation angle) shared across canvas components.",
+      "tags": [
+        "context",
+        "state",
+        "simulation-clock",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/canvas/Starfield.tsx",
+      "type": "file",
+      "name": "Starfield.tsx",
+      "filePath": "components/canvas/Starfield.tsx",
+      "summary": "Procedurally generates a seeded spherical starfield background using a mulberry32 PRNG and renders it as a Three.js Points cloud.",
+      "tags": [
+        "component",
+        "background",
+        "procedural",
+        "react-three-fiber"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/canvas/Starfield.tsx:Starfield",
+      "type": "function",
+      "name": "Starfield",
+      "filePath": "components/canvas/Starfield.tsx",
+      "lineRange": [
+        43,
+        77
+      ],
+      "summary": "Memoizes star positions on a large sphere and renders them as a single Points object for the scene backdrop.",
+      "tags": [
+        "component",
+        "background",
+        "procedural"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/canvas/Sun.tsx",
+      "type": "file",
+      "name": "Sun.tsx",
+      "filePath": "components/canvas/Sun.tsx",
+      "summary": "Renders the Sun as an emissive mesh with a subtle corona glow sprite, pointer focus selection, and optional drag repositioning.",
+      "tags": [
+        "component",
+        "planet",
+        "light-source",
+        "react-three-fiber"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/canvas/Sun.tsx:Sun",
+      "type": "function",
+      "name": "Sun",
+      "filePath": "components/canvas/Sun.tsx",
+      "lineRange": [
+        25,
+        67
+      ],
+      "summary": "Creates the Sun sphere and glow billboard, animates gentle pulsing via useFrame, and wires click events to sun-centric focus mode.",
+      "tags": [
+        "component",
+        "planet",
+        "light-source"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/canvas/ZoomSync.tsx",
+      "type": "file",
+      "name": "ZoomSync.tsx",
+      "filePath": "components/canvas/ZoomSync.tsx",
+      "summary": "Bidirectionally syncs OrbitControls camera distance with the Zustand zoom store and applies season-explainer camera presets when active.",
+      "tags": [
+        "component",
+        "camera",
+        "controls",
+        "react-three-fiber"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/canvas/ZoomSync.tsx:ZoomSync",
+      "type": "function",
+      "name": "ZoomSync",
+      "filePath": "components/canvas/ZoomSync.tsx",
+      "lineRange": [
+        21,
+        92
+      ],
+      "summary": "Runs each frame to mirror zoom distance to/from the store, reset pan on focus changes, and snap the camera for season explainer events.",
+      "tags": [
+        "component",
+        "camera",
+        "controls"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/hud/HUD.tsx",
+      "type": "file",
+      "name": "HUD.tsx",
+      "filePath": "components/hud/HUD.tsx",
+      "summary": "Root overlay HUD composing the timeline slider, playback toggle, and control panels; publishes a --hud-height CSS variable via ResizeObserver for layout sync with the explainer panel.",
+      "tags": [
+        "component",
+        "overlay",
+        "layout",
+        "composition",
+        "event-handler"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Client component using ResizeObserver and a custom DOM event to broadcast HUD height without React state."
+    },
+    {
+      "id": "file:components/hud/HemisphereControl.tsx",
+      "type": "file",
+      "name": "HemisphereControl.tsx",
+      "filePath": "components/hud/HemisphereControl.tsx",
+      "summary": "Toggle control for switching the simulation between northern and southern hemisphere perspectives via Zustand store state.",
+      "tags": [
+        "component",
+        "control",
+        "hemisphere",
+        "zustand"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/hud/LabelsControl.tsx",
+      "type": "file",
+      "name": "LabelsControl.tsx",
+      "filePath": "components/hud/LabelsControl.tsx",
+      "summary": "On/off toggle for orbital path labels in the 3D scene, wired to showOrbitalLabels in the app store with accessible aria-pressed buttons.",
+      "tags": [
+        "component",
+        "control",
+        "labels",
+        "accessibility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/hud/PlanetSelector.tsx",
+      "type": "file",
+      "name": "PlanetSelector.tsx",
+      "filePath": "components/hud/PlanetSelector.tsx",
+      "summary": "Visual planet picker showing all eight solar system bodies; only Earth is active, with others disabled as Phase 2 placeholders.",
+      "tags": [
+        "component",
+        "selector",
+        "planets",
+        "placeholder"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/hud/SpeedControls.tsx",
+      "type": "file",
+      "name": "SpeedControls.tsx",
+      "filePath": "components/hud/SpeedControls.tsx",
+      "summary": "Row of range sliders adjusting orbit speed, rotation speed, camera zoom, and Earth scale through Zustand, using shared constants for min/max bounds.",
+      "tags": [
+        "component",
+        "control",
+        "sliders",
+        "simulation-speed"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/hud/TimelineSlider.tsx",
+      "type": "file",
+      "name": "TimelineSlider.tsx",
+      "filePath": "components/hud/TimelineSlider.tsx",
+      "summary": "Year-scoped Julian-day timeline with season colour bands and solstice/equinox tick marks; scrubs the mutable simulation clock and pauses playback during drag.",
+      "tags": [
+        "component",
+        "timeline",
+        "orbital-mechanics",
+        "seasons"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Polls SimulationContext on an interval to avoid coupling R3F useFrame to React DOM updates."
+    },
+    {
+      "id": "function:components/hud/HUD.tsx:HUD",
+      "type": "function",
+      "name": "HUD",
+      "filePath": "components/hud/HUD.tsx",
+      "lineRange": [
+        11,
+        76
+      ],
+      "summary": "Renders the fixed bottom HUD shell with play/pause and child controls, and sets up ResizeObserver to publish --hud-height and dispatch solar:hud-height events.",
+      "tags": [
+        "component",
+        "composition",
+        "layout",
+        "event-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/hud/HemisphereControl.tsx:HemisphereControl",
+      "type": "function",
+      "name": "HemisphereControl",
+      "filePath": "components/hud/HemisphereControl.tsx",
+      "lineRange": [
+        5,
+        36
+      ],
+      "summary": "Renders north/south hemisphere toggle buttons bound to hemisphere and setHemisphere store selectors.",
+      "tags": [
+        "component",
+        "control",
+        "hemisphere"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/hud/LabelsControl.tsx:LabelsControl",
+      "type": "function",
+      "name": "LabelsControl",
+      "filePath": "components/hud/LabelsControl.tsx",
+      "lineRange": [
+        5,
+        40
+      ],
+      "summary": "Renders On/Off buttons that toggle showOrbitalLabels in the app store for 3D annotation visibility.",
+      "tags": [
+        "component",
+        "control",
+        "labels"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/hud/PlanetSelector.tsx:PlanetSelector",
+      "type": "function",
+      "name": "PlanetSelector",
+      "filePath": "components/hud/PlanetSelector.tsx",
+      "lineRange": [
+        14,
+        39
+      ],
+      "summary": "Maps a static PLANETS array to coloured circular buttons, enabling only Earth and disabling future planets with tooltips.",
+      "tags": [
+        "component",
+        "selector",
+        "planets"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/hud/SpeedControls.tsx:SpeedSlider",
+      "type": "function",
+      "name": "SpeedSlider",
+      "filePath": "components/hud/SpeedControls.tsx",
+      "lineRange": [
+        23,
+        53
+      ],
+      "summary": "Reusable labelled range input with optional inverted mapping for camera zoom, displaying the current value with a configurable suffix.",
+      "tags": [
+        "component",
+        "slider",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/hud/SpeedControls.tsx:SpeedControls",
+      "type": "function",
+      "name": "SpeedControls",
+      "filePath": "components/hud/SpeedControls.tsx",
+      "lineRange": [
+        55,
+        94
+      ],
+      "summary": "Composes four SpeedSlider instances for orbit speed, rotation speed, inverted camera zoom, and Earth scale using store setters and lib/constants bounds.",
+      "tags": [
+        "component",
+        "control",
+        "sliders",
+        "zustand"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:components/hud/TimelineSlider.tsx:TimelineSlider",
+      "type": "function",
+      "name": "TimelineSlider",
+      "filePath": "components/hud/TimelineSlider.tsx",
+      "lineRange": [
+        17,
+        154
+      ],
+      "summary": "Interactive year timeline that reads and mutates clock.julianDay, renders season bands from solstice/equinox events, and restores playback after scrubbing.",
+      "tags": [
+        "component",
+        "timeline",
+        "orbital-mechanics",
+        "seasons"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:lib/cameraMath.ts",
+      "type": "file",
+      "name": "cameraMath.ts",
+      "filePath": "lib/cameraMath.ts",
+      "summary": "Pure Three.js camera math helpers for screen panning, zoom distance, heliocentric framing, and season-explainer teaching viewpoints.",
+      "tags": [
+        "utility",
+        "camera",
+        "three-js",
+        "math",
+        "tested"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses module-scoped Three.js Vector3 scratch buffers to avoid per-frame allocations in the render loop."
+    },
+    {
+      "id": "file:lib/constants.ts",
+      "type": "file",
+      "name": "constants.ts",
+      "filePath": "lib/constants.ts",
+      "summary": "Central registry of astronomical, orbital, simulation-speed, zoom, and Moon geometry constants used across the solar system simulation.",
+      "tags": [
+        "constants",
+        "orbital-mechanics",
+        "configuration",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/orbitalMechanics.ts",
+      "type": "file",
+      "name": "orbitalMechanics.ts",
+      "filePath": "lib/orbitalMechanics.ts",
+      "summary": "Pure functions for Julian day conversion, Keplerian Earth orbit solving, sidereal rotation, and solstice/equinox season labelling.",
+      "tags": [
+        "utility",
+        "orbital-mechanics",
+        "astronomy",
+        "math",
+        "tested"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:lib/seasonExplainer.ts",
+      "type": "file",
+      "name": "seasonExplainer.ts",
+      "filePath": "lib/seasonExplainer.ts",
+      "summary": "Pedagogical season-explainer domain layer that builds solstice and equinox event metadata, copy, view presets, and today-aware event selection for the overlay UI.",
+      "tags": [
+        "utility",
+        "education",
+        "seasons",
+        "domain-logic",
+        "tested"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:lib/cameraMath.ts:pixelToWorldScale",
+      "type": "function",
+      "name": "pixelToWorldScale",
+      "filePath": "lib/cameraMath.ts",
+      "lineRange": [
+        18,
+        25
+      ],
+      "summary": "Converts viewport pixel deltas to world-space scale given camera FOV, distance, and viewport height.",
+      "tags": [
+        "utility",
+        "camera",
+        "math"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/cameraMath.ts:applyScreenPan",
+      "type": "function",
+      "name": "applyScreenPan",
+      "filePath": "lib/cameraMath.ts",
+      "lineRange": [
+        34,
+        49
+      ],
+      "summary": "Applies a 2D screen drag as a parallel camera-and-target translation using the camera's right and up axes.",
+      "tags": [
+        "utility",
+        "camera",
+        "interaction"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/cameraMath.ts:resetPanToOrigin",
+      "type": "function",
+      "name": "resetPanToOrigin",
+      "filePath": "lib/cameraMath.ts",
+      "lineRange": [
+        56,
+        64
+      ],
+      "summary": "Recenters the orbit target to the origin while preserving the current camera distance and viewing direction.",
+      "tags": [
+        "utility",
+        "camera",
+        "interaction"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/cameraMath.ts:zoomToDistance",
+      "type": "function",
+      "name": "zoomToDistance",
+      "filePath": "lib/cameraMath.ts",
+      "lineRange": [
+        71,
+        78
+      ],
+      "summary": "Moves the camera along its view ray to a specified distance from the orbit target.",
+      "tags": [
+        "utility",
+        "camera",
+        "zoom"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/cameraMath.ts:getInitialHeliocentricCameraPosition",
+      "type": "function",
+      "name": "getInitialHeliocentricCameraPosition",
+      "filePath": "lib/cameraMath.ts",
+      "lineRange": [
+        84,
+        97
+      ],
+      "summary": "Computes the default sun-centric camera offset that frames Earth from an elevated oblique angle.",
+      "tags": [
+        "utility",
+        "camera",
+        "heliocentric"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/cameraMath.ts:getSeasonExplainerCameraPosition",
+      "type": "function",
+      "name": "getSeasonExplainerCameraPosition",
+      "filePath": "lib/cameraMath.ts",
+      "lineRange": [
+        105,
+        135
+      ],
+      "summary": "Positions the teaching camera for season-explainer modes using Earth position and a side-on or overhead viewing strategy.",
+      "tags": [
+        "utility",
+        "camera",
+        "education"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/orbitalMechanics.ts:dateToJulianDay",
+      "type": "function",
+      "name": "dateToJulianDay",
+      "filePath": "lib/orbitalMechanics.ts",
+      "lineRange": [
+        13,
+        15
+      ],
+      "summary": "Converts a JavaScript Date to Julian day number for astronomical calculations.",
+      "tags": [
+        "utility",
+        "date",
+        "astronomy"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/orbitalMechanics.ts:julianDayToDate",
+      "type": "function",
+      "name": "julianDayToDate",
+      "filePath": "lib/orbitalMechanics.ts",
+      "lineRange": [
+        17,
+        19
+      ],
+      "summary": "Converts a Julian day number back to a UTC JavaScript Date.",
+      "tags": [
+        "utility",
+        "date",
+        "astronomy"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/orbitalMechanics.ts:getEarthOrbitalPosition",
+      "type": "function",
+      "name": "getEarthOrbitalPosition",
+      "filePath": "lib/orbitalMechanics.ts",
+      "lineRange": [
+        42,
+        60
+      ],
+      "summary": "Solves Kepler's equation to return Earth's 3D heliocentric orbital position for a given Julian day.",
+      "tags": [
+        "utility",
+        "orbital-mechanics",
+        "kepler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/orbitalMechanics.ts:getSiderealRotationAngle",
+      "type": "function",
+      "name": "getSiderealRotationAngle",
+      "filePath": "lib/orbitalMechanics.ts",
+      "lineRange": [
+        68,
+        70
+      ],
+      "summary": "Returns Earth's sidereal rotation angle in radians for the given Julian day.",
+      "tags": [
+        "utility",
+        "rotation",
+        "astronomy"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/orbitalMechanics.ts:getSolsticeEquinoxEvents",
+      "type": "function",
+      "name": "getSolsticeEquinoxEvents",
+      "filePath": "lib/orbitalMechanics.ts",
+      "lineRange": [
+        81,
+        87
+      ],
+      "summary": "Builds labelled solstice and equinox Julian-day events for the current UTC calendar year.",
+      "tags": [
+        "utility",
+        "seasons",
+        "events"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/orbitalMechanics.ts:getSeasonLabel",
+      "type": "function",
+      "name": "getSeasonLabel",
+      "filePath": "lib/orbitalMechanics.ts",
+      "lineRange": [
+        89,
+        112
+      ],
+      "summary": "Determines the astronomical season name for a Julian day and hemisphere by comparing against solstice and equinox thresholds.",
+      "tags": [
+        "utility",
+        "seasons",
+        "labelling"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/seasonExplainer.ts:getExplainerEventLabels",
+      "type": "function",
+      "name": "getExplainerEventLabels",
+      "filePath": "lib/seasonExplainer.ts",
+      "lineRange": [
+        75,
+        77
+      ],
+      "summary": "Returns the ordered event label list for either solstice or equinox explainer mode.",
+      "tags": [
+        "utility",
+        "education",
+        "events"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/seasonExplainer.ts:getSeasonExplainerEvents",
+      "type": "function",
+      "name": "getSeasonExplainerEvents",
+      "filePath": "lib/seasonExplainer.ts",
+      "lineRange": [
+        79,
+        85
+      ],
+      "summary": "Maps all explainer event labels for a mode, hemisphere, and year into fully populated SeasonExplainerEvent objects.",
+      "tags": [
+        "utility",
+        "education",
+        "events"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/seasonExplainer.ts:getSeasonExplainerEvent",
+      "type": "function",
+      "name": "getSeasonExplainerEvent",
+      "filePath": "lib/seasonExplainer.ts",
+      "lineRange": [
+        87,
+        117
+      ],
+      "summary": "Assembles a single season-explainer event with Julian day, season label, pedagogical copy, and 3D view preset for one named astronomical event.",
+      "tags": [
+        "utility",
+        "education",
+        "factory"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/seasonExplainer.ts:getTodayAwareExplainerEvent",
+      "type": "function",
+      "name": "getTodayAwareExplainerEvent",
+      "filePath": "lib/seasonExplainer.ts",
+      "lineRange": [
+        119,
+        142
+      ],
+      "summary": "Selects the nearest upcoming or same-day explainer event across adjacent years for a given mode and hemisphere.",
+      "tags": [
+        "utility",
+        "education",
+        "date-selection"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/seasonExplainer.ts:getSeasonName",
+      "type": "function",
+      "name": "getSeasonName",
+      "filePath": "lib/seasonExplainer.ts",
+      "lineRange": [
+        169,
+        183
+      ],
+      "summary": "Maps a solstice or equinox event label to the human-readable season name for the chosen hemisphere.",
+      "tags": [
+        "utility",
+        "education",
+        "labelling"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/seasonExplainer.ts:getSummary",
+      "type": "function",
+      "name": "getSummary",
+      "filePath": "lib/seasonExplainer.ts",
+      "lineRange": [
+        185,
+        199
+      ],
+      "summary": "Produces the short introductory summary paragraph shown in the season explainer overlay for each event.",
+      "tags": [
+        "utility",
+        "education",
+        "copy"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/seasonExplainer.ts:getTiltPrompt",
+      "type": "function",
+      "name": "getTiltPrompt",
+      "filePath": "lib/seasonExplainer.ts",
+      "lineRange": [
+        208,
+        222
+      ],
+      "summary": "Generates the axial-tilt teaching prompt explaining how Earth's tilt drives seasonal differences at each event.",
+      "tags": [
+        "utility",
+        "education",
+        "copy"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:lib/seasonExplainer.ts:getDaylightPrompt",
+      "type": "function",
+      "name": "getDaylightPrompt",
+      "filePath": "lib/seasonExplainer.ts",
+      "lineRange": [
+        224,
+        238
+      ],
+      "summary": "Generates the daylight-length teaching prompt contrasting hemisphere day length at solstices and equinoxes.",
+      "tags": [
+        "utility",
+        "education",
+        "copy"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.cursor/plans/explainer_overlay_scroll_bba43f33.plan.md",
+      "type": "document",
+      "name": "explainer_overlay_scroll_bba43f33.plan.md",
+      "filePath": ".cursor/plans/explainer_overlay_scroll_bba43f33.plan.md",
+      "summary": "Implementation plan to fix the solstice/equinox explainer overlay so it scrolls on desktop, supports vertical resize via a custom drag handle, and uses a mobile drawer pattern anchored above the HUD without clipping content.",
+      "tags": [
+        "documentation",
+        "explainer-ui",
+        "layout",
+        "accessibility",
+        "mobile-responsive"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Cursor plan file with YAML frontmatter tracking seven pending todos for HUD CSS variables, panel restructuring, and viewport-aware height math."
+    },
+    {
+      "id": "document:.cursor/plans/fix_stale_service_worker_caching_6a107926.plan.md",
+      "type": "document",
+      "name": "fix_stale_service_worker_caching_6a107926.plan.md",
+      "filePath": ".cursor/plans/fix_stale_service_worker_caching_6a107926.plan.md",
+      "summary": "Completed plan diagnosing stale service-worker cache-first serving of old JS and textures, prescribing production-only SW registration, versioned cache names, and a vitest guard to keep coupled constants in sync.",
+      "tags": [
+        "documentation",
+        "service-worker",
+        "caching",
+        "offline",
+        "bugfix"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Includes mermaid flowchart illustrating cache-first stale-chunk path and references verified browser console symptoms."
+    },
+    {
+      "id": "document:.cursor/plans/pedagogical_explainer_views_6913a24f.plan.md",
+      "type": "document",
+      "name": "pedagogical_explainer_views_6913a24f.plan.md",
+      "filePath": ".cursor/plans/pedagogical_explainer_views_6913a24f.plan.md",
+      "summary": "Implementation plan to improve season explainers by selecting the nearest solstice/equinox event and applying deterministic teaching camera and globe rotation presets via seasonExplainer data, TopLeftControls, and ZoomSync.",
+      "tags": [
+        "documentation",
+        "explainer-ui",
+        "camera-math",
+        "pedagogy",
+        "season-events"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Defines SeasonExplainerViewPreset interface and mermaid diagrams contrasting current versus planned explainer selection and camera snap flows."
+    },
+    {
+      "id": "document:AGENTS.md",
+      "type": "document",
+      "name": "AGENTS.md",
+      "filePath": "AGENTS.md",
+      "summary": "Short agent rules file warning that Next.js 16 in this repo has breaking API changes and directing contributors to read node_modules Next.js docs before coding.",
+      "tags": [
+        "documentation",
+        "nextjs",
+        "agent-rules"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:CLAUDE.md",
+      "type": "document",
+      "name": "CLAUDE.md",
+      "filePath": "CLAUDE.md",
+      "summary": "Claude Code guidance covering pnpm commands, rendering pipeline (page → ClientRoot → Scene), Zustand state, orbital mechanics modules, component layout, and triple focus-mode reference frames.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "onboarding"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "Primary project overview for SolarSim: vision, tech stack, full directory map, architecture diagrams, getting-started commands, contributor onboarding, documentation map, and known limitations.",
+      "tags": [
+        "documentation",
+        "entry-point",
+        "onboarding"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:WORKING_MEMORY.md",
+      "type": "document",
+      "name": "WORKING_MEMORY.md",
+      "filePath": "WORKING_MEMORY.md",
+      "summary": "Maintainer working memory with current architecture (Zustand + SimulationClock), render tree, recent feature commits, lessons learned, and tracked technical debt.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "maintainer-notes"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "package.json",
+      "summary": "npm package manifest for solarsim v0.2.0 defining pnpm scripts (dev on port 3100, build, test, lint) and dependencies for Next.js 16, React Three Fiber, Zustand, and Vitest.",
+      "tags": [
+        "configuration",
+        "dependencies",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:pnpm-workspace.yaml",
+      "type": "config",
+      "name": "pnpm-workspace.yaml",
+      "filePath": "pnpm-workspace.yaml",
+      "summary": "pnpm workspace configuration that ignores built dependencies sharp and unrs-resolver during install.",
+      "tags": [
+        "configuration",
+        "pnpm",
+        "workspace"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "tsconfig.json",
+      "summary": "TypeScript compiler configuration with strict mode, Next.js plugin, Vitest globals, bundler module resolution, and @/* path alias mapping to the project root.",
+      "tags": [
+        "configuration",
+        "typescript",
+        "build-system"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Uses path alias @/* → ./* and includes Next.js generated type paths under .next/types."
+    },
+    {
+      "id": "config:vercel.json",
+      "type": "config",
+      "name": "vercel.json",
+      "filePath": "vercel.json",
+      "summary": "Vercel deployment configuration setting long-lived immutable Cache-Control headers for /textures/* static assets.",
+      "tags": [
+        "configuration",
+        "deployment",
+        "caching"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:__tests__/appStore.test.ts",
+      "type": "file",
+      "name": "appStore.test.ts",
+      "filePath": "__tests__/appStore.test.ts",
+      "summary": "Vitest suite exercising the Zustand app store for playback, camera focus, zoom, earth scale, and season explainer snapshot/restore behaviour.",
+      "tags": [
+        "test",
+        "state-management",
+        "zustand",
+        "regression"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:__tests__/appStore.test.ts:resetStore",
+      "type": "function",
+      "name": "resetStore",
+      "filePath": "__tests__/appStore.test.ts",
+      "lineRange": [
+        30,
+        42
+      ],
+      "summary": "Test helper that resets useAppStore to known defaults before each store assertion block.",
+      "tags": [
+        "test",
+        "helper",
+        "state-management"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:__tests__/cameraMath.test.ts",
+      "type": "file",
+      "name": "cameraMath.test.ts",
+      "filePath": "__tests__/cameraMath.test.ts",
+      "summary": "Vitest suite validating camera pan/zoom math, screen projection, and season-explainer camera presets against orbital positions.",
+      "tags": [
+        "test",
+        "camera",
+        "three-js",
+        "regression"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:__tests__/orbitalMechanics.test.ts",
+      "type": "file",
+      "name": "orbitalMechanics.test.ts",
+      "filePath": "__tests__/orbitalMechanics.test.ts",
+      "summary": "Vitest suite covering Julian day conversion, Keplerian Earth position, sidereal rotation, and solstice/equinox event labelling.",
+      "tags": [
+        "test",
+        "orbital-mechanics",
+        "physics",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/seasonExplainer.test.ts",
+      "type": "file",
+      "name": "seasonExplainer.test.ts",
+      "filePath": "__tests__/seasonExplainer.test.ts",
+      "summary": "Vitest suite verifying season explainer event groups, scene presets, and today-aware event selection for solstice and equinox education.",
+      "tags": [
+        "test",
+        "season-explainer",
+        "pedagogy",
+        "regression"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:__tests__/swCacheNames.test.ts",
+      "type": "file",
+      "name": "swCacheNames.test.ts",
+      "filePath": "__tests__/swCacheNames.test.ts",
+      "summary": "Vitest guard test ensuring service worker cache name constants stay synchronized between public/sw.js and lib/useOfflineStatus.ts.",
+      "tags": [
+        "test",
+        "service-worker",
+        "offline",
+        "coupling"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.claude/settings.local.json",
+      "type": "config",
+      "name": "settings.local.json",
+      "filePath": ".claude/settings.local.json",
+      "summary": "Local Claude Code permission overrides allowing git, pnpm, plugin, and NASA texture fetch commands for this repository.",
+      "tags": [
+        "configuration",
+        "claude-code",
+        "permissions",
+        "development"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.understand-anything/.understandignore",
+      "type": "file",
+      "name": ".understandignore",
+      "filePath": ".understand-anything/.understandignore",
+      "summary": "Understand Anything ignore patterns file documenting optional exclusions from codebase graph analysis using gitignore-style syntax.",
+      "tags": [
+        "tooling",
+        "understand-anything",
+        "ignore-patterns"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/globals.css",
+      "type": "file",
+      "name": "globals.css",
+      "filePath": "app/globals.css",
+      "summary": "Global Tailwind v4 stylesheet defining dark theme tokens, HUD layout variables, explainer panel scroll styling, and reduced-motion overrides.",
+      "tags": [
+        "stylesheet",
+        "tailwind",
+        "theme",
+        "accessibility"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses Tailwind v4 @import and @variant directives with CSS custom properties for semantic colour tokens."
+    },
+    {
+      "id": "file:app/layout.tsx",
+      "type": "file",
+      "name": "layout.tsx",
+      "filePath": "app/layout.tsx",
+      "summary": "Next.js root layout setting page metadata, PWA manifest link, dark HTML shell, and global stylesheet import.",
+      "tags": [
+        "entry-point",
+        "next-js",
+        "layout",
+        "metadata"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/layout.tsx:RootLayout",
+      "type": "function",
+      "name": "RootLayout",
+      "filePath": "app/layout.tsx",
+      "lineRange": [
+        10,
+        16
+      ],
+      "summary": "Default root layout component wrapping all pages in a dark full-screen HTML document.",
+      "tags": [
+        "component",
+        "layout",
+        "next-js"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:app/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "app/page.tsx",
+      "summary": "Next.js home page server component that mounts the client-side simulation shell inside a full-viewport main element.",
+      "tags": [
+        "entry-point",
+        "next-js",
+        "page",
+        "server-component"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:app/page.tsx:Home",
+      "type": "function",
+      "name": "Home",
+      "filePath": "app/page.tsx",
+      "lineRange": [
+        3,
+        9
+      ],
+      "summary": "Default exported home page rendering ClientRoot as the sole interactive simulation entry point.",
+      "tags": [
+        "component",
+        "page",
+        "entry-point"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/canvas/ErrorBoundary.tsx",
+      "type": "file",
+      "name": "ErrorBoundary.tsx",
+      "filePath": "components/canvas/ErrorBoundary.tsx",
+      "summary": "React error boundary wrapping the Three.js canvas to catch render failures and surface them via an onError callback.",
+      "tags": [
+        "component",
+        "error-handling",
+        "react-three-fiber",
+        "canvas"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:components/canvas/ErrorBoundary.tsx:CanvasErrorBoundary",
+      "type": "class",
+      "name": "CanvasErrorBoundary",
+      "filePath": "components/canvas/ErrorBoundary.tsx",
+      "lineRange": [
+        14,
+        45
+      ],
+      "summary": "Class-based error boundary that captures canvas exceptions and renders a fallback UI when the 3D scene fails.",
+      "tags": [
+        "component",
+        "error-boundary",
+        "react"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/ClientRoot.tsx",
+      "type": "file",
+      "name": "ClientRoot.tsx",
+      "filePath": "components/ClientRoot.tsx",
+      "summary": "Client boundary that creates the shared SimulationClock, wraps the R3F Scene and HUD, and coordinates loading/error overlay state.",
+      "tags": [
+        "component",
+        "entry-point",
+        "client-boundary",
+        "simulation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/ClientRoot.tsx:ClientRoot",
+      "type": "function",
+      "name": "ClientRoot",
+      "filePath": "components/ClientRoot.tsx",
+      "lineRange": [
+        12,
+        43
+      ],
+      "summary": "Top-level client component wiring SimulationContext, canvas scene, HUD controls, and loading overlay into one tree.",
+      "tags": [
+        "component",
+        "orchestration",
+        "react-context"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:components/ui/InfoModal.tsx",
+      "type": "file",
+      "name": "InfoModal.tsx",
+      "filePath": "components/ui/InfoModal.tsx",
+      "summary": "Accessible info dialog with about/help content, offline texture caching controls, progress toasts, and focus-trap keyboard handling.",
+      "tags": [
+        "component",
+        "modal",
+        "offline",
+        "accessibility"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/ui/InfoModal.tsx:InfoModal",
+      "type": "function",
+      "name": "InfoModal",
+      "filePath": "components/ui/InfoModal.tsx",
+      "lineRange": [
+        16,
+        213
+      ],
+      "summary": "Main info modal component managing open/close animation, offline cache triggering, and keyboard focus trapping.",
+      "tags": [
+        "component",
+        "modal",
+        "hook-consumer"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/ui/InfoModal.tsx:CacheCompleteToast",
+      "type": "function",
+      "name": "CacheCompleteToast",
+      "filePath": "components/ui/InfoModal.tsx",
+      "lineRange": [
+        215,
+        237
+      ],
+      "summary": "Ephemeral toast notification shown after offline texture caching completes successfully.",
+      "tags": [
+        "component",
+        "toast",
+        "offline"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/ui/InfoModal.tsx:CacheErrorToast",
+      "type": "function",
+      "name": "CacheErrorToast",
+      "filePath": "components/ui/InfoModal.tsx",
+      "lineRange": [
+        239,
+        262
+      ],
+      "summary": "Ephemeral toast notification displaying a cache failure message with auto-dismiss behaviour.",
+      "tags": [
+        "component",
+        "toast",
+        "error-handling"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/ui/LoadingOverlay.tsx",
+      "type": "file",
+      "name": "LoadingOverlay.tsx",
+      "filePath": "components/ui/LoadingOverlay.tsx",
+      "summary": "Full-screen loading overlay that fades out once the 3D scene signals readiness, respecting reduced-motion preferences.",
+      "tags": [
+        "component",
+        "loading",
+        "overlay",
+        "accessibility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/ui/LoadingOverlay.tsx:LoadingOverlay",
+      "type": "function",
+      "name": "LoadingOverlay",
+      "filePath": "components/ui/LoadingOverlay.tsx",
+      "lineRange": [
+        9,
+        40
+      ],
+      "summary": "Animated loading screen component toggled by the isReady prop from ClientRoot scene lifecycle callbacks.",
+      "tags": [
+        "component",
+        "loading",
+        "ui"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:components/ui/TopLeftControls.tsx",
+      "type": "file",
+      "name": "TopLeftControls.tsx",
+      "filePath": "components/ui/TopLeftControls.tsx",
+      "summary": "Primary HUD panel for season explainer mode with event selection, resizable explainer overlay, and simulation preset application.",
+      "tags": [
+        "component",
+        "hud",
+        "season-explainer",
+        "controls"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:components/ui/TopLeftControls.tsx:calcExplainerMaxHeight",
+      "type": "function",
+      "name": "calcExplainerMaxHeight",
+      "filePath": "components/ui/TopLeftControls.tsx",
+      "lineRange": [
+        41,
+        56
+      ],
+      "summary": "Computes the maximum explainer panel height from HUD CSS variables and viewport constraints for mobile and desktop.",
+      "tags": [
+        "utility",
+        "layout",
+        "responsive"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:components/ui/TopLeftControls.tsx:TopLeftControls",
+      "type": "function",
+      "name": "TopLeftControls",
+      "filePath": "components/ui/TopLeftControls.tsx",
+      "lineRange": [
+        58,
+        382
+      ],
+      "summary": "Main control panel orchestrating season explainer presets, event pickers, panel resize drag, and store snapshot restore.",
+      "tags": [
+        "component",
+        "hud",
+        "state-management"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:eslint.config.mjs",
+      "type": "file",
+      "name": "eslint.config.mjs",
+      "filePath": "eslint.config.mjs",
+      "summary": "Flat ESLint configuration extending Next.js core-web-vitals and TypeScript rules with standard build output ignores.",
+      "tags": [
+        "configuration",
+        "linting",
+        "eslint",
+        "next-js"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/shaders/earth.frag.ts",
+      "type": "file",
+      "name": "earth.frag.ts",
+      "filePath": "lib/shaders/earth.frag.ts",
+      "summary": "GLSL fragment shader string for Earth day/night texturing, atmosphere tint, and sun-direction lighting uniforms.",
+      "tags": [
+        "shader",
+        "glsl",
+        "earth",
+        "rendering"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Shader source exported as a tagged template literal for bundler inlining into Three.js ShaderMaterial."
+    },
+    {
+      "id": "file:lib/shaders/earth.vert.ts",
+      "type": "file",
+      "name": "earth.vert.ts",
+      "filePath": "lib/shaders/earth.vert.ts",
+      "summary": "GLSL vertex shader string transforming Earth mesh vertices and passing world-space normals and sun direction to the fragment stage.",
+      "tags": [
+        "shader",
+        "glsl",
+        "earth",
+        "rendering"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/shaders/sunSurface.frag.ts",
+      "type": "file",
+      "name": "sunSurface.frag.ts",
+      "filePath": "lib/shaders/sunSurface.frag.ts",
+      "summary": "GLSL fragment shader string rendering animated procedural sun surface noise and emissive colour for the Sun mesh.",
+      "tags": [
+        "shader",
+        "glsl",
+        "sun",
+        "rendering"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/shaders/sunSurface.vert.ts",
+      "type": "file",
+      "name": "sunSurface.vert.ts",
+      "filePath": "lib/shaders/sunSurface.vert.ts",
+      "summary": "GLSL vertex shader string for the Sun mesh passing UV coordinates and view direction to the surface fragment shader.",
+      "tags": [
+        "shader",
+        "glsl",
+        "sun",
+        "rendering"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:lib/useOfflineStatus.ts",
+      "type": "file",
+      "name": "useOfflineStatus.ts",
+      "filePath": "lib/useOfflineStatus.ts",
+      "summary": "React hook tracking online/offline state, service worker texture cache progress, and manual offline cache triggering for PWA use.",
+      "tags": [
+        "hook",
+        "offline",
+        "service-worker",
+        "pwa",
+        "tested"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/useOfflineStatus.ts:useOfflineStatus",
+      "type": "function",
+      "name": "useOfflineStatus",
+      "filePath": "lib/useOfflineStatus.ts",
+      "lineRange": [
+        33,
+        109
+      ],
+      "summary": "Hook exposing offline detection, cache readiness, progress percentage, errors, and a triggerCache action via service worker messaging.",
+      "tags": [
+        "hook",
+        "offline",
+        "service-worker"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:lib/usePlanetDrag.ts",
+      "type": "file",
+      "name": "usePlanetDrag.ts",
+      "filePath": "lib/usePlanetDrag.ts",
+      "summary": "React Three Fiber hook enabling screen-space drag panning of the focused planet body using camera distance and pixel-to-world scaling.",
+      "tags": [
+        "hook",
+        "interaction",
+        "camera",
+        "react-three-fiber"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:lib/usePlanetDrag.ts:usePlanetDrag",
+      "type": "function",
+      "name": "usePlanetDrag",
+      "filePath": "lib/usePlanetDrag.ts",
+      "lineRange": [
+        26,
+        86
+      ],
+      "summary": "Pointer-drag handler hook that converts mouse movement into world-space pan offsets for sun, earth, or moon focus targets.",
+      "tags": [
+        "hook",
+        "drag",
+        "camera",
+        "interaction"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:next.config.ts",
+      "type": "file",
+      "name": "next.config.ts",
+      "filePath": "next.config.ts",
+      "summary": "Minimal Next.js configuration file exporting default settings for the SolarSim application build.",
+      "tags": [
+        "configuration",
+        "next-js",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:postcss.config.mjs",
+      "type": "file",
+      "name": "postcss.config.mjs",
+      "filePath": "postcss.config.mjs",
+      "summary": "PostCSS configuration enabling the Tailwind CSS v4 plugin for processing global styles during the Next.js build.",
+      "tags": [
+        "configuration",
+        "postcss",
+        "tailwind",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:public/manifest.json",
+      "type": "config",
+      "name": "manifest.json",
+      "filePath": "public/manifest.json",
+      "summary": "Web app manifest declaring SolarSim PWA name, standalone display mode, theme colours, and icon assets for installability.",
+      "tags": [
+        "configuration",
+        "pwa",
+        "manifest",
+        "offline"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:public/sw.js",
+      "type": "file",
+      "name": "sw.js",
+      "filePath": "public/sw.js",
+      "summary": "Service worker that enables offline use by cache-first serving of planet textures, content-hashed Next.js static assets, and network-first navigation with stale fallback.",
+      "tags": [
+        "service-worker",
+        "offline",
+        "caching",
+        "pwa",
+        "tested"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses Cache API with separate static and texture caches; TEXTURE_CACHE version must stay in sync with lib/useOfflineStatus.ts."
+    },
+    {
+      "id": "file:public/textures/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "public/textures/.gitkeep",
+      "summary": "Placeholder file that keeps the public/textures directory in version control so Earth and Moon texture assets have a stable mount path for the service worker.",
+      "tags": [
+        "assets",
+        "placeholder",
+        "textures"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:store/useAppStore.ts",
+      "type": "file",
+      "name": "useAppStore.ts",
+      "filePath": "store/useAppStore.ts",
+      "summary": "Central Zustand store holding simulation playback, camera zoom, Earth scale, hemisphere, focus target, season explainer overlay, and orbital label visibility with clamped setters.",
+      "tags": [
+        "state-management",
+        "zustand",
+        "singleton",
+        "store",
+        "tested"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Exports a single create()-based hook consumed imperatively in the render loop via getState() to avoid React re-renders."
+    },
+    {
+      "id": "file:vitest.config.ts",
+      "type": "file",
+      "name": "vitest.config.ts",
+      "filePath": "vitest.config.ts",
+      "summary": "Vitest configuration enabling Node test environment, global test APIs, and the @ path alias mirroring the Next.js/tsconfig setup.",
+      "tags": [
+        "test",
+        "configuration",
+        "vitest",
+        "build-system"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:components/canvas/Animator.tsx",
+      "target": "function:components/canvas/Animator.tsx:Animator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/canvas/Animator.tsx",
+      "target": "function:components/canvas/Animator.tsx:Animator",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/canvas/Animator.tsx",
+      "target": "file:components/canvas/SimulationContext.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/canvas/Animator.tsx",
+      "target": "file:components/canvas/SimulationContext.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:components/canvas/Annotations.tsx",
+      "target": "function:components/canvas/Annotations.tsx:Annotations",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/canvas/Annotations.tsx",
+      "target": "function:components/canvas/Annotations.tsx:Annotations",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/canvas/Earth.tsx",
+      "target": "function:components/canvas/Earth.tsx:Earth",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/canvas/Earth.tsx",
+      "target": "function:components/canvas/Earth.tsx:Earth",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/canvas/Moon.tsx",
+      "target": "function:components/canvas/Moon.tsx:Moon",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/canvas/Moon.tsx",
+      "target": "function:components/canvas/Moon.tsx:Moon",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/canvas/OrbitPath.tsx",
+      "target": "function:components/canvas/OrbitPath.tsx:OrbitPath",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/canvas/OrbitPath.tsx",
+      "target": "function:components/canvas/OrbitPath.tsx:OrbitPath",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/canvas/Scene.tsx",
+      "target": "function:components/canvas/Scene.tsx:Scene",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/canvas/Scene.tsx",
+      "target": "function:components/canvas/Scene.tsx:Scene",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/canvas/Scene.tsx",
+      "target": "file:components/canvas/Animator.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/canvas/Scene.tsx",
+      "target": "file:components/canvas/Annotations.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/canvas/Scene.tsx",
+      "target": "file:components/canvas/Earth.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/canvas/Scene.tsx",
+      "target": "file:components/canvas/Moon.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/canvas/Scene.tsx",
+      "target": "file:components/canvas/OrbitPath.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/canvas/Scene.tsx",
+      "target": "file:components/canvas/SimulationContext.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/canvas/Scene.tsx",
+      "target": "file:components/canvas/Starfield.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/canvas/Scene.tsx",
+      "target": "file:components/canvas/Sun.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/canvas/Scene.tsx",
+      "target": "file:components/canvas/ZoomSync.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/canvas/Starfield.tsx",
+      "target": "function:components/canvas/Starfield.tsx:Starfield",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/canvas/Starfield.tsx",
+      "target": "function:components/canvas/Starfield.tsx:Starfield",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/canvas/Sun.tsx",
+      "target": "function:components/canvas/Sun.tsx:Sun",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/canvas/Sun.tsx",
+      "target": "function:components/canvas/Sun.tsx:Sun",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/canvas/ZoomSync.tsx",
+      "target": "function:components/canvas/ZoomSync.tsx:ZoomSync",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/canvas/ZoomSync.tsx",
+      "target": "function:components/canvas/ZoomSync.tsx:ZoomSync",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/hud/HUD.tsx",
+      "target": "file:components/hud/HemisphereControl.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/hud/HUD.tsx",
+      "target": "file:components/hud/LabelsControl.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/hud/HUD.tsx",
+      "target": "file:components/hud/PlanetSelector.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/hud/HUD.tsx",
+      "target": "file:components/hud/SpeedControls.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/hud/HUD.tsx",
+      "target": "file:components/hud/TimelineSlider.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:components/hud/HUD.tsx",
+      "target": "function:components/hud/HUD.tsx:HUD",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/hud/HUD.tsx",
+      "target": "function:components/hud/HUD.tsx:HUD",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/hud/HemisphereControl.tsx",
+      "target": "function:components/hud/HemisphereControl.tsx:HemisphereControl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/hud/HemisphereControl.tsx",
+      "target": "function:components/hud/HemisphereControl.tsx:HemisphereControl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/hud/LabelsControl.tsx",
+      "target": "function:components/hud/LabelsControl.tsx:LabelsControl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/hud/LabelsControl.tsx",
+      "target": "function:components/hud/LabelsControl.tsx:LabelsControl",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/hud/PlanetSelector.tsx",
+      "target": "function:components/hud/PlanetSelector.tsx:PlanetSelector",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/hud/PlanetSelector.tsx",
+      "target": "function:components/hud/PlanetSelector.tsx:PlanetSelector",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/hud/SpeedControls.tsx",
+      "target": "function:components/hud/SpeedControls.tsx:SpeedSlider",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/hud/SpeedControls.tsx",
+      "target": "function:components/hud/SpeedControls.tsx:SpeedControls",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/hud/SpeedControls.tsx",
+      "target": "function:components/hud/SpeedControls.tsx:SpeedControls",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/hud/TimelineSlider.tsx",
+      "target": "function:components/hud/TimelineSlider.tsx:TimelineSlider",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/hud/TimelineSlider.tsx",
+      "target": "function:components/hud/TimelineSlider.tsx:TimelineSlider",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "file:lib/seasonExplainer.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "file:lib/constants.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "file:lib/orbitalMechanics.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "function:lib/cameraMath.ts:pixelToWorldScale",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "function:lib/cameraMath.ts:applyScreenPan",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "function:lib/cameraMath.ts:resetPanToOrigin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "function:lib/cameraMath.ts:zoomToDistance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "function:lib/cameraMath.ts:getInitialHeliocentricCameraPosition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "function:lib/cameraMath.ts:getSeasonExplainerCameraPosition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "function:lib/orbitalMechanics.ts:dateToJulianDay",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "function:lib/orbitalMechanics.ts:julianDayToDate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "function:lib/orbitalMechanics.ts:getEarthOrbitalPosition",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "function:lib/orbitalMechanics.ts:getSiderealRotationAngle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "function:lib/orbitalMechanics.ts:getSolsticeEquinoxEvents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "function:lib/orbitalMechanics.ts:getSeasonLabel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "function:lib/seasonExplainer.ts:getExplainerEventLabels",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "function:lib/seasonExplainer.ts:getSeasonExplainerEvents",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "function:lib/seasonExplainer.ts:getSeasonExplainerEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "function:lib/seasonExplainer.ts:getTodayAwareExplainerEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "function:lib/seasonExplainer.ts:getSeasonName",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "function:lib/seasonExplainer.ts:getSummary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "function:lib/seasonExplainer.ts:getTiltPrompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "function:lib/seasonExplainer.ts:getDaylightPrompt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "function:lib/cameraMath.ts:pixelToWorldScale",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "function:lib/cameraMath.ts:applyScreenPan",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "function:lib/cameraMath.ts:resetPanToOrigin",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "function:lib/cameraMath.ts:zoomToDistance",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "function:lib/cameraMath.ts:getInitialHeliocentricCameraPosition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "function:lib/cameraMath.ts:getSeasonExplainerCameraPosition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "function:lib/orbitalMechanics.ts:dateToJulianDay",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "function:lib/orbitalMechanics.ts:julianDayToDate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "function:lib/orbitalMechanics.ts:getEarthOrbitalPosition",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "function:lib/orbitalMechanics.ts:getSiderealRotationAngle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "function:lib/orbitalMechanics.ts:getSolsticeEquinoxEvents",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "function:lib/orbitalMechanics.ts:getSeasonLabel",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "function:lib/seasonExplainer.ts:getExplainerEventLabels",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "function:lib/seasonExplainer.ts:getSeasonExplainerEvents",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "function:lib/seasonExplainer.ts:getSeasonExplainerEvent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "function:lib/seasonExplainer.ts:getTodayAwareExplainerEvent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "file:lib/seasonExplainer.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "function:lib/orbitalMechanics.ts:getSolsticeEquinoxEvents",
+      "target": "function:lib/orbitalMechanics.ts:dateToJulianDay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/orbitalMechanics.ts:getSeasonLabel",
+      "target": "function:lib/orbitalMechanics.ts:dateToJulianDay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/orbitalMechanics.ts:getSeasonLabel",
+      "target": "function:lib/orbitalMechanics.ts:julianDayToDate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/seasonExplainer.ts:getSeasonExplainerEvents",
+      "target": "function:lib/seasonExplainer.ts:getExplainerEventLabels",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/seasonExplainer.ts:getSeasonExplainerEvents",
+      "target": "function:lib/seasonExplainer.ts:getSeasonExplainerEvent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/seasonExplainer.ts:getSeasonExplainerEvent",
+      "target": "function:lib/orbitalMechanics.ts:dateToJulianDay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/seasonExplainer.ts:getSeasonExplainerEvent",
+      "target": "function:lib/orbitalMechanics.ts:getSeasonLabel",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/seasonExplainer.ts:getSeasonExplainerEvent",
+      "target": "function:lib/seasonExplainer.ts:getSummary",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/seasonExplainer.ts:getSeasonExplainerEvent",
+      "target": "function:lib/seasonExplainer.ts:getTiltPrompt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/seasonExplainer.ts:getSeasonExplainerEvent",
+      "target": "function:lib/seasonExplainer.ts:getDaylightPrompt",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/seasonExplainer.ts:getTodayAwareExplainerEvent",
+      "target": "function:lib/orbitalMechanics.ts:dateToJulianDay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/seasonExplainer.ts:getTodayAwareExplainerEvent",
+      "target": "function:lib/seasonExplainer.ts:getSeasonExplainerEvents",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "document:.cursor/plans/explainer_overlay_scroll_bba43f33.plan.md",
+      "target": "file:components/ui/TopLeftControls.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/explainer_overlay_scroll_bba43f33.plan.md",
+      "target": "file:components/hud/HUD.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/explainer_overlay_scroll_bba43f33.plan.md",
+      "target": "file:app/globals.css",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/explainer_overlay_scroll_bba43f33.plan.md",
+      "target": "file:app/page.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/explainer_overlay_scroll_bba43f33.plan.md",
+      "target": "file:app/layout.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/explainer_overlay_scroll_bba43f33.plan.md",
+      "target": "document:.cursor/plans/pedagogical_explainer_views_6913a24f.plan.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/fix_stale_service_worker_caching_6a107926.plan.md",
+      "target": "file:lib/useOfflineStatus.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/fix_stale_service_worker_caching_6a107926.plan.md",
+      "target": "file:public/sw.js",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/pedagogical_explainer_views_6913a24f.plan.md",
+      "target": "file:lib/seasonExplainer.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/pedagogical_explainer_views_6913a24f.plan.md",
+      "target": "file:components/ui/TopLeftControls.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/pedagogical_explainer_views_6913a24f.plan.md",
+      "target": "file:components/canvas/ZoomSync.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/pedagogical_explainer_views_6913a24f.plan.md",
+      "target": "file:lib/cameraMath.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/pedagogical_explainer_views_6913a24f.plan.md",
+      "target": "file:__tests__/seasonExplainer.test.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.cursor/plans/pedagogical_explainer_views_6913a24f.plan.md",
+      "target": "file:__tests__/cameraMath.test.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:app/page.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:components/ClientRoot.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:components/canvas/Scene.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:components/canvas/Animator.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:store/useAppStore.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:lib/orbitalMechanics.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:lib/constants.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:lib/seasonExplainer.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:CLAUDE.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:WORKING_MEMORY.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:AGENTS.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "document:AGENTS.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:app/page.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:components/ClientRoot.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:components/canvas/Scene.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:components/canvas/Animator.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:store/useAppStore.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:lib/orbitalMechanics.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:lib/constants.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:WORKING_MEMORY.md",
+      "target": "file:store/useAppStore.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:WORKING_MEMORY.md",
+      "target": "file:components/canvas/Animator.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:WORKING_MEMORY.md",
+      "target": "file:components/canvas/SimulationContext.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:WORKING_MEMORY.md",
+      "target": "file:components/ui/InfoModal.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:WORKING_MEMORY.md",
+      "target": "file:lib/useOfflineStatus.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:WORKING_MEMORY.md",
+      "target": "document:CLAUDE.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:AGENTS.md",
+      "target": "file:app/page.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:package.json",
+      "target": "file:app/page.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:package.json",
+      "target": "config:pnpm-workspace.yaml",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "file:app/page.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "file:components/ClientRoot.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "file:lib/orbitalMechanics.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:vercel.json",
+      "target": "file:app/page.tsx",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "config:vercel.json",
+      "target": "config:package.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:app/layout.tsx",
+      "target": "file:app/globals.css",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:__tests__/appStore.test.ts",
+      "target": "function:__tests__/appStore.test.ts:resetStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/layout.tsx",
+      "target": "function:app/layout.tsx:RootLayout",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/page.tsx",
+      "target": "function:app/page.tsx:Home",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/canvas/ErrorBoundary.tsx",
+      "target": "class:components/canvas/ErrorBoundary.tsx:CanvasErrorBoundary",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/ClientRoot.tsx",
+      "target": "function:components/ClientRoot.tsx:ClientRoot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/ui/InfoModal.tsx",
+      "target": "function:components/ui/InfoModal.tsx:InfoModal",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/ui/InfoModal.tsx",
+      "target": "function:components/ui/InfoModal.tsx:CacheCompleteToast",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/ui/InfoModal.tsx",
+      "target": "function:components/ui/InfoModal.tsx:CacheErrorToast",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/ui/LoadingOverlay.tsx",
+      "target": "function:components/ui/LoadingOverlay.tsx:LoadingOverlay",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/ui/TopLeftControls.tsx",
+      "target": "function:components/ui/TopLeftControls.tsx:calcExplainerMaxHeight",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:components/ui/TopLeftControls.tsx",
+      "target": "function:components/ui/TopLeftControls.tsx:TopLeftControls",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/useOfflineStatus.ts",
+      "target": "function:lib/useOfflineStatus.ts:useOfflineStatus",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:lib/usePlanetDrag.ts",
+      "target": "function:lib/usePlanetDrag.ts:usePlanetDrag",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:app/layout.tsx",
+      "target": "function:app/layout.tsx:RootLayout",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:app/page.tsx",
+      "target": "function:app/page.tsx:Home",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/canvas/ErrorBoundary.tsx",
+      "target": "class:components/canvas/ErrorBoundary.tsx:CanvasErrorBoundary",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/ClientRoot.tsx",
+      "target": "function:components/ClientRoot.tsx:ClientRoot",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/ui/InfoModal.tsx",
+      "target": "function:components/ui/InfoModal.tsx:InfoModal",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/ui/LoadingOverlay.tsx",
+      "target": "function:components/ui/LoadingOverlay.tsx:LoadingOverlay",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:components/ui/TopLeftControls.tsx",
+      "target": "function:components/ui/TopLeftControls.tsx:TopLeftControls",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/useOfflineStatus.ts",
+      "target": "function:lib/useOfflineStatus.ts:useOfflineStatus",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:lib/usePlanetDrag.ts",
+      "target": "function:lib/usePlanetDrag.ts:usePlanetDrag",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:store/useAppStore.ts",
+      "target": "file:__tests__/appStore.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:lib/cameraMath.ts",
+      "target": "file:__tests__/cameraMath.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:lib/orbitalMechanics.ts",
+      "target": "file:__tests__/orbitalMechanics.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:lib/seasonExplainer.ts",
+      "target": "file:__tests__/seasonExplainer.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:lib/useOfflineStatus.ts",
+      "target": "file:__tests__/swCacheNames.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:public/sw.js",
+      "target": "file:__tests__/swCacheNames.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:next.config.ts",
+      "target": "file:app/layout.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:public/manifest.json",
+      "target": "file:app/layout.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:eslint.config.mjs",
+      "target": "file:app/page.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:components/ClientRoot.tsx",
+      "target": "file:components/canvas/ErrorBoundary.tsx",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:components/ClientRoot.tsx",
+      "target": "file:components/ui/LoadingOverlay.tsx",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:components/ClientRoot.tsx",
+      "target": "file:components/ui/TopLeftControls.tsx",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:components/ui/InfoModal.tsx",
+      "target": "function:lib/useOfflineStatus.ts:useOfflineStatus",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "function:components/ClientRoot.tsx:ClientRoot",
+      "target": "function:lib/orbitalMechanics.ts:dateToJulianDay",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/ui/InfoModal.tsx:InfoModal",
+      "target": "function:lib/useOfflineStatus.ts:useOfflineStatus",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/ui/TopLeftControls.tsx:TopLeftControls",
+      "target": "function:lib/seasonExplainer.ts:getSeasonExplainerEvent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/ui/TopLeftControls.tsx:TopLeftControls",
+      "target": "function:lib/seasonExplainer.ts:getSeasonExplainerEvents",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/ui/TopLeftControls.tsx:TopLeftControls",
+      "target": "function:lib/seasonExplainer.ts:getTodayAwareExplainerEvent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:components/ui/TopLeftControls.tsx:TopLeftControls",
+      "target": "function:components/ui/TopLeftControls.tsx:calcExplainerMaxHeight",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/usePlanetDrag.ts:usePlanetDrag",
+      "target": "function:lib/cameraMath.ts:pixelToWorldScale",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:lib/usePlanetDrag.ts:usePlanetDrag",
+      "target": "function:lib/cameraMath.ts:applyScreenPan",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:public/sw.js",
+      "target": "file:public/textures/.gitkeep",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:public/sw.js",
+      "target": "file:lib/useOfflineStatus.ts",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:vitest.config.ts",
+      "target": "file:__tests__/appStore.test.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:vitest.config.ts",
+      "target": "file:__tests__/cameraMath.test.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:vitest.config.ts",
+      "target": "file:__tests__/orbitalMechanics.test.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:vitest.config.ts",
+      "target": "file:__tests__/seasonExplainer.test.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:vitest.config.ts",
+      "target": "file:__tests__/swCacheNames.test.ts",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:.cursor/plans/fix_stale_service_worker_caching_6a107926.plan.md",
+      "target": "file:__tests__/swCacheNames.test.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:postcss.config.mjs",
+      "target": "file:app/globals.css",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:entry",
+      "name": "Application Entry",
+      "description": "Next.js App Router shell that defines page metadata, global dark-theme styles, and mounts the client simulation inside a full-viewport layout.",
+      "nodeIds": [
+        "file:app/globals.css",
+        "file:app/layout.tsx",
+        "file:app/page.tsx"
+      ]
+    },
+    {
+      "id": "layer:ui",
+      "name": "Presentation Layer",
+      "description": "React and React Three Fiber components composing the 3D solar-system scene, HUD controls, season-explainer overlays, and the ClientRoot client boundary.",
+      "nodeIds": [
+        "file:components/canvas/Animator.tsx",
+        "file:components/canvas/Annotations.tsx",
+        "file:components/canvas/Earth.tsx",
+        "file:components/canvas/Moon.tsx",
+        "file:components/canvas/OrbitPath.tsx",
+        "file:components/canvas/Scene.tsx",
+        "file:components/canvas/SimulationContext.ts",
+        "file:components/canvas/Starfield.tsx",
+        "file:components/canvas/Sun.tsx",
+        "file:components/canvas/ZoomSync.tsx",
+        "file:components/canvas/ErrorBoundary.tsx",
+        "file:components/ClientRoot.tsx",
+        "file:components/hud/HUD.tsx",
+        "file:components/hud/HemisphereControl.tsx",
+        "file:components/hud/LabelsControl.tsx",
+        "file:components/hud/PlanetSelector.tsx",
+        "file:components/hud/SpeedControls.tsx",
+        "file:components/hud/TimelineSlider.tsx",
+        "file:components/ui/InfoModal.tsx",
+        "file:components/ui/LoadingOverlay.tsx",
+        "file:components/ui/TopLeftControls.tsx"
+      ]
+    },
+    {
+      "id": "layer:domain",
+      "name": "Domain & Simulation Logic",
+      "description": "Pure orbital-mechanics math, season-explainer pedagogy, camera helpers, GLSL shaders, astronomical constants, and React hooks for planet drag and offline caching.",
+      "nodeIds": [
+        "file:lib/cameraMath.ts",
+        "file:lib/constants.ts",
+        "file:lib/orbitalMechanics.ts",
+        "file:lib/seasonExplainer.ts",
+        "file:lib/shaders/earth.frag.ts",
+        "file:lib/shaders/earth.vert.ts",
+        "file:lib/shaders/sunSurface.frag.ts",
+        "file:lib/shaders/sunSurface.vert.ts",
+        "file:lib/useOfflineStatus.ts",
+        "file:lib/usePlanetDrag.ts"
+      ]
+    },
+    {
+      "id": "layer:state",
+      "name": "State Management",
+      "description": "Central Zustand store holding playback speeds, camera zoom, focus target, hemisphere toggle, season-explainer mode, and orbital label visibility for the simulation.",
+      "nodeIds": [
+        "file:store/useAppStore.ts"
+      ]
+    },
+    {
+      "id": "layer:assets",
+      "name": "Static Assets & PWA",
+      "description": "Public-facing planet texture mount path, service worker offline caching, and web app manifest for installable SolarSim PWA behaviour.",
+      "nodeIds": [
+        "config:public/manifest.json",
+        "file:public/sw.js",
+        "file:public/textures/.gitkeep"
+      ]
+    },
+    {
+      "id": "layer:test",
+      "name": "Test Layer",
+      "description": "Vitest suites and configuration validating orbital mechanics, camera presets, season explainer events, Zustand store behaviour, and service-worker cache coupling.",
+      "nodeIds": [
+        "file:__tests__/appStore.test.ts",
+        "file:__tests__/cameraMath.test.ts",
+        "file:__tests__/orbitalMechanics.test.ts",
+        "file:__tests__/seasonExplainer.test.ts",
+        "file:__tests__/swCacheNames.test.ts",
+        "file:vitest.config.ts"
+      ]
+    },
+    {
+      "id": "layer:config",
+      "name": "Configuration",
+      "description": "Build, lint, TypeScript, PostCSS, Next.js, Vercel deployment, pnpm workspace, and local tooling settings that configure the SolarSim development and production pipeline.",
+      "nodeIds": [
+        "config:package.json",
+        "config:pnpm-workspace.yaml",
+        "config:tsconfig.json",
+        "config:vercel.json",
+        "config:.claude/settings.local.json",
+        "file:.understand-anything/.understandignore",
+        "file:eslint.config.mjs",
+        "file:next.config.ts",
+        "file:postcss.config.mjs"
+      ]
+    },
+    {
+      "id": "layer:documentation",
+      "name": "Documentation",
+      "description": "Project README, agent onboarding guides, maintainer working memory, and implementation plans for explainer UI, service-worker caching, and pedagogical camera presets.",
+      "nodeIds": [
+        "document:.cursor/plans/explainer_overlay_scroll_bba43f33.plan.md",
+        "document:.cursor/plans/fix_stale_service_worker_caching_6a107926.plan.md",
+        "document:.cursor/plans/pedagogical_explainer_views_6913a24f.plan.md",
+        "document:AGENTS.md",
+        "document:CLAUDE.md",
+        "document:README.md",
+        "document:WORKING_MEMORY.md"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "Project Overview",
+      "description": "SolarSim is an interactive 3D solar-system visualisation built to teach solstice and equinox concepts through accurate Keplerian orbital mechanics, defaulting to a southern-hemisphere perspective. The README maps the full architecture—Next.js 16, React Three Fiber, and Zustand—and explains how Sun, Earth, and Moon fit into Phase 1, giving you a roadmap for the rest of this tour.",
+      "nodeIds": [
+        "document:README.md"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Application Entry Point",
+      "description": "The tour's code journey begins at the Next.js App Router shell. `app/page.tsx` is the server component home page that mounts the simulation inside a full-viewport `<main>`, while `app/layout.tsx` wraps every route with metadata, the PWA manifest link, and global dark-theme styles. Together they form the thin server boundary before any 3D rendering starts.",
+      "nodeIds": [
+        "file:app/page.tsx",
+        "file:app/layout.tsx"
+      ],
+      "languageLesson": "Next.js App Router separates Server Components (like `page.tsx`, which can render on the server without client JavaScript) from Client Components marked with `'use client'`, keeping the initial HTML payload small before the WebGL canvas hydrates."
+    },
+    {
+      "order": 3,
+      "title": "Client Bootstrap Shell",
+      "description": "Building on the page entry point, `ClientRoot` is the first client boundary: it instantiates a mutable `SimulationClock` (Julian day plus rotation angle) and shares it through React context rather than Zustand, avoiding re-renders on every animation frame. It composes the 3D scene, HUD overlays, loading screen, and season-explainer controls into one coordinated shell.",
+      "nodeIds": [
+        "file:components/ClientRoot.tsx",
+        "file:components/canvas/SimulationContext.ts"
+      ],
+      "languageLesson": "React Context is ideal here for a frequently mutated object that many descendants read but that should not trigger React reconciliation—unlike Zustand state, context value identity stays stable while the clock object's fields change in place."
+    },
+    {
+      "order": 4,
+      "title": "Central Application State",
+      "description": "The Zustand store is the single source of truth for everything the HUD and camera react to: playback speed, zoom, Earth scale, hemisphere toggle, focus target (sun, Earth, or Moon), and season-explainer overlay state. Canvas components read it via `getState()` inside `useFrame` to stay off the React render path, which is why this file ranks among the most depended-upon modules in the graph.",
+      "nodeIds": [
+        "file:store/useAppStore.ts"
+      ]
+    },
+    {
+      "order": 5,
+      "title": "3D Scene Composition",
+      "description": "With state and the simulation clock in place, `Scene` is the React Three Fiber `<Canvas>` root that wires together every visible body and helper—Sun, Earth, Moon, orbit path, starfield, annotations, the frame Animator, and camera zoom sync. It owns the shared Three.js refs passed down to children, making it the highest fan-out module and the best map of the presentation layer.",
+      "nodeIds": [
+        "file:components/canvas/Scene.tsx"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Frame Animation Engine",
+      "description": "The Animator runs inside R3F's `useFrame` hook each render tick: it advances the shared clock from store speeds, computes Earth and Moon positions for all three focus reference frames, handles tidal locking and nodal precession, and pushes the Sun direction uniform into Earth's shader. This is where orbital math meets the render loop—the bridge between pure functions and pixels on screen.",
+      "nodeIds": [
+        "file:components/canvas/Animator.tsx"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Orbital Mechanics Core",
+      "description": "Underpinning the Animator are pure, testable functions with no React dependency. `constants.ts` centralises astronomical values—orbital elements, simulation speed bounds, Moon geometry—while `orbitalMechanics.ts` converts calendar dates to Julian days, solves Kepler's equation for Earth's position, computes sidereal rotation, and labels solstice/equinox events. These two files are among the highest fan-in domain modules because nearly every simulation feature depends on them.",
+      "nodeIds": [
+        "file:lib/constants.ts",
+        "file:lib/orbitalMechanics.ts"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Season Explainer Domain",
+      "description": "SolarSim's educational mission lives in the season-explainer layer, which builds solstice and equinox event metadata, teaching copy, and deterministic camera/globe presets on top of the orbital functions from the previous step. `cameraMath.ts` supplies the Three.js viewpoint math—heliocentric framing, screen panning, and explainer-specific camera positions—so the overlay can snap learners to pedagogically meaningful views.",
+      "nodeIds": [
+        "file:lib/seasonExplainer.ts",
+        "file:lib/cameraMath.ts"
+      ]
+    },
+    {
+      "order": 9,
+      "title": "HUD and Timeline",
+      "description": "The 2D overlay HUD sits above the WebGL canvas and is how users scrub time, toggle playback, and adjust simulation parameters. `HUD` composes the control panels and publishes a `--hud-height` CSS variable so the explainer panel can size itself, while `TimelineSlider` maps a year-scoped Julian-day range with season colour bands and solstice/equinox tick marks directly onto the mutable simulation clock.",
+      "nodeIds": [
+        "file:components/hud/HUD.tsx",
+        "file:components/hud/TimelineSlider.tsx"
+      ]
+    },
+    {
+      "order": 10,
+      "title": "Explainer Overlay UI",
+      "description": "Connecting the domain layer to the viewport, `TopLeftControls` drives season-explainer mode—event selection, resizable overlay, and preset application—while `ZoomSync` bidirectionally links OrbitControls camera distance to the Zustand zoom store and applies explainer camera presets when teaching mode is active. This pair is where pedagogy becomes an interactive, camera-guided experience rather than static text.",
+      "nodeIds": [
+        "file:components/ui/TopLeftControls.tsx",
+        "file:components/canvas/ZoomSync.tsx"
+      ]
+    },
+    {
+      "order": 11,
+      "title": "Earth Shaders and Rendering",
+      "description": "Earth's day/night appearance is the visual centrepiece of the season story. `Earth.tsx` loads textures and attaches a custom `ShaderMaterial`, while the paired GLSL vertex and fragment shaders compute lighting from a `uSunPositionWorld` uniform that the Animator updates each frame across all three reference frames. Understanding this pipeline explains why the globe looks correct whether you are focused on the Sun, Earth, or Moon.",
+      "nodeIds": [
+        "file:components/canvas/Earth.tsx",
+        "file:lib/shaders/earth.frag.ts",
+        "file:lib/shaders/earth.vert.ts"
+      ],
+      "languageLesson": "GLSL shaders run on the GPU: the vertex shader transforms mesh coordinates and passes interpolated normals to the fragment shader, which samples day/night textures and applies sun-direction lighting per pixel—far cheaper than doing the same on the CPU for every sphere point."
+    },
+    {
+      "order": 12,
+      "title": "PWA and Offline Support",
+      "description": "SolarSim is designed for classroom use without reliable connectivity. The service worker cache-first serves planet textures and hashed Next.js assets, the web app manifest declares installability, and `useOfflineStatus` exposes cache progress to the info modal. `package.json` ties it together with pnpm scripts (`dev` on port 3100, `build`, `test`, `lint`) and the dependency stack that makes the entire tour's architecture possible.",
+      "nodeIds": [
+        "file:public/sw.js",
+        "file:lib/useOfflineStatus.ts",
+        "config:public/manifest.json",
+        "config:package.json"
+      ],
+      "languageLesson": "Service workers intercept network requests in a separate thread. Cache-first strategies serve static assets instantly offline, while versioned cache names let you invalidate stale bundles without users manually clearing browser storage."
+    }
+  ]
+}

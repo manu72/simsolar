@@ -57,6 +57,7 @@ simsolar/
 │   │   ├── TimelineSlider.tsx        # Year scrubber with season colour bands, date display, event ticks
 │   │   ├── SpeedControls.tsx         # Orbit speed, rotation speed, camera zoom, earth scale sliders
 │   │   ├── HemisphereControl.tsx     # S/N hemisphere toggle
+│   │   ├── LabelsControl.tsx         # Orbital labels toggle (Phase 1)
 │   │   └── PlanetSelector.tsx        # Planet selector (Earth only in Phase 1)
 │   └── ui/
 │       ├── TopLeftControls.tsx       # Info button, season explainer picker (embeds InfoModal)
@@ -86,6 +87,22 @@ simsolar/
 │   ├── cameraMath.test.ts            # Pixel-to-world, screen pan, zoom-to-distance
 │   ├── seasonExplainer.test.ts       # Explainer events, presets, today-aware selection
 │   └── swCacheNames.test.ts          # Service worker cache name coupling with public/sw.js
+├── .agentic/                         # t8 Agentic OS operational memory and routing (agent-first)
+│   ├── CONFIG/agentic.json           # AgenticOS config (graph-first provider, codemap fallback)
+│   ├── MEMORY_INDEX.md               # Memory index for agent routing
+│   ├── PROJECT_BRIEF.md              # Project brief from repo evidence
+│   ├── SUBSYSTEMS/                   # Subsystem documentation
+│   └── LESSONS/                      # Durable lessons from code changes
+├── .understand-anything/             # Understand Anything knowledge graph (auto-update enabled)
+│   ├── config.json                   # autoUpdate: true, outputLanguage: en
+│   ├── meta/                         # Graph metadata
+│   └── fingerprints/                 # File fingerprints for freshness
+├── scripts/agentic/                  # AgenticOS runtime tooling
+│   ├── README.md                     # Scripts documentation
+│   ├── graph_sync.py                 # Graph sync script
+│   ├── route_task.py                 # Task routing to context bundle
+│   ├── update_memory.py              # Runtime memory maintenance
+│   └── validate_memory.py            # Memory validation checks
 ├── CLAUDE.md                         # AI assistant guidance (architecture, commands, patterns)
 ├── AGENTS.md                         # Agent rules (Next.js version warning)
 ├── WORKING_MEMORY.md                 # Project context, decisions, lessons, tech debt
@@ -107,7 +124,7 @@ ClientRoot (SimulationContext.Provider)
 ├── Scene (R3F Canvas — loads textures; calls onReady when ready)
 ├── TopLeftControls + HUD          shown only after sceneReady (not on WebGL failure)
 │   ├── TopLeftControls            season explainer picker; embeds InfoModal
-│   └── HUD                        TimelineSlider, SpeedControls, HemisphereControl, PlanetSelector
+│   └── HUD                        TimelineSlider, SpeedControls, HemisphereControl, LabelsControl, PlanetSelector
 └── LoadingOverlay                 hidden when sceneReady or sceneFailed
 
 Scene (inside Canvas)
@@ -119,7 +136,7 @@ Scene (inside Canvas)
 └── OrbitControls                  mouse orbit/zoom
 ```
 
-### Data Flow
+### ### Data Flow
 
 ```
 SimulationClock (mutable ref — { julianDay, rotationAngle })
@@ -130,11 +147,12 @@ SimulationClock (mutable ref — { julianDay, rotationAngle })
        ├─ updates mesh transforms & shader uniforms
        └─ parents Moon under Earth group (inherits position/scale/ref frame)
 
-User Input (HUD sliders, buttons, clicks, season explainer)
+User Input (HUD sliders, buttons, clicks, season explainer, labels toggle)
   └─ Zustand store (store/useAppStore.ts)
        ├─ isPlaying, orbitSpeed, rotationSpeed
-       ├─ hemisphere, zoomDistance, earthScale, focusTarget
+       ├─ hemisphere, zoomDistance, earthScale (1–20x), focusTarget
        ├─ activeSeasonExplainer (mode + event label, or null)
+       ├─ showOrbitalLabels (boolean)
        └─ HUD / TopLeftControls read via useAppStore() for reactivity
 
 Date Display
@@ -249,7 +267,7 @@ kill <pid>       # free the port
 - **Timeline scrubber** — drag through a full year; season colour bands and solstice/equinox tick marks
 - **Playback controls** — play/pause, independent orbit and rotation speed sliders
 - **Camera zoom** — HUD slider bidirectionally synced with mouse wheel via ZoomSync
-- **Earth scale** — enlarge Earth (1-10x) independently of camera zoom for detail viewing
+- **Earth scale** — enlarge Earth (1–20x) independently of camera zoom for detail viewing
 - **Hemisphere toggle** — switch between southern and northern hemisphere labels and terminology
 - **Season explainer** — guided solstice/equinox tours with educational copy, scene presets, and orbit annotations
 - **Solstice/equinox annotations** — labelled positions on the orbit path, updating with hemisphere choice
@@ -286,7 +304,7 @@ If you'd rather explore the codebase top-to-bottom:
 | --- | --- |
 | README | Product context, commands, file structure, onboarding |
 | [`CLAUDE.md`](CLAUDE.md) | Render loop, focus modes, file roles, key patterns |
-| [`WORKING_MEMORY.md`](WORKING_MEMORY.md) | Pitfalls, recent decisions, tech debt, lessons learned |
+| [`WORKING_MEMORY.md`](WORKING_MEMORY.md) | Pitfalls, recent decisions, tech debt, lessons learned (last updated 2026-06-15) |
 | [`AGENTS.md`](AGENTS.md) | Next.js 16 API caveats (only if touching App Router) |
 
 ### Common Pitfalls

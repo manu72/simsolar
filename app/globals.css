@@ -2,6 +2,39 @@
 
 @variant dark (&:where(.dark, .dark *));
 
+/* Custom scrollbar for the explainer scroll body */
+.season-explainer-body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.season-explainer-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.season-explainer-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.season-explainer-body::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+.season-explainer-body::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .season-explainer-body {
+    scrollbar-width: thin;
+  }
+  .season-explainer-body::-webkit-scrollbar-thumb {
+    transition: none;
+  }
+}
+
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;

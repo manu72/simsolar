@@ -1,0 +1,70 @@
+{
+  "task": "season explainer",
+  "confidence": "medium",
+  "graph_available": true,
+  "graph_source": ".agentic/GRAPH/knowledge-graph.json",
+  "fallback_active": false,
+  "selected_paths": [
+    "__tests__/seasonExplainer.test.ts",
+    "lib/seasonExplainer.ts",
+    ".cursor/plans/pedagogical_explainer_views_6913a24f.plan.md",
+    ".cursor/plans/explainer_overlay_scroll_bba43f33.plan.md",
+    "__tests__/appStore.test.ts",
+    "__tests__/cameraMath.test.ts",
+    "components/canvas/ZoomSync.tsx",
+    "components/ui/TopLeftControls.tsx",
+    "lib/cameraMath.ts",
+    "store/useAppStore.ts"
+  ],
+  "selection_reasons": {
+    "__tests__/seasonExplainer.test.ts": "graph search",
+    "lib/seasonExplainer.ts": "graph search",
+    ".cursor/plans/pedagogical_explainer_views_6913a24f.plan.md": "graph search",
+    ".cursor/plans/explainer_overlay_scroll_bba43f33.plan.md": "graph search",
+    "__tests__/appStore.test.ts": "graph search",
+    "__tests__/cameraMath.test.ts": "graph search",
+    "components/canvas/ZoomSync.tsx": "graph search",
+    "components/ui/TopLeftControls.tsx": "graph search",
+    "lib/cameraMath.ts": "graph search",
+    "store/useAppStore.ts": "graph search"
+  },
+  "graph_nodes": [
+    "file:__tests__/seasonExplainer.test.ts",
+    "file:lib/seasonExplainer.ts",
+    "file:__tests__/appStore.test.ts",
+    "file:__tests__/cameraMath.test.ts",
+    "file:components/canvas/ZoomSync.tsx",
+    "file:components/ui/TopLeftControls.tsx",
+    "file:lib/cameraMath.ts",
+    "file:store/useAppStore.ts"
+  ],
+  "dependency_paths": [],
+  "related_tests": [
+    "__tests__/seasonExplainer.test.ts",
+    "__tests__/appStore.test.ts",
+    "__tests__/cameraMath.test.ts"
+  ],
+  "subsystem_files": [
+    ".agentic/SUBSYSTEMS/canvas.md",
+    ".agentic/SUBSYSTEMS/hud.md",
+    ".agentic/SUBSYSTEMS/lib.md",
+    ".agentic/SUBSYSTEMS/pwa-offline.md",
+    ".agentic/SUBSYSTEMS/store.md",
+    ".agentic/SUBSYSTEMS/ui.md"
+  ],
+  "memory_files": [
+    ".agentic/PROJECT_BRIEF.md",
+    ".agentic/MEMORY_INDEX.md"
+  ],
+  "risk_tags": [
+    "security",
+    "authn",
+    "money",
+    "compliance",
+    "data-integrity",
+    "secrets",
+    "infra"
+  ],
+  "unknowns": [],
+  "stop_conditions": []
+}

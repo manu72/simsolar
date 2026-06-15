@@ -1,8 +1,12 @@
 import { Vector3, Matrix4 } from 'three'
+import type { SeasonExplainerCameraKind } from './seasonExplainer'
 
 const _dir = new Vector3()
 const _right = new Vector3()
 const _up = new Vector3()
+const _sunDirection = new Vector3()
+const _sideDirection = new Vector3()
+const _teachingDirection = new Vector3()
 const INITIAL_EARTH_VIEW_ANGLE_RAD = (75 * Math.PI) / 180
 
 /**
@@ -90,4 +94,42 @@ export function getInitialHeliocentricCameraPosition(
     cameraY,
     horizontalDistance * Math.cos(cameraAzimuth),
   ]
+}
+
+/**
+ * Returns an earth-centric teaching camera position for explainer events.
+ * Solstice views use a fixed world-space direction so Earth's projected axis
+ * keeps the same teaching orientation across June and December. Equinox views
+ * stay Sun-relative so the day/night balance reads side-on.
+ */
+export function getSeasonExplainerCameraPosition(
+  cameraKind: SeasonExplainerCameraKind,
+  earthPosition: Vector3,
+  distance: number,
+): [number, number, number] {
+  if (cameraKind === 'solstice-fixed') {
+    _teachingDirection.set(0, 0, -1)
+    _teachingDirection.normalize().multiplyScalar(distance)
+    return [_teachingDirection.x, _teachingDirection.y, _teachingDirection.z]
+  }
+
+  _sunDirection.copy(earthPosition).multiplyScalar(-1)
+  _sunDirection.y = 0
+
+  if (_sunDirection.lengthSq() === 0) {
+    _sunDirection.set(0, 0, 1)
+  } else {
+    _sunDirection.normalize()
+  }
+
+  _sideDirection.set(-_sunDirection.z, 0, _sunDirection.x).normalize()
+
+  _teachingDirection
+    .copy(_sideDirection)
+    .multiplyScalar(0.9)
+    .addScaledVector(_sunDirection, 0.3)
+    .addScaledVector(_up.set(0, 1, 0), 0.12)
+
+  _teachingDirection.normalize().multiplyScalar(distance)
+  return [_teachingDirection.x, _teachingDirection.y, _teachingDirection.z]
 }
