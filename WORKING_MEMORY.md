@@ -1,12 +1,12 @@
 # Working Memory
 
-**Last Updated:** 2026-03-29
+**Last Updated:** 2026-06-15
 
 ## Architecture
 
 ### State Model
 
-- **Zustand** (`store/useAppStore.ts`): `isPlaying`, `orbitSpeed`, `rotationSpeed`, `hemisphere`, `zoomDistance`, `earthScale`, `focusTarget` (`'sun' | 'earth' | 'moon'`).
+- **Zustand** (`store/useAppStore.ts`): `isPlaying`, `orbitSpeed`, `rotationSpeed`, `hemisphere`, `zoomDistance`, `earthScale` (1–20x), `focusTarget` (`'sun' | 'earth' | 'moon')`, `activeSeasonExplainer` (`ActiveSeasonExplainer | null`), `showOrbitalLabels` (boolean).
 - **SimulationClock** (mutable ref via `SimulationContext`): `julianDay`, `rotationAngle` — written every frame by `Animator`, never in Zustand.
 - **Display date** is local state in `TimelineSlider`, polled from the clock ref via `setInterval`.
 
@@ -29,6 +29,7 @@ ClientRoot (SimulationContext.Provider)
 │   ├── TimelineSlider    year scrubber with season bands, date display
 │   ├── SpeedControls     orbit speed, rotation speed, camera zoom, earth scale
 │   ├── HemisphereControl S/N toggle
+│   ├── LabelsControl     orbital labels toggle
 │   └── PlanetSelector    Earth only (Phase 1)
 └── InfoModal             about/help modal + offline caching toggle
 ```
@@ -40,6 +41,12 @@ ClientRoot (SimulationContext.Provider)
 - **No postprocessing library:** `@react-three/postprocessing` removed from rendering due to React 19 + Three.js r183 incompatibilities. Sun glow uses CSS radial-gradient via drei `Html`.
 - **Moon parented under Earth:** Moon is a child of the Earth group, so it inherits Earth's position, scale, and reference frame automatically. Orbit angle derived from `clock.rotationAngle / MOON_SIDEREAL_PERIOD_DAYS`.
 - **PWA offline support:** Service worker (`public/sw.js`) caches textures and assets. `useOfflineStatus` hook manages cache state. `InfoModal` provides opt-in offline toggle.
+
+### AgenticOS Infrastructure
+
+- **`.agentic/`** — t8 Agentic OS operational memory: project brief, subsystem docs, lessons learned, memory index. Runtime uses `.agentic/CONFIG/agentic.json` (graph-first with Understand Anything provider, codemap fallback). Scripts in `scripts/agentic/` (`graph_sync.py`, `route_task.py`, `update_memory.py`, `validate_memory.py`).
+- **`.understand-anything/`** — knowledge graph system with auto-update enabled. Graph at `.understand-anything/knowledge-graph.json`. AgenticOS config references this via `"provider": "understand-anything"`.
+- Purpose: agent-first routing and operational memory for future AI coding assistants working on the codebase.
 
 ## Recent Features
 
@@ -74,7 +81,13 @@ ClientRoot (SimulationContext.Provider)
 ### Geocentric View, Sun Shader, HUD Controls
 - Click celestial body to focus (heliocentric/geocentric/selenocentric). Earth shader uses `uSunPositionWorld` with per-vertex direction.
 - Procedural FBM sun surface with 3D trilinear noise and view-space limb darkening.
-- Camera zoom (bidirectional via `ZoomSync`), Earth scale (1–10x). Defaults: orbit 2x, rotation 5000x, zoom 400, scale 5x.
+- Camera zoom (bidirectional via `ZoomSync`), Earth scale (1–20x). Defaults: orbit 2x, rotation 5000x, zoom 400, scale 5x.
+
+## Recent Commits (since last doc sync)
+
+- `b4c6306` — Initialize t8 Agentic OS for agent-first routing and memory.
+- `d9a230c` — Add Understand Anything knowledge graph with auto-update enabled.
+- `2bbfd35` — Increased max earth scale to 20 and bumped explainer earthScale to max.
 
 ## Lessons
 
