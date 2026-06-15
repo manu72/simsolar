@@ -216,7 +216,7 @@ export function TopLeftControls() {
 
   // ── Mobile panel classes ────────────────────────────────────────────
   const mobilePanelClasses = selectedEvent
-    ? 'fixed inset-x-3 top-3 bottom-[calc(var(--hud-height,8rem)+0.75rem)] z-60 rounded-t-2xl w-auto sm:relative sm:mt-1 sm:top-auto sm:bottom-auto sm:left-auto sm:right-auto sm:z-50 sm:w-[min(23rem,calc(100vw-1.5rem))]'
+    ? 'fixed inset-x-3 top-3 bottom-[calc(var(--hud-height,8rem)+0.75rem)] z-[60] rounded-t-2xl w-auto sm:relative sm:mt-1 sm:top-auto sm:bottom-auto sm:left-auto sm:right-auto sm:z-50 sm:w-[min(23rem,calc(100vw-1.5rem))]'
     : ''
 
   // Button visibility when drawer is open on mobile — only wrap buttons, not the panel
@@ -254,7 +254,7 @@ export function TopLeftControls() {
         // Scrim overlay for mobile drawer
         <>
           <div
-            className="fixed inset-0 bg-black/40 z-55 sm:hidden"
+            className="fixed inset-0 bg-black/40 z-[55] sm:hidden"
             onClick={closeExplainer}
             aria-hidden="true"
           />
