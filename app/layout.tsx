@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "SolarSim Interactive Solar System Animation Simulator",
-  description: "Interactive visual guide to the solar system with adjustable perspective and animation.",
+  description:
+    "Dive into an immersive interactive space experience where you can explore the solar system and its planets with adjustable perspective and animation.",
   manifest: "/manifest.json",
   icons: {
     icon: [
