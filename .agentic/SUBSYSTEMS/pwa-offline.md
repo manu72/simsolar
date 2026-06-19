@@ -26,7 +26,7 @@ Opt-in offline asset caching via service worker — textures and static assets f
 
 ## Dependencies
 - `components/ui/InfoModal.tsx`
-- `public/textures/` assets (~2MB)
+- `public/textures/` assets (~25MB)
 
 ## Invariants
 - Guard every `cache.put()` with `response.ok` — 4xx/5xx must not poison cache

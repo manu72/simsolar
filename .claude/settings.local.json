@@ -10,7 +10,18 @@
       "WebFetch(domain:visibleearth.nasa.gov)",
       "WebFetch(domain:neo.gsfc.nasa.gov)",
       "WebFetch(domain:eoimages.gsfc.nasa.gov)",
-      "mcp__plugin_context7_context7__query-docs"
+      "mcp__plugin_context7_context7__query-docs",
+      "mcp__plugin_context-mode_context-mode__ctx_execute_file",
+      "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+      "mcp__plugin_context-mode_context-mode__ctx_execute",
+      "Bash(python3 scripts/agentic/route_task.py \"season explainer\")",
+      "Bash(echo \"exit: $?\")",
+      "Read(//tmp/**)",
+      "Bash(python3 -c ' *)",
+      "Bash(echo \"TEST exit: $?\")",
+      "Bash(pnpm lint *)",
+      "Bash(echo \"LINT exit: $?\")",
+      "Bash(python3 scripts/agentic/validate_memory.py)"
     ]
   }
 }

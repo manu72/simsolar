@@ -78,11 +78,11 @@ simsolar/
 ├── store/
 │   └── useAppStore.ts                # Zustand (playback, speeds, hemisphere, zoom, scale, focus, season explainer)
 ├── public/
-│   ├── textures/                     # Earth day/night and Moon texture maps (~2MB total)
+│   ├── textures/                     # Earth day/night and Moon texture maps (~25MB total)
 │   ├── icons/                        # PWA app icons (192px, 512px)
 │   ├── manifest.json                 # PWA manifest
 │   └── sw.js                         # Service worker for offline asset caching
-├── __tests__/                        # Vitest — run `pnpm test` for current counts (4 files, 60 tests)
+├── __tests__/                        # Vitest — run `pnpm test` for current counts (5 files, 123 tests)
 │   ├── orbitalMechanics.test.ts      # Julian day, Kepler orbit, seasons, solstice/equinox events
 │   ├── cameraMath.test.ts            # Pixel-to-world, screen pan, zoom-to-distance
 │   ├── seasonExplainer.test.ts       # Explainer events, presets, today-aware selection

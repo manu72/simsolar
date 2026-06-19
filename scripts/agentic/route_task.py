@@ -228,17 +228,45 @@ def risk_tags(config: dict, paths: list[str]) -> list[str]:
         for rule in config.get("high_risk_patterns", []):
             match = rule.get("match", "")
             rule_tags = rule.get("tags", [])
-            if isinstance(match, str) and isinstance(rule_tags, list) and glob_match_simple(match, path):
+            if isinstance(match, str) and isinstance(rule_tags, list) and glob_match(match, path):
                 for tag in rule_tags:
                     if isinstance(tag, str) and tag not in tags:
                         tags.append(tag)
     return tags
 
 
-def glob_match_simple(pattern: str, path: str) -> bool:
+def glob_match(pattern: str, path: str) -> bool:
+    """Recursive glob match supporting ``**`` segments (used by high_risk_patterns).
+
+    Mirrors validate_memory.glob_match so routing and validation agree on which
+    paths are high-risk. The previous fnmatch-based match undermatched top-level
+    dirs: ``**/payments/**`` must match ``payments/checkout.ts`` (a risk dir at
+    the repo root), which ``fnmatch(norm, "*/payments/*")`` rejected.
+    """
     norm = path.replace("\\", "/")
-    pat = pattern.replace("\\", "/")
-    return fnmatch.fnmatch(norm, pat.replace("**", "*"))
+    parts = pattern.replace("\\", "/").split("/")
+    return _glob_parts(parts, norm.split("/"))
+
+
+def _glob_parts(pattern_parts: list[str], path_parts: list[str]) -> bool:
+    if not pattern_parts:
+        return not path_parts
+    head, *tail = pattern_parts
+    if head == "**":
+        if _glob_parts(tail, path_parts):
+            return True
+        if path_parts:
+            return _glob_parts(pattern_parts, path_parts[1:])
+        return False
+    if not path_parts:
+        return False
+    if head == "*":
+        if not _glob_parts(tail, path_parts[1:]):
+            return False
+        return True
+    if head != path_parts[0]:
+        return False
+    return _glob_parts(tail, path_parts[1:])
 
 
 def filesystem_fallback(root: Path, terms: list[str], limit: int) -> list[tuple[str, str]]:
