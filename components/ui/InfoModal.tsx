@@ -193,7 +193,7 @@ export function InfoModal({ triggerClassName = DEFAULT_TRIGGER_CLASS_NAME, trigg
                 <p className="text-xs text-white/40 mt-0.5">
                   {isCached
                     ? "Textures and assets are cached for offline use."
-                    : "Downloads textures and assets (~2MB) so the app works without an internet connection."}
+                    : "Downloads textures and assets (~25MB) so the app works without an internet connection."}
                 </p>
               </div>
             </label>
