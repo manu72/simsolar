@@ -1,6 +1,6 @@
 'use client'
 
-import { useContext, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useTexture } from '@react-three/drei'
 import * as THREE from 'three'
@@ -43,6 +43,12 @@ export function Planet({ planet }: PlanetProps) {
       meshRef.current.rotation.y = clock.rotationAngle * (SIDEREAL_DAY_DAYS / data.rotationPeriodDays)
     }
   })
+
+  // The mesh unmounts while hidden, so onPointerOut can't fire — clear any
+  // hover cursor left behind (e.g. explainer opened via keyboard mid-hover)
+  useEffect(() => {
+    if (explainerActive) document.body.style.cursor = 'auto'
+  }, [explainerActive])
 
   // Explainers teach with Earth alone — other planets would clutter the view
   if (explainerActive) return null

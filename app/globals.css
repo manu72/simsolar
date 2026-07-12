@@ -187,3 +187,81 @@ body {
     transform: translate3d(0, 0, 0) rotate(18deg);
   }
 }
+
+/* ── Season diagram (SVG explainer) ─────────────────────────────── */
+@keyframes sd-sun-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+@keyframes sd-rays-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes sd-beam-flow {
+  to { stroke-dashoffset: -36; }
+}
+@keyframes sd-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.9; }
+}
+@keyframes sd-nudge-left {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-4px); }
+}
+@keyframes sd-nudge-right {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+@keyframes sd-axis-glow {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.7; }
+}
+@keyframes sd-modal-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.season-diagram .sd-sun-pulse {
+  animation: sd-sun-pulse 4.5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.season-diagram .sd-rays {
+  animation: sd-rays-spin 90s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.season-diagram .sd-beam-line {
+  stroke-dasharray: 8 10;
+  animation: sd-beam-flow 2.6s linear infinite;
+}
+.season-diagram .sd-twinkle {
+  animation: sd-twinkle 3.2s ease-in-out infinite;
+}
+.season-diagram .sd-twinkle-late {
+  animation-delay: 1.4s;
+}
+.season-diagram .sd-nudge-left {
+  animation: sd-nudge-left 2.8s ease-in-out infinite;
+}
+.season-diagram .sd-nudge-right {
+  animation: sd-nudge-right 2.8s ease-in-out infinite;
+}
+.season-diagram .sd-axis-glow {
+  animation: sd-axis-glow 3.6s ease-in-out infinite;
+}
+.sd-modal-panel {
+  animation: sd-modal-in 0.25s ease-out;
+}
+
+/* Pause everything while the page is hidden */
+.season-diagram[data-paused="true"] * {
+  animation-play-state: paused !important;
+}
+
+/* Static version keeps all information; motion is decorative only */
+@media (prefers-reduced-motion: reduce) {
+  .season-diagram *,
+  .sd-modal-panel {
+    animation: none !important;
+  }
+}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Line, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import {
@@ -35,6 +35,12 @@ export function Moon({ groupRef, inclinationGroupRef }: MoonProps) {
     const pts = curve.getPoints(ORBIT_SEGMENTS)
     return pts.map(p => new THREE.Vector3(p.x, 0, p.y))
   }, [])
+
+  // The mesh unmounts while hidden, so onPointerOut can't fire — clear any
+  // hover cursor left behind (e.g. explainer opened via keyboard mid-hover)
+  useEffect(() => {
+    if (explainerActive) document.body.style.cursor = 'auto'
+  }, [explainerActive])
 
   // Explainers teach with Earth alone — the spinning globe would otherwise
   // carry the Moon across the camera view mid-lesson

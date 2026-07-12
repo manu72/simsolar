@@ -24,7 +24,9 @@ export function PlanetSelector() {
         {PLANETS.map(planet => (
           <button
             key={planet.name}
+            type="button"
             title={planet.target ? planet.name : `${planet.name} — Coming in Phase 2`}
+            aria-label={planet.target ? `Focus ${planet.name}` : `${planet.name} — not yet available`}
             disabled={!planet.target}
             onClick={() => planet.target && setFocusTarget(planet.target)}
             className={`rounded-full transition-all ${
