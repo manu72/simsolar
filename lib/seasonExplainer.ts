@@ -32,7 +32,6 @@ export interface SeasonExplainerEvent {
 export interface SeasonExplainerScenePreset {
   isPlaying: boolean;
   orbitSpeed: number;
-  zoomDistance: number;
   earthScale: number;
   focusTarget: "earth";
 }
@@ -48,7 +47,6 @@ interface SolarEventDefinition {
 export const SEASON_EXPLAINER_SCENE_PRESET: SeasonExplainerScenePreset = {
   isPlaying: false,
   orbitSpeed: 0,
-  zoomDistance: 150,
   earthScale: 20,
   focusTarget: "earth",
 };
@@ -67,7 +65,7 @@ const EVENT_ROTATION_ANGLES: Record<SolarEventLabel, number> = {
   "December Solstice": Math.PI * 0.15,
 };
 
-const SOLSTICE_EXPLAINER_ZOOM_DISTANCE = 420;
+export const EXPLAINER_ZOOM_DISTANCE = 420;
 
 export const SOLSTICE_EVENT_LABELS: readonly SolarEventLabel[] = ["June Solstice", "December Solstice"];
 export const EQUINOX_EVENT_LABELS: readonly SolarEventLabel[] = ["March Equinox", "September Equinox"];
@@ -157,7 +155,7 @@ function getViewPreset(label: SolarEventLabel): SeasonExplainerViewPreset {
   return {
     rotationAngle: EVENT_ROTATION_ANGLES[label],
     cameraKind: isEquinox ? "equinox-side" : "solstice-fixed",
-    zoomDistance: isEquinox ? SEASON_EXPLAINER_SCENE_PRESET.zoomDistance : SOLSTICE_EXPLAINER_ZOOM_DISTANCE,
+    zoomDistance: EXPLAINER_ZOOM_DISTANCE,
   };
 }
 

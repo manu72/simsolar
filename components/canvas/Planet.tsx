@@ -4,7 +4,7 @@ import { useContext, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useTexture } from '@react-three/drei'
 import * as THREE from 'three'
-import { PLANET_DATA, SIDEREAL_DAY_DAYS, EARTH_PERIHELION_LONGITUDE_DEG, type InnerPlanet } from '@/lib/constants'
+import { PLANET_DATA, SIDEREAL_DAY_DAYS, EARTH_PERIHELION_LONGITUDE_DEG, DEFAULT_EARTH_SCALE, type InnerPlanet } from '@/lib/constants'
 import { getPlanetOrbitalPosition } from '@/lib/orbitalMechanics'
 import { useAppStore } from '@/store/useAppStore'
 import { usePlanetDrag } from '@/lib/usePlanetDrag'
@@ -25,22 +25,27 @@ export function Planet({ planet }: PlanetProps) {
   const groupRef = useRef<THREE.Group>(null)
   const meshRef = useRef<THREE.Mesh>(null)
   const { onPointerDown } = usePlanetDrag(planet)
+  const explainerActive = useAppStore(s => Boolean(s.activeSeasonExplainer))
   const data = PLANET_DATA[planet]
   const texture = useTexture(data.texture, (t) => {
     t.colorSpace = THREE.SRGBColorSpace
   })
 
   useFrame(() => {
-    const { earthScale } = useAppStore.getState()
+    const { earthScale, focusTarget } = useAppStore.getState()
     if (groupRef.current) {
       groupRef.current.position.copy(getPlanetOrbitalPosition(planet, clock.julianDay))
-      groupRef.current.scale.setScalar(earthScale)
+      // Planet Scale only applies to the focused planet
+      groupRef.current.scale.setScalar(focusTarget === planet ? earthScale : DEFAULT_EARTH_SCALE)
     }
     if (meshRef.current) {
       // clock.rotationAngle is 2π per Earth sidereal day; rescale to this planet's spin
       meshRef.current.rotation.y = clock.rotationAngle * (SIDEREAL_DAY_DAYS / data.rotationPeriodDays)
     }
   })
+
+  // Explainers teach with Earth alone — other planets would clutter the view
+  if (explainerActive) return null
 
   return (
     <>

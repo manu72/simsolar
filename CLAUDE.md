@@ -30,7 +30,7 @@ SolarSim is a browser-based solar system simulation built with **Next.js 16**, *
 
 ### State management
 
-`store/useAppStore.ts` — single Zustand store holding playback state (isPlaying, orbitSpeed, rotationSpeed), camera/zoom, planet scale (`earthScale`, applied to all planets), hemisphere toggle, and focus target (`'sun' | 'mercury' | 'venus' | 'earth' | 'moon'`). The Animator reads this via `useAppStore.getState()` inside `useFrame` to avoid React re-renders in the render loop.
+`store/useAppStore.ts` — single Zustand store holding playback state (isPlaying, orbitSpeed, rotationSpeed), camera/zoom, planet scale (`earthScale`, applied to the focused planet only — others render at `DEFAULT_EARTH_SCALE`), hemisphere toggle, and focus target (`'sun' | 'mercury' | 'venus' | 'earth' | 'moon'`). The Animator reads this via `useAppStore.getState()` inside `useFrame` to avoid React re-renders in the render loop.
 
 ### Orbital mechanics
 

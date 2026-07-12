@@ -13,6 +13,7 @@ import {
   MOON_SIDEREAL_PERIOD_DAYS,
   MOON_INCLINATION_RAD,
   MOON_NODAL_PRECESSION_YEARS,
+  DEFAULT_EARTH_SCALE,
 } from '@/lib/constants'
 
 // Pre-allocated objects reused every frame to avoid GC pressure
@@ -86,7 +87,9 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldG
 
     if (earthGroupRef.current) {
       earthGroupRef.current.position.copy(earthPos).sub(_focusOffset)
-      earthGroupRef.current.scale.setScalar(earthScale)
+      // Planet Scale applies to Earth unless another planet is the focus
+      const otherPlanetFocused = focusTarget === 'mercury' || focusTarget === 'venus'
+      earthGroupRef.current.scale.setScalar(otherPlanetFocused ? DEFAULT_EARTH_SCALE : earthScale)
     }
     if (worldGroupRef.current) {
       worldGroupRef.current.position.copy(_focusOffset).negate()
