@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { Vector3, PerspectiveCamera } from 'three'
 import {
   AXIAL_TILT_RAD,
+  EARTH_AXIS_WORLD,
 } from '@/lib/constants'
 import { getEarthOrbitalPosition } from '@/lib/orbitalMechanics'
 import { getSeasonExplainerEvent } from '@/lib/seasonExplainer'
@@ -375,8 +376,8 @@ describe('getSeasonExplainerCameraPosition', () => {
     )
     const aspect = 16 / 9
     const camera = makeExplainerCamera(cameraPosition, aspect)
-    const northPole = new Vector3(Math.sin(AXIAL_TILT_RAD), Math.cos(AXIAL_TILT_RAD), 0).project(camera)
-    const southPole = new Vector3(-Math.sin(AXIAL_TILT_RAD), -Math.cos(AXIAL_TILT_RAD), 0).project(camera)
+    const northPole = new Vector3(...EARTH_AXIS_WORLD).project(camera)
+    const southPole = new Vector3(...EARTH_AXIS_WORLD).negate().project(camera)
     const dx = (southPole.x - northPole.x) * aspect
     const dy = northPole.y - southPole.y
 
@@ -390,17 +391,17 @@ describe('getSeasonExplainerCameraPosition', () => {
     )
     const aspect = 16 / 9
     const camera = makeExplainerCamera(cameraPosition, aspect)
-    const northPole = new Vector3(Math.sin(AXIAL_TILT_RAD), Math.cos(AXIAL_TILT_RAD), 0).project(camera)
-    const southPole = new Vector3(-Math.sin(AXIAL_TILT_RAD), -Math.cos(AXIAL_TILT_RAD), 0).project(camera)
+    const northPole = new Vector3(...EARTH_AXIS_WORLD).project(camera)
+    const southPole = new Vector3(...EARTH_AXIS_WORLD).negate().project(camera)
 
     expect(northPole.x).toBeCloseTo(southPole.x, 6)
     expect(northPole.y).toBeGreaterThan(southPole.y)
   })
 
   it('tips the equinox view toward the pole of the selected hemisphere', () => {
-    // Earth's axis leans toward +X, so the camera on the -X side sees the
-    // south pole tipped toward it, and +X the north pole
-    const northAxis = new Vector3(Math.sin(AXIAL_TILT_RAD), Math.cos(AXIAL_TILT_RAD), 0)
+    // The south camera sits opposite the axis lean, so it sees the south
+    // pole tipped toward it; the north camera sees the north pole
+    const northAxis = new Vector3(...EARTH_AXIS_WORLD)
     const southCamera = new Vector3(
       ...getSeasonExplainerCameraPosition('equinox-side', distance, 'south'),
     )

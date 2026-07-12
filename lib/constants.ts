@@ -1,6 +1,21 @@
 export const ECCENTRICITY = 0.0167;
-export const AXIAL_TILT_DEG = 23.5;
-export const AXIAL_TILT_RAD = (23.5 * Math.PI) / 180;
+export const AXIAL_TILT_DEG = 23.44;
+export const AXIAL_TILT_RAD = (AXIAL_TILT_DEG * Math.PI) / 180;
+export const EARTH_PERIHELION_LONGITUDE_DEG = 102.94719;
+
+// Earth's axis leans toward its December-solstice position, NOT toward
+// perihelion (+X in the scene frame). The solstice sits at true anomaly
+// 90° − ϖ ≈ −12.95°, ~13 days before perihelion (Dec 21 vs Jan 3). Without
+// this offset the terminator misses the poles by ~5° on the equinoxes.
+export const TILT_DIRECTION_RAD = ((90 - EARTH_PERIHELION_LONGITUDE_DEG) * Math.PI) / 180;
+
+// Earth's spin-axis direction in world space (unit vector): +Y tilted by
+// AXIAL_TILT toward the TILT_DIRECTION azimuth in the orbital (XZ) plane
+export const EARTH_AXIS_WORLD: [number, number, number] = [
+  Math.sin(AXIAL_TILT_RAD) * Math.cos(TILT_DIRECTION_RAD),
+  Math.cos(AXIAL_TILT_RAD),
+  Math.sin(AXIAL_TILT_RAD) * Math.sin(TILT_DIRECTION_RAD),
+];
 
 // Scene scale (Three.js world units)
 export const SEMI_MAJOR_AXIS = 200;
@@ -42,7 +57,6 @@ export const DEFAULT_ZOOM_DISTANCE = 400;
 // render in the ecliptic plane like Earth's; add an inclination rotation if
 // out-of-plane accuracy ever matters.
 export const J2000_JD = 2451545.0; // Jan 1 2000 12:00 UTC
-export const EARTH_PERIHELION_LONGITUDE_DEG = 102.94719;
 
 export const PLANET_DATA = {
   mercury: {

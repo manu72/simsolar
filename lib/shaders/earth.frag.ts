@@ -15,9 +15,10 @@ void main() {
   // Dot product: 1.0 at subsolar point, -1.0 at antisolar point
   float sunDot = dot(normal, sunDir);
 
-  // Soft terminator band: blend day->night over ~12 degrees either side of terminator
-  // smoothstep(-0.1, 0.1, sunDot): 0.0 on night side, 1.0 on day side
-  float dayBlend = smoothstep(-0.1, 0.1, sunDot);
+  // Terminator band: blend day->night over ~1.7 degrees either side of the
+  // terminator — close to the real twilight band, keeps a crisp pole-to-pole
+  // line at equinox while staying antialiased
+  float dayBlend = smoothstep(-0.03, 0.03, sunDot);
 
   vec4 dayColor   = texture2D(uDayTexture,   vUv);
   vec4 nightColor = texture2D(uNightTexture, vUv) * 0.9;

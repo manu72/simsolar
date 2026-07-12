@@ -1,4 +1,5 @@
 import { Vector3, Matrix4 } from 'three'
+import { TILT_DIRECTION_RAD } from './constants'
 import type { Hemisphere, SeasonExplainerCameraKind } from './seasonExplainer'
 
 const _dir = new Vector3()
@@ -97,13 +98,14 @@ export function getInitialHeliocentricCameraPosition(
 /**
  * Returns an earth-centric teaching camera position for explainer events.
  * Both kinds use fixed world-space directions so the projected axis keeps a
- * consistent teaching orientation. Solstice views look along -Z, showing the
- * axial tilt (which lies in the world XY plane) leaning at its full 23.5°.
- * Equinox views look along ±X — within the tilt plane — so the axis projects
+ * consistent teaching orientation. Directions are defined relative to the
+ * axial-tilt plane (the axis leans toward the TILT_DIRECTION_RAD azimuth):
+ * solstice views look perpendicular to that plane, showing the tilt leaning
+ * at its full angle; equinox views look along it, so the axis projects
  * perfectly vertical (Earth appears untilted) and the day/night terminator
- * reads side-on through both poles. The sign follows the hemisphere setting:
- * the axis leans toward +X, so a -X camera has the south pole tipped toward
- * the viewer (the app's southern-hemisphere default) and +X the north.
+ * reads side-on through both poles. The equinox sign follows the hemisphere
+ * setting: viewed from opposite the lean the south pole tips toward the
+ * viewer (the app's southern-hemisphere default), from along it the north.
  */
 export function getSeasonExplainerCameraPosition(
   cameraKind: SeasonExplainerCameraKind,
@@ -115,6 +117,6 @@ export function getSeasonExplainerCameraPosition(
   } else {
     _teachingDirection.set(hemisphere === 'north' ? 1 : -1, 0, 0)
   }
-  _teachingDirection.multiplyScalar(distance)
+  _teachingDirection.applyAxisAngle(_up.set(0, 1, 0), -TILT_DIRECTION_RAD).multiplyScalar(distance)
   return [_teachingDirection.x, _teachingDirection.y, _teachingDirection.z]
 }

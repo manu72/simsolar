@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest'
-import { SEMI_MAJOR_AXIS, SIDEREAL_DAY_DAYS, PLANET_DATA, J2000_JD, type InnerPlanet } from '@/lib/constants'
+import { Vector3 } from 'three'
+import {
+  SEMI_MAJOR_AXIS,
+  SIDEREAL_DAY_DAYS,
+  PLANET_DATA,
+  J2000_JD,
+  EARTH_AXIS_WORLD,
+  AXIAL_TILT_DEG,
+  type InnerPlanet,
+} from '@/lib/constants'
 import {
   dateToJulianDay,
   julianDayToDate,
@@ -66,6 +75,33 @@ describe('getEarthOrbitalPosition', () => {
     const dist = getEarthOrbitalPosition(jd).length()
     expect(dist).toBeGreaterThan(SEMI_MAJOR_AXIS * 0.98)
     expect(dist).toBeLessThan(SEMI_MAJOR_AXIS * 1.02)
+  })
+})
+
+describe('subsolar latitude (axis vs orbit alignment)', () => {
+  // Latitude where the sun is directly overhead — the ground truth for
+  // day/night shading. Zero at the equinoxes (terminator pole to pole),
+  // ±AXIAL_TILT at the solstices. This fails if the axis lean drifts back
+  // toward perihelion instead of the December-solstice direction.
+  function subsolarLatDeg(jd: number): number {
+    const sunDir = getEarthOrbitalPosition(jd).negate().normalize()
+    return (Math.asin(new Vector3(...EARTH_AXIS_WORLD).dot(sunDir)) * 180) / Math.PI
+  }
+
+  it('is ~0° at the March equinox (terminator through both poles)', () => {
+    expect(subsolarLatDeg(dateToJulianDay(new Date('2026-03-20T00:00:00Z')))).toBeCloseTo(0, 0)
+  })
+
+  it('is ~0° at the September equinox', () => {
+    expect(subsolarLatDeg(dateToJulianDay(new Date('2026-09-23T00:00:00Z')))).toBeCloseTo(0, 0)
+  })
+
+  it('is ~+23.44° at the June solstice (midnight sun above the arctic circle)', () => {
+    expect(subsolarLatDeg(dateToJulianDay(new Date('2026-06-21T00:00:00Z')))).toBeCloseTo(AXIAL_TILT_DEG, 1)
+  })
+
+  it('is ~-23.44° at the December solstice', () => {
+    expect(subsolarLatDeg(dateToJulianDay(new Date('2026-12-21T00:00:00Z')))).toBeCloseTo(-AXIAL_TILT_DEG, 1)
   })
 })
 
