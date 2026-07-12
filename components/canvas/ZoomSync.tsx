@@ -54,6 +54,7 @@ export function ZoomSync({ controlsRef }: ZoomSyncProps) {
         const [x, y, z] = getSeasonExplainerCameraPosition(
           event.viewPreset.cameraKind,
           zoomDistance,
+          hemisphere,
         )
 
         controls.target.set(0, 0, 0)
