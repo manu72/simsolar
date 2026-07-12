@@ -21,6 +21,7 @@ interface MoonProps {
 
 export function Moon({ groupRef, inclinationGroupRef }: MoonProps) {
   const { onPointerDown } = usePlanetDrag('moon')
+  const explainerActive = useAppStore(s => Boolean(s.activeSeasonExplainer))
   const moonTexture = useTexture('/textures/moon.jpg')
 
   const orbitPoints = useMemo(() => {
@@ -34,6 +35,10 @@ export function Moon({ groupRef, inclinationGroupRef }: MoonProps) {
     const pts = curve.getPoints(ORBIT_SEGMENTS)
     return pts.map(p => new THREE.Vector3(p.x, 0, p.y))
   }, [])
+
+  // Explainers teach with Earth alone — the spinning globe would otherwise
+  // carry the Moon across the camera view mid-lesson
+  if (explainerActive) return null
 
   return (
     <group ref={inclinationGroupRef} rotation={[MOON_INCLINATION_RAD, 0, 0]}>

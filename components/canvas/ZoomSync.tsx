@@ -6,7 +6,6 @@ import { Vector3 } from 'three'
 import { SimulationContext } from '@/components/canvas/SimulationContext'
 import { useAppStore } from '@/store/useAppStore'
 import { getSeasonExplainerCameraPosition, resetPanToOrigin, zoomToDistance } from '@/lib/cameraMath'
-import { getEarthOrbitalPosition } from '@/lib/orbitalMechanics'
 import { getSeasonExplainerEvent } from '@/lib/seasonExplainer'
 
 interface ZoomSyncProps {
@@ -52,11 +51,10 @@ export function ZoomSync({ controlsRef }: ZoomSyncProps) {
       const explainerKey = `${activeSeasonExplainer.eventLabel}:${hemisphere}:${clock.julianDay}`
 
       if (snappedExplainerKey.current !== explainerKey) {
-        const earthPosition = getEarthOrbitalPosition(clock.julianDay)
         const [x, y, z] = getSeasonExplainerCameraPosition(
           event.viewPreset.cameraKind,
-          earthPosition,
           zoomDistance,
+          hemisphere,
         )
 
         controls.target.set(0, 0, 0)

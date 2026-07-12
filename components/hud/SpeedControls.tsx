@@ -82,7 +82,7 @@ export function SpeedControls() {
         onChange={setZoomDistance}
       />
       <SpeedSlider
-        label="Earth Scale"
+        label="Planet Scale"
         value={earthScale}
         min={MIN_EARTH_SCALE}
         max={MAX_EARTH_SCALE}

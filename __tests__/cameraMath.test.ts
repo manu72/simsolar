@@ -2,9 +2,10 @@ import { describe, it, expect } from 'vitest'
 import { Vector3, PerspectiveCamera } from 'three'
 import {
   AXIAL_TILT_RAD,
+  EARTH_AXIS_WORLD,
 } from '@/lib/constants'
 import { getEarthOrbitalPosition } from '@/lib/orbitalMechanics'
-import { SEASON_EXPLAINER_SCENE_PRESET, getSeasonExplainerEvent } from '@/lib/seasonExplainer'
+import { getSeasonExplainerEvent } from '@/lib/seasonExplainer'
 import {
   pixelToWorldScale,
   applyScreenPan,
@@ -301,7 +302,6 @@ describe('getInitialHeliocentricCameraPosition', () => {
 // ---------------------------------------------------------------------------
 
 describe('getSeasonExplainerCameraPosition', () => {
-  const earthPosition = new Vector3(120, 0, -180)
   const distance = 150
 
   function makeExplainerCamera(cameraPosition: Vector3, aspect = 16 / 9) {
@@ -315,36 +315,29 @@ describe('getSeasonExplainerCameraPosition', () => {
 
   it('returns finite coordinates at the requested distance', () => {
     const cameraPosition = new Vector3(
-      ...getSeasonExplainerCameraPosition('solstice-fixed', earthPosition, distance),
+      ...getSeasonExplainerCameraPosition('solstice-fixed', distance, 'south'),
     )
 
     expect(cameraPosition.distanceTo(new Vector3(0, 0, 0))).toBeCloseTo(distance, 6)
     expect(cameraPosition.toArray().every(Number.isFinite)).toBe(true)
   })
 
-  it('returns stable output for the same preset and Earth position', () => {
-    const first = getSeasonExplainerCameraPosition('equinox-side', earthPosition, distance)
-    const second = getSeasonExplainerCameraPosition('equinox-side', earthPosition, distance)
+  it('returns stable output for the same preset', () => {
+    const first = getSeasonExplainerCameraPosition('equinox-side', distance, 'south')
+    const second = getSeasonExplainerCameraPosition('equinox-side', distance, 'south')
 
     expect(second).toEqual(first)
   })
 
   it('uses distinct directions for solstice and equinox teaching views', () => {
     const solstice = new Vector3(
-      ...getSeasonExplainerCameraPosition('solstice-fixed', earthPosition, distance),
+      ...getSeasonExplainerCameraPosition('solstice-fixed', distance, 'south'),
     ).normalize()
     const equinox = new Vector3(
-      ...getSeasonExplainerCameraPosition('equinox-side', earthPosition, distance),
+      ...getSeasonExplainerCameraPosition('equinox-side', distance, 'south'),
     ).normalize()
 
     expect(solstice.dot(equinox)).toBeLessThan(0.98)
-  })
-
-  it('keeps the solstice camera direction fixed across opposite Earth positions', () => {
-    const juneDirection = getSeasonExplainerCameraPosition('solstice-fixed', new Vector3(-200, 0, 45), distance)
-    const decemberDirection = getSeasonExplainerCameraPosition('solstice-fixed', new Vector3(200, 0, -45), distance)
-
-    expect(decemberDirection).toEqual(juneDirection)
   })
 
   it('places June and December solstice Suns on opposite sides of the centered Earth', () => {
@@ -355,15 +348,15 @@ describe('getSeasonExplainerCameraPosition', () => {
     const juneCameraPosition = new Vector3(
       ...getSeasonExplainerCameraPosition(
         june.viewPreset.cameraKind,
-        juneEarthPosition,
         june.viewPreset.zoomDistance,
+        'south',
       ),
     )
     const decemberCameraPosition = new Vector3(
       ...getSeasonExplainerCameraPosition(
         december.viewPreset.cameraKind,
-        decemberEarthPosition,
         december.viewPreset.zoomDistance,
+        'south',
       ),
     )
     const juneCamera = makeExplainerCamera(juneCameraPosition)
@@ -379,20 +372,44 @@ describe('getSeasonExplainerCameraPosition', () => {
 
   it('projects the solstice axis with the north pole leaning left at the axial tilt angle', () => {
     const cameraPosition = new Vector3(
-      ...getSeasonExplainerCameraPosition(
-        'solstice-fixed',
-        earthPosition,
-        SEASON_EXPLAINER_SCENE_PRESET.zoomDistance,
-      ),
+      ...getSeasonExplainerCameraPosition('solstice-fixed', distance, 'south'),
     )
     const aspect = 16 / 9
     const camera = makeExplainerCamera(cameraPosition, aspect)
-    const northPole = new Vector3(Math.sin(AXIAL_TILT_RAD), Math.cos(AXIAL_TILT_RAD), 0).project(camera)
-    const southPole = new Vector3(-Math.sin(AXIAL_TILT_RAD), -Math.cos(AXIAL_TILT_RAD), 0).project(camera)
+    const northPole = new Vector3(...EARTH_AXIS_WORLD).project(camera)
+    const southPole = new Vector3(...EARTH_AXIS_WORLD).negate().project(camera)
     const dx = (southPole.x - northPole.x) * aspect
     const dy = northPole.y - southPole.y
 
     expect(northPole.x).toBeLessThan(southPole.x)
     expect(Math.atan2(Math.abs(dx), Math.abs(dy))).toBeCloseTo(AXIAL_TILT_RAD, 3)
+  })
+
+  it('projects the equinox axis perfectly vertical (Earth appears untilted)', () => {
+    const cameraPosition = new Vector3(
+      ...getSeasonExplainerCameraPosition('equinox-side', distance, 'south'),
+    )
+    const aspect = 16 / 9
+    const camera = makeExplainerCamera(cameraPosition, aspect)
+    const northPole = new Vector3(...EARTH_AXIS_WORLD).project(camera)
+    const southPole = new Vector3(...EARTH_AXIS_WORLD).negate().project(camera)
+
+    expect(northPole.x).toBeCloseTo(southPole.x, 6)
+    expect(northPole.y).toBeGreaterThan(southPole.y)
+  })
+
+  it('tips the equinox view toward the pole of the selected hemisphere', () => {
+    // The south camera sits opposite the axis lean, so it sees the south
+    // pole tipped toward it; the north camera sees the north pole
+    const northAxis = new Vector3(...EARTH_AXIS_WORLD)
+    const southCamera = new Vector3(
+      ...getSeasonExplainerCameraPosition('equinox-side', distance, 'south'),
+    )
+    const northCamera = new Vector3(
+      ...getSeasonExplainerCameraPosition('equinox-side', distance, 'north'),
+    )
+
+    expect(southCamera.dot(northAxis)).toBeLessThan(0)
+    expect(northCamera.dot(northAxis)).toBeGreaterThan(0)
   })
 })

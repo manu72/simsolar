@@ -13,14 +13,14 @@ import {
   type SeasonExplainerMode,
   type SolarEventLabel,
 } from '@/lib/seasonExplainer'
-import { useAppStore } from '@/store/useAppStore'
+import { useAppStore, type FocusTarget } from '@/store/useAppStore'
 
 interface SceneSnapshot {
   isPlaying: boolean
   orbitSpeed: number
   zoomDistance: number
   earthScale: number
-  focusTarget: 'sun' | 'earth' | 'moon'
+  focusTarget: FocusTarget
   julianDay: number
   rotationAngle: number
 }

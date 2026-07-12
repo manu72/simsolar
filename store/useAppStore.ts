@@ -12,14 +12,16 @@ interface ActiveSeasonExplainer {
   eventLabel: SolarEventLabel
 }
 
+export type FocusTarget = 'sun' | 'mercury' | 'venus' | 'earth' | 'moon'
+
 interface AppState {
   isPlaying: boolean
   orbitSpeed: number
   rotationSpeed: number
   hemisphere: 'north' | 'south'
   zoomDistance: number
-  earthScale: number
-  focusTarget: 'sun' | 'earth' | 'moon'
+  earthScale: number // scales all planets — UI label is "Planet Scale"
+  focusTarget: FocusTarget
   activeSeasonExplainer: ActiveSeasonExplainer | null
   showOrbitalLabels: boolean
 
@@ -29,7 +31,7 @@ interface AppState {
   setHemisphere: (h: 'north' | 'south') => void
   setZoomDistance: (v: number) => void
   setEarthScale: (v: number) => void
-  setFocusTarget: (target: 'sun' | 'earth' | 'moon') => void
+  setFocusTarget: (target: FocusTarget) => void
   setActiveSeasonExplainer: (explainer: ActiveSeasonExplainer) => void
   clearActiveSeasonExplainer: () => void
   setShowOrbitalLabels: (v: boolean) => void

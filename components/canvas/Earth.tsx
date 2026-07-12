@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from 'react'
 import { useTexture, Line } from '@react-three/drei'
 import * as THREE from 'three'
-import { EARTH_RADIUS, EARTH_AXIS_LENGTH, AXIAL_TILT_RAD } from '@/lib/constants'
+import { EARTH_RADIUS, EARTH_AXIS_LENGTH, AXIAL_TILT_RAD, TILT_DIRECTION_RAD } from '@/lib/constants'
 import { useAppStore } from '@/store/useAppStore'
 import { usePlanetDrag } from '@/lib/usePlanetDrag'
 import earthVert from '@/lib/shaders/earth.vert'
@@ -51,7 +51,9 @@ export function Earth({ groupRef, meshRef, materialRef, isVisible, onReady, chil
 
   return (
     <group ref={groupRef} visible={isVisible}>
-      <group rotation={[0, 0, -AXIAL_TILT_RAD]}>
+      {/* Euler XYZ: tilt about Z first, then swing the lean azimuth to the
+          December-solstice direction (see TILT_DIRECTION_RAD) */}
+      <group rotation={[0, -TILT_DIRECTION_RAD, -AXIAL_TILT_RAD]}>
         <mesh
           ref={meshRef}
           onClick={(e) => { e.stopPropagation(); useAppStore.getState().setFocusTarget('earth') }}

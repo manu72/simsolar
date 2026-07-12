@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   EQUINOX_EVENT_LABELS,
+  EXPLAINER_ZOOM_DISTANCE,
   SEASON_EXPLAINER_SCENE_PRESET,
   SOLSTICE_EVENT_LABELS,
   getSeasonExplainerEvent,
@@ -117,7 +118,7 @@ describe("getSeasonExplainerEvent", () => {
     ]);
     for (const event of events) {
       expect(Number.isFinite(event.viewPreset.rotationAngle)).toBe(true);
-      expect(event.viewPreset.zoomDistance).toBe(SEASON_EXPLAINER_SCENE_PRESET.zoomDistance);
+      expect(event.viewPreset.zoomDistance).toBe(EXPLAINER_ZOOM_DISTANCE);
     }
   });
 
@@ -131,7 +132,7 @@ describe("getSeasonExplainerEvent", () => {
 
     for (const event of events) {
       expect(event.viewPreset.cameraKind).toBe("solstice-fixed");
-      expect(event.viewPreset.zoomDistance).toBeGreaterThan(SEASON_EXPLAINER_SCENE_PRESET.zoomDistance);
+      expect(event.viewPreset.zoomDistance).toBe(EXPLAINER_ZOOM_DISTANCE);
     }
   });
 });
@@ -141,7 +142,6 @@ describe("SEASON_EXPLAINER_SCENE_PRESET", () => {
     expect(SEASON_EXPLAINER_SCENE_PRESET).toEqual({
       isPlaying: false,
       orbitSpeed: 0,
-      zoomDistance: 150,
       earthScale: 20,
       focusTarget: "earth",
     });

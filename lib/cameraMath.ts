@@ -1,11 +1,10 @@
 import { Vector3, Matrix4 } from 'three'
-import type { SeasonExplainerCameraKind } from './seasonExplainer'
+import { TILT_DIRECTION_RAD } from './constants'
+import type { Hemisphere, SeasonExplainerCameraKind } from './seasonExplainer'
 
 const _dir = new Vector3()
 const _right = new Vector3()
 const _up = new Vector3()
-const _sunDirection = new Vector3()
-const _sideDirection = new Vector3()
 const _teachingDirection = new Vector3()
 const INITIAL_EARTH_VIEW_ANGLE_RAD = (75 * Math.PI) / 180
 
@@ -98,38 +97,26 @@ export function getInitialHeliocentricCameraPosition(
 
 /**
  * Returns an earth-centric teaching camera position for explainer events.
- * Solstice views use a fixed world-space direction so Earth's projected axis
- * keeps the same teaching orientation across June and December. Equinox views
- * stay Sun-relative so the day/night balance reads side-on.
+ * Both kinds use fixed world-space directions so the projected axis keeps a
+ * consistent teaching orientation. Directions are defined relative to the
+ * axial-tilt plane (the axis leans toward the TILT_DIRECTION_RAD azimuth):
+ * solstice views look perpendicular to that plane, showing the tilt leaning
+ * at its full angle; equinox views look along it, so the axis projects
+ * perfectly vertical (Earth appears untilted) and the day/night terminator
+ * reads side-on through both poles. The equinox sign follows the hemisphere
+ * setting: viewed from opposite the lean the south pole tips toward the
+ * viewer (the app's southern-hemisphere default), from along it the north.
  */
 export function getSeasonExplainerCameraPosition(
   cameraKind: SeasonExplainerCameraKind,
-  earthPosition: Vector3,
   distance: number,
+  hemisphere: Hemisphere,
 ): [number, number, number] {
   if (cameraKind === 'solstice-fixed') {
     _teachingDirection.set(0, 0, -1)
-    _teachingDirection.normalize().multiplyScalar(distance)
-    return [_teachingDirection.x, _teachingDirection.y, _teachingDirection.z]
-  }
-
-  _sunDirection.copy(earthPosition).multiplyScalar(-1)
-  _sunDirection.y = 0
-
-  if (_sunDirection.lengthSq() === 0) {
-    _sunDirection.set(0, 0, 1)
   } else {
-    _sunDirection.normalize()
+    _teachingDirection.set(hemisphere === 'north' ? 1 : -1, 0, 0)
   }
-
-  _sideDirection.set(-_sunDirection.z, 0, _sunDirection.x).normalize()
-
-  _teachingDirection
-    .copy(_sideDirection)
-    .multiplyScalar(0.9)
-    .addScaledVector(_sunDirection, 0.3)
-    .addScaledVector(_up.set(0, 1, 0), 0.12)
-
-  _teachingDirection.normalize().multiplyScalar(distance)
+  _teachingDirection.applyAxisAngle(_up.set(0, 1, 0), -TILT_DIRECTION_RAD).multiplyScalar(distance)
   return [_teachingDirection.x, _teachingDirection.y, _teachingDirection.z]
 }
