@@ -11,6 +11,7 @@ import { Animator } from './Animator'
 import { Sun } from './Sun'
 import { Earth } from './Earth'
 import { Moon } from './Moon'
+import { Planet } from './Planet'
 import { OrbitPath } from './OrbitPath'
 import { Starfield } from './Starfield'
 import { Annotations } from './Annotations'
@@ -59,6 +60,10 @@ export function Scene({ isReady, onReady }: SceneProps) {
             <OrbitPath />
             <Sun />
             <Annotations />
+            <Suspense fallback={null}>
+              <Planet planet="mercury" />
+              <Planet planet="venus" />
+            </Suspense>
           </>
         ) : null}
       </group>

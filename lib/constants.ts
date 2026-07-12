@@ -36,9 +36,38 @@ export const MIN_ZOOM_DISTANCE = 50;
 export const MAX_ZOOM_DISTANCE = 600;
 export const DEFAULT_ZOOM_DISTANCE = 400;
 
-// Orbit path geometry (semi-minor axis)
-// b = a * sqrt(1 - e^2)
-export const SEMI_MINOR_AXIS = SEMI_MAJOR_AXIS * Math.sqrt(1 - ECCENTRICITY ** 2); // ≈ 199.972
+// Inner planets — J2000 orbital elements (a in AU scaled to scene units where
+// Earth's a = SEMI_MAJOR_AXIS, radii relative to EARTH_RADIUS)
+// ponytail: orbital inclination omitted (Mercury 7°, Venus 3.4°) — all orbits
+// render in the ecliptic plane like Earth's; add an inclination rotation if
+// out-of-plane accuracy ever matters.
+export const J2000_JD = 2451545.0; // Jan 1 2000 12:00 UTC
+export const EARTH_PERIHELION_LONGITUDE_DEG = 102.94719;
+
+export const PLANET_DATA = {
+  mercury: {
+    semiMajorAxis: 0.38709893 * SEMI_MAJOR_AXIS,
+    eccentricity: 0.20563069,
+    periodDays: 87.969,
+    radius: EARTH_RADIUS * 0.3829,
+    meanLongitudeDeg: 252.25084,
+    perihelionLongitudeDeg: 77.45645,
+    rotationPeriodDays: 58.646,
+    texture: '/textures/mercury.jpg',
+  },
+  venus: {
+    semiMajorAxis: 0.72333199 * SEMI_MAJOR_AXIS,
+    eccentricity: 0.00677323,
+    periodDays: 224.701,
+    radius: EARTH_RADIUS * 0.9499,
+    meanLongitudeDeg: 181.97973,
+    perihelionLongitudeDeg: 131.53298,
+    rotationPeriodDays: -243.018, // retrograde
+    texture: '/textures/venus.jpg',
+  },
+} as const;
+
+export type InnerPlanet = keyof typeof PLANET_DATA;
 
 // Moon
 export const MOON_RADIUS = 0.41; // visually scaled for readability (real ratio ~27% of Earth)

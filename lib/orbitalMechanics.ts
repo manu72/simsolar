@@ -5,6 +5,10 @@ import {
   ORBITAL_PERIOD_DAYS,
   PERIHELION_JD_2000,
   SIDEREAL_DAY_DAYS,
+  J2000_JD,
+  EARTH_PERIHELION_LONGITUDE_DEG,
+  PLANET_DATA,
+  type InnerPlanet,
 } from './constants'
 
 // ─── Julian Day ────────────────────────────────────────────────────────────
@@ -57,6 +61,33 @@ export function getEarthOrbitalPosition(jd: number): Vector3 {
   const r = SEMI_MAJOR_AXIS * (1 - ECCENTRICITY * Math.cos(E))
 
   return new Vector3(r * Math.cos(nu), 0, r * Math.sin(nu))
+}
+
+/**
+ * Returns an inner planet's heliocentric position in Three.js world units,
+ * in the same scene frame as getEarthOrbitalPosition (Earth's perihelion
+ * along +X, orbit in the XZ plane). Rotating each planet's true anomaly by
+ * its longitude of perihelion relative to Earth's keeps relative geometry
+ * (elongations, conjunctions) correct.
+ */
+export function getPlanetOrbitalPosition(planet: InnerPlanet, jd: number): Vector3 {
+  const p = PLANET_DATA[planet]
+  const e = p.eccentricity
+
+  const M0 = ((p.meanLongitudeDeg - p.perihelionLongitudeDeg) * Math.PI) / 180
+  const M = (M0 + (2 * Math.PI * (jd - J2000_JD)) / p.periodDays) % (2 * Math.PI)
+
+  const E = solveKepler(M, e)
+
+  const nu = 2 * Math.atan2(
+    Math.sqrt(1 + e) * Math.sin(E / 2),
+    Math.sqrt(1 - e) * Math.cos(E / 2),
+  )
+
+  const r = p.semiMajorAxis * (1 - e * Math.cos(E))
+  const theta = nu + ((p.perihelionLongitudeDeg - EARTH_PERIHELION_LONGITUDE_DEG) * Math.PI) / 180
+
+  return new Vector3(r * Math.cos(theta), 0, r * Math.sin(theta))
 }
 
 // ─── Earth Rotation ────────────────────────────────────────────────────────

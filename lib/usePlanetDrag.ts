@@ -5,7 +5,7 @@ import { useThree } from '@react-three/fiber'
 import type { ThreeEvent } from '@react-three/fiber'
 import { Vector3 } from 'three'
 import type { PerspectiveCamera } from 'three'
-import { useAppStore } from '@/store/useAppStore'
+import { useAppStore, type FocusTarget } from '@/store/useAppStore'
 import { pixelToWorldScale, applyScreenPan } from '@/lib/cameraMath'
 
 interface PanControls {
@@ -23,7 +23,7 @@ interface PanControls {
  * follows the visual offset. Resets automatically on focus change
  * (handled by ZoomSync).
  */
-export function usePlanetDrag(identity: 'sun' | 'earth' | 'moon') {
+export function usePlanetDrag(identity: FocusTarget) {
   const camera = useThree(s => s.camera)
   const size = useThree(s => s.size)
   const controls = useThree(s => s.controls) as PanControls | null

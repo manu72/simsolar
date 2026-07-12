@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { SEMI_MAJOR_AXIS, SIDEREAL_DAY_DAYS } from '@/lib/constants'
+import { SEMI_MAJOR_AXIS, SIDEREAL_DAY_DAYS, PLANET_DATA, J2000_JD, type InnerPlanet } from '@/lib/constants'
 import {
   dateToJulianDay,
   julianDayToDate,
   getEarthOrbitalPosition,
+  getPlanetOrbitalPosition,
   getSiderealRotationAngle,
   getSeasonLabel,
   getSolsticeEquinoxEvents,
@@ -65,6 +66,60 @@ describe('getEarthOrbitalPosition', () => {
     const dist = getEarthOrbitalPosition(jd).length()
     expect(dist).toBeGreaterThan(SEMI_MAJOR_AXIS * 0.98)
     expect(dist).toBeLessThan(SEMI_MAJOR_AXIS * 1.02)
+  })
+})
+
+describe('getPlanetOrbitalPosition', () => {
+  const planets: InnerPlanet[] = ['mercury', 'venus']
+
+  it.each(planets)('%s stays in the ecliptic plane (y ≈ 0)', (planet) => {
+    const pos = getPlanetOrbitalPosition(planet, J2000_JD + 123.4)
+    expect(pos.y).toBeCloseTo(0, 5)
+  })
+
+  it.each(planets)('%s distance stays within perihelion/aphelion bounds', (planet) => {
+    const { semiMajorAxis: a, eccentricity: e } = PLANET_DATA[planet]
+    for (let d = 0; d < 1000; d += 13) {
+      const r = getPlanetOrbitalPosition(planet, J2000_JD + d).length()
+      expect(r).toBeGreaterThanOrEqual(a * (1 - e) - 0.01)
+      expect(r).toBeLessThanOrEqual(a * (1 + e) + 0.01)
+    }
+  })
+
+  it.each(planets)('%s position repeats after one orbital period', (planet) => {
+    const jd = J2000_JD + 42
+    const p1 = getPlanetOrbitalPosition(planet, jd)
+    const p2 = getPlanetOrbitalPosition(planet, jd + PLANET_DATA[planet].periodDays)
+    expect(p1.distanceTo(p2)).toBeLessThan(0.01)
+  })
+
+  // Elongation = angle at Earth between the Sun and the planet. Its maximum
+  // is a well-known observable (Mercury ≤ ~28°, Venus ≤ ~47°) and validates
+  // that both planets share Earth's scene frame with correct perihelion
+  // orientation — a frame bug would shift these badly.
+  function maxElongationDeg(planet: InnerPlanet, spanDays: number): number {
+    let max = 0
+    for (let d = 0; d < spanDays; d += 0.5) {
+      const jd = J2000_JD + d
+      const earth = getEarthOrbitalPosition(jd)
+      const toSun = earth.clone().negate().normalize()
+      const toPlanet = getPlanetOrbitalPosition(planet, jd).sub(earth).normalize()
+      const deg = (Math.acos(toSun.dot(toPlanet)) * 180) / Math.PI
+      if (deg > max) max = deg
+    }
+    return max
+  }
+
+  it('Mercury max elongation ≈ 28° over 3 synodic periods', () => {
+    const max = maxElongationDeg('mercury', 350)
+    expect(max).toBeGreaterThan(25)
+    expect(max).toBeLessThan(29)
+  })
+
+  it('Venus max elongation ≈ 46–47° over 2 synodic periods', () => {
+    const max = maxElongationDeg('venus', 1170)
+    expect(max).toBeGreaterThan(45)
+    expect(max).toBeLessThan(48)
   })
 })
 

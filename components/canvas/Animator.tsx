@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { SimulationContext } from './SimulationContext'
 import { useAppStore } from '@/store/useAppStore'
-import { getEarthOrbitalPosition } from '@/lib/orbitalMechanics'
+import { getEarthOrbitalPosition, getPlanetOrbitalPosition } from '@/lib/orbitalMechanics'
 import {
   DAYS_PER_SECOND_BASE,
   TWO_PI_PER_SIDEREAL_SECOND,
@@ -18,6 +18,7 @@ import {
 // Pre-allocated objects reused every frame to avoid GC pressure
 const _moonLocalPos = new THREE.Vector3()
 const _inclinationEuler = new THREE.Euler(0, 0, 0, 'YXZ')
+const _focusOffset = new THREE.Vector3()
 
 interface AnimatorProps {
   earthGroupRef: React.RefObject<THREE.Group | null>
@@ -69,34 +70,26 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldG
     _moonLocalPos.applyEuler(_inclinationEuler)
 
     // ── Reference-frame positioning ─────────────────────────────────────
+    // The focused body sits at the origin: everything positioned
+    // heliocentrically is shifted by -focusOffset (the focused body's
+    // heliocentric position). Mercury/Venus live inside worldGroup at their
+    // heliocentric positions, so the worldGroup shift covers them too.
     if (focusTarget === 'moon') {
-      // Selenocentric: Moon at origin, Earth offset by -moonLocalPos,
-      // world (Sun/orbit) offset by -(earthPos + moonLocalPos)
-      if (earthGroupRef.current) {
-        earthGroupRef.current.position.copy(_moonLocalPos).negate()
-        earthGroupRef.current.scale.setScalar(earthScale)
-      }
-      if (worldGroupRef.current) {
-        worldGroupRef.current.position.copy(earthPos).add(_moonLocalPos).negate()
-      }
+      _focusOffset.copy(earthPos).add(_moonLocalPos)
     } else if (focusTarget === 'earth') {
-      // Geocentric: Earth at origin, world offset by -earthPos
-      if (earthGroupRef.current) {
-        earthGroupRef.current.position.set(0, 0, 0)
-        earthGroupRef.current.scale.setScalar(earthScale)
-      }
-      if (worldGroupRef.current) {
-        worldGroupRef.current.position.copy(earthPos).negate()
-      }
+      _focusOffset.copy(earthPos)
+    } else if (focusTarget === 'mercury' || focusTarget === 'venus') {
+      _focusOffset.copy(getPlanetOrbitalPosition(focusTarget, clock.julianDay))
     } else {
-      // Heliocentric (default): Sun at origin, Earth at orbital position
-      if (earthGroupRef.current) {
-        earthGroupRef.current.position.copy(earthPos)
-        earthGroupRef.current.scale.setScalar(earthScale)
-      }
-      if (worldGroupRef.current) {
-        worldGroupRef.current.position.set(0, 0, 0)
-      }
+      _focusOffset.set(0, 0, 0)
+    }
+
+    if (earthGroupRef.current) {
+      earthGroupRef.current.position.copy(earthPos).sub(_focusOffset)
+      earthGroupRef.current.scale.setScalar(earthScale)
+    }
+    if (worldGroupRef.current) {
+      worldGroupRef.current.position.copy(_focusOffset).negate()
     }
 
     if (earthMeshRef.current) {
@@ -106,14 +99,7 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldG
     // Sun world position for the Earth day/night shader.
     // In each mode, Sun = worldGroup origin, so its world position equals worldGroupRef.position.
     if (earthMaterialRef.current) {
-      const sunUniform = earthMaterialRef.current.uniforms.uSunPositionWorld.value
-      if (focusTarget === 'sun') {
-        sunUniform.set(0, 0, 0)
-      } else if (focusTarget === 'earth') {
-        sunUniform.copy(earthPos).negate()
-      } else {
-        sunUniform.copy(earthPos).add(_moonLocalPos).negate()
-      }
+      earthMaterialRef.current.uniforms.uSunPositionWorld.value.copy(_focusOffset).negate()
     }
 
     // ── Moon local transforms (within earthGroup) ───────────────────────
