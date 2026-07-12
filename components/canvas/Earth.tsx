@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import { EARTH_RADIUS, EARTH_AXIS_LENGTH, AXIAL_TILT_RAD, TILT_DIRECTION_RAD } from '@/lib/constants'
 import { useAppStore } from '@/store/useAppStore'
 import { usePlanetDrag } from '@/lib/usePlanetDrag'
+import { BodyLabel } from './BodyLabel'
 import earthVert from '@/lib/shaders/earth.vert'
 import earthFrag from '@/lib/shaders/earth.frag'
 
@@ -79,6 +80,7 @@ export function Earth({ groupRef, meshRef, materialRef, isVisible, onReady, chil
           opacity={explainerActive ? 0.9 : 0.4}
         />
       </group>
+      <BodyLabel name="earth" offsetY={EARTH_RADIUS * 1.6} />
       {children}
     </group>
   )

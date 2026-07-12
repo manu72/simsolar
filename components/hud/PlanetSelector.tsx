@@ -6,9 +6,9 @@ const PLANETS: { name: string; color: string; size: number; target: FocusTarget 
   { name: 'Mercury', color: '#9e9e9e', size: 10, target: 'mercury' },
   { name: 'Venus',   color: '#c2956c', size: 11, target: 'venus'   },
   { name: 'Earth',   color: '#4a8fd4', size: 14, target: 'earth'   },
-  { name: 'Mars',    color: '#c1440e', size: 11, target: null },
-  { name: 'Jupiter', color: '#c88b3a', size: 13, target: null },
-  { name: 'Saturn',  color: '#e8d5a3', size: 12, target: null },
+  { name: 'Mars',    color: '#c1440e', size: 11, target: 'mars'    },
+  { name: 'Jupiter', color: '#c88b3a', size: 13, target: 'jupiter' },
+  { name: 'Saturn',  color: '#e8d5a3', size: 12, target: 'saturn'  },
   { name: 'Uranus',  color: '#7de8e8', size: 11, target: null },
   { name: 'Neptune', color: '#4169e1', size: 11, target: null },
 ]

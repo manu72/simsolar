@@ -7,11 +7,10 @@ import { dateToJulianDay, julianDayToDate, getSolsticeEquinoxEvents } from '@/li
 
 const POLL_INTERVAL_MS = 250
 
-function getYearBounds() {
-  const year = new Date().getUTCFullYear()
+function getYearBounds(year: number) {
   const min = dateToJulianDay(new Date(Date.UTC(year, 0, 1)))
   const max = dateToJulianDay(new Date(Date.UTC(year, 11, 31)))
-  return { min, max, year }
+  return { min, max }
 }
 
 export function TimelineSlider() {
@@ -37,9 +36,19 @@ export function TimelineSlider() {
   }, [clock])
 
   const preScrubPlayingRef = useRef(useAppStore.getState().isPlaying)
-  const { min, max } = getYearBounds()
+  // The one-year window tracks the simulated date, so stepping back a year
+  // (or playing across New Year) shifts the whole slider window with it
+  const year = displayDate.getUTCFullYear()
+  const { min, max } = getYearBounds(year)
 
-  const events = useMemo(() => getSolsticeEquinoxEvents(), [])
+  const events = useMemo(() => getSolsticeEquinoxEvents(year), [year])
+
+  const stepBackOneYear = useCallback(() => {
+    const d = julianDayToDate(clock.julianDay)
+    d.setUTCFullYear(d.getUTCFullYear() - 1)
+    clock.julianDay = dateToJulianDay(d)
+    updateDisplayDateFromClock()
+  }, [clock, updateDisplayDateFromClock])
 
   const sliderValue = Math.max(min, Math.min(max, clock.julianDay))
 
@@ -75,79 +84,96 @@ export function TimelineSlider() {
         <span className="text-xs text-gray-400">{formattedDate}</span>
       </div>
 
-      {/* Slider track with season bands */}
-      <div className="relative">
-        {/* Season colour bands */}
-        <div className="absolute inset-0 h-2 rounded overflow-hidden pointer-events-none">
-          {seasonBands.map((band, i) => (
-            <div
-              key={i}
-              className="absolute top-0 h-full"
-              style={{
-                left: `${band.left}%`,
-                width: `${band.width}%`,
-                backgroundColor: band.color,
+      <div className="flex items-start gap-2">
+        {/* Step back one year */}
+        <button
+          type="button"
+          onClick={stepBackOneYear}
+          title="Back 1 year"
+          aria-label="Back 1 year"
+          className="flex-shrink-0 h-2 flex items-center text-gray-500 hover:text-gray-200 cursor-pointer transition-colors"
+        >
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" aria-hidden="true">
+            <path d="M8 1 L2 5 L8 9 Z" />
+          </svg>
+        </button>
+
+        <div className="flex-1">
+          {/* Slider track with season bands */}
+          <div className="relative">
+            {/* Season colour bands */}
+            <div className="absolute inset-0 h-2 rounded overflow-hidden pointer-events-none">
+              {seasonBands.map((band, i) => (
+                <div
+                  key={i}
+                  className="absolute top-0 h-full"
+                  style={{
+                    left: `${band.left}%`,
+                    width: `${band.width}%`,
+                    backgroundColor: band.color,
+                  }}
+                />
+              ))}
+              {/* Solstice/equinox tick marks */}
+              {events.map(event => {
+                const tickPct = (event.jd - min) / (max - min) * 100
+                return (
+                  <div
+                    key={event.label}
+                    className="absolute top-0 h-full w-px bg-white/20"
+                    style={{ left: `${tickPct}%` }}
+                  />
+                )
+              })}
+            </div>
+
+            {/* Range input */}
+            <input
+              type="range"
+              min={min}
+              max={max}
+              step={0.01}
+              value={sliderValue}
+              onPointerDown={() => {
+                preScrubPlayingRef.current = useAppStore.getState().isPlaying
+                setIsPlaying(false)
               }}
+              onInput={e => {
+                const newJD = parseFloat((e.target as HTMLInputElement).value)
+                clock.julianDay = newJD
+                updateDisplayDateFromClock()
+              }}
+              onPointerUp={() => {
+                setIsPlaying(preScrubPlayingRef.current)
+              }}
+              className="relative w-full h-2 bg-transparent rounded appearance-none cursor-pointer z-10
+                         [&::-webkit-slider-thumb]:appearance-none
+                         [&::-webkit-slider-thumb]:w-3
+                         [&::-webkit-slider-thumb]:h-3
+                         [&::-webkit-slider-thumb]:rounded-full
+                         [&::-webkit-slider-thumb]:bg-blue-300
+                         [&::-webkit-slider-thumb]:cursor-grab"
             />
-          ))}
-          {/* Solstice/equinox tick marks */}
-          {events.map(event => {
-            const tickPct = (event.jd - min) / (max - min) * 100
-            return (
-              <div
-                key={event.label}
-                className="absolute top-0 h-full w-px bg-white/20"
-                style={{ left: `${tickPct}%` }}
-              />
-            )
-          })}
+          </div>
+
+          {/* Tick labels */}
+          <div className="relative flex justify-between mt-0.5 px-0.5">
+            <span className="text-[10px] text-gray-600">Jan</span>
+            {events.map(event => {
+              const tickPct = (event.jd - min) / (max - min) * 100
+              return (
+                <span
+                  key={event.label}
+                  className="text-[10px] text-gray-500 absolute transform -translate-x-1/2"
+                  style={{ left: `${tickPct}%` }}
+                >
+                  {event.date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', timeZone: 'UTC' })}
+                </span>
+              )
+            })}
+            <span className="text-[10px] text-gray-600">Dec</span>
+          </div>
         </div>
-
-        {/* Range input */}
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={0.01}
-          value={sliderValue}
-          onPointerDown={() => {
-            preScrubPlayingRef.current = useAppStore.getState().isPlaying
-            setIsPlaying(false)
-          }}
-          onInput={e => {
-            const newJD = parseFloat((e.target as HTMLInputElement).value)
-            clock.julianDay = newJD
-            updateDisplayDateFromClock()
-          }}
-          onPointerUp={() => {
-            setIsPlaying(preScrubPlayingRef.current)
-          }}
-          className="relative w-full h-2 bg-transparent rounded appearance-none cursor-pointer z-10
-                     [&::-webkit-slider-thumb]:appearance-none
-                     [&::-webkit-slider-thumb]:w-3
-                     [&::-webkit-slider-thumb]:h-3
-                     [&::-webkit-slider-thumb]:rounded-full
-                     [&::-webkit-slider-thumb]:bg-blue-300
-                     [&::-webkit-slider-thumb]:cursor-grab"
-        />
-      </div>
-
-      {/* Tick labels */}
-      <div className="relative flex justify-between mt-0.5 px-0.5">
-        <span className="text-[10px] text-gray-600">Jan</span>
-        {events.map(event => {
-          const tickPct = (event.jd - min) / (max - min) * 100
-          return (
-            <span
-              key={event.label}
-              className="text-[10px] text-gray-500 absolute transform -translate-x-1/2"
-              style={{ left: `${tickPct}%` }}
-            >
-              {event.date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', timeZone: 'UTC' })}
-            </span>
-          )
-        })}
-        <span className="text-[10px] text-gray-600">Dec</span>
       </div>
     </div>
   )

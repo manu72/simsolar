@@ -3,13 +3,14 @@
 import { useMemo } from 'react'
 
 const STAR_COUNT = 2000
-const SPHERE_RADIUS = 800
+// Outside MAX_ZOOM_DISTANCE (5000) so the camera never exits the star sphere
+const SPHERE_RADIUS = 8000
 
 const vertexShader = `
 attribute float size;
 void main() {
   vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-  gl_PointSize = size * (300.0 / -mvPosition.z);
+  gl_PointSize = size * (3000.0 / -mvPosition.z);
   gl_Position = projectionMatrix * mvPosition;
 }
 `

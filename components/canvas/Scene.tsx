@@ -5,7 +5,8 @@ import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import type * as THREE from 'three'
 import { getInitialHeliocentricCameraPosition } from '@/lib/cameraMath'
-import { getEarthOrbitalPosition } from '@/lib/orbitalMechanics'
+import { MIN_ZOOM_DISTANCE, MAX_ZOOM_DISTANCE, CAMERA_FAR } from '@/lib/constants'
+import { getEarthOrbitalPosition, compressDisplayPosition } from '@/lib/orbitalMechanics'
 import { SimulationContext } from './SimulationContext'
 import { Animator } from './Animator'
 import { Sun } from './Sun'
@@ -34,13 +35,13 @@ export function Scene({ isReady, onReady }: SceneProps) {
   const moonInclinationGroupRef  = useRef<THREE.Group>(null)
   const controlsRef              = useRef<OrbitControlsRef>(null)
   const initialCameraPosition = useMemo(
-    () => getInitialHeliocentricCameraPosition(getEarthOrbitalPosition(clock.julianDay), 80, 392),
+    () => getInitialHeliocentricCameraPosition(compressDisplayPosition(getEarthOrbitalPosition(clock.julianDay)), 80, 392),
     [clock],
   )
 
   return (
     <Canvas
-      camera={{ position: initialCameraPosition, fov: 45 }}
+      camera={{ position: initialCameraPosition, fov: 45, far: CAMERA_FAR }}
       style={{ background: '#000005' }}
       gl={{ antialias: true }}
     >
@@ -63,6 +64,9 @@ export function Scene({ isReady, onReady }: SceneProps) {
             <Suspense fallback={null}>
               <Planet planet="mercury" />
               <Planet planet="venus" />
+              <Planet planet="mars" />
+              <Planet planet="jupiter" />
+              <Planet planet="saturn" />
             </Suspense>
           </>
         ) : null}
@@ -85,8 +89,8 @@ export function Scene({ isReady, onReady }: SceneProps) {
       <OrbitControls
         ref={controlsRef}
         makeDefault
-        minDistance={50}
-        maxDistance={600}
+        minDistance={MIN_ZOOM_DISTANCE}
+        maxDistance={MAX_ZOOM_DISTANCE}
         enablePan
       />
     </Canvas>

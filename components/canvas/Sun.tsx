@@ -7,6 +7,7 @@ import * as THREE from "three";
 import { SUN_RADIUS } from "@/lib/constants";
 import { useAppStore } from "@/store/useAppStore";
 import { usePlanetDrag } from "@/lib/usePlanetDrag";
+import { BodyLabel } from "./BodyLabel";
 import sunSurfaceVert from "@/lib/shaders/sunSurface.vert";
 import sunSurfaceFrag from "@/lib/shaders/sunSurface.frag";
 
@@ -62,6 +63,7 @@ export function Sun() {
       <Html center distanceFactor={40} style={HTML_STYLE} zIndexRange={HTML_Z_INDEX_RANGE}>
         <div style={GLOW_STYLE} />
       </Html>
+      <BodyLabel name="sun" offsetY={SUN_RADIUS * 1.6} />
     </>
   );
 }

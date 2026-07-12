@@ -7,7 +7,7 @@ import {
   J2000_JD,
   EARTH_AXIS_WORLD,
   AXIAL_TILT_DEG,
-  type InnerPlanet,
+  type PlanetId,
 } from '@/lib/constants'
 import {
   dateToJulianDay,
@@ -17,6 +17,7 @@ import {
   getSiderealRotationAngle,
   getSeasonLabel,
   getSolsticeEquinoxEvents,
+  compressDisplayPosition,
 } from '@/lib/orbitalMechanics'
 
 describe('dateToJulianDay', () => {
@@ -106,7 +107,7 @@ describe('subsolar latitude (axis vs orbit alignment)', () => {
 })
 
 describe('getPlanetOrbitalPosition', () => {
-  const planets: InnerPlanet[] = ['mercury', 'venus']
+  const planets: PlanetId[] = ['mercury', 'venus', 'mars', 'jupiter', 'saturn']
 
   it.each(planets)('%s stays in the ecliptic plane (y ≈ 0)', (planet) => {
     const pos = getPlanetOrbitalPosition(planet, J2000_JD + 123.4)
@@ -133,7 +134,7 @@ describe('getPlanetOrbitalPosition', () => {
   // is a well-known observable (Mercury ≤ ~28°, Venus ≤ ~47°) and validates
   // that both planets share Earth's scene frame with correct perihelion
   // orientation — a frame bug would shift these badly.
-  function maxElongationDeg(planet: InnerPlanet, spanDays: number): number {
+  function maxElongationDeg(planet: PlanetId, spanDays: number): number {
     let max = 0
     for (let d = 0; d < spanDays; d += 0.5) {
       const jd = J2000_JD + d
@@ -156,6 +157,27 @@ describe('getPlanetOrbitalPosition', () => {
     const max = maxElongationDeg('venus', 1170)
     expect(max).toBeGreaterThan(45)
     expect(max).toBeLessThan(48)
+  })
+})
+
+describe('compressDisplayPosition', () => {
+  it('is the identity at 1 AU (Earth stays put)', () => {
+    const pos = new Vector3(SEMI_MAJOR_AXIS, 0, 0)
+    expect(compressDisplayPosition(pos.clone()).distanceTo(pos)).toBeLessThan(1e-9)
+  })
+
+  it('preserves direction and shortens outer-planet distances', () => {
+    const saturn = getPlanetOrbitalPosition('saturn', J2000_JD)
+    const compressed = compressDisplayPosition(saturn.clone())
+    expect(compressed.clone().normalize().dot(saturn.clone().normalize())).toBeCloseTo(1, 9)
+    expect(compressed.length()).toBeLessThan(saturn.length())
+    expect(compressed.length()).toBeGreaterThan(SEMI_MAJOR_AXIS) // still outside Earth
+  })
+
+  it('keeps planet ordering by distance', () => {
+    const order = (['mercury', 'venus', 'mars', 'jupiter', 'saturn'] as PlanetId[])
+      .map(p => compressDisplayPosition(getPlanetOrbitalPosition(p, J2000_JD)).length())
+    expect([...order].sort((a, b) => a - b)).toEqual(order)
   })
 })
 
