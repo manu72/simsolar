@@ -154,6 +154,19 @@ export type PlanetId = keyof typeof PLANET_DATA;
 export const SATURN_RING_INNER = 1.5;
 export const SATURN_RING_OUTER = 2.3;
 
+// Galilean moons — rendered as children of Jupiter's group (Moon pattern).
+// Orbit radii are in Jupiter-local units, compressed for visibility like
+// MOON_ORBIT_RADIUS (real spacing is 6–27 Jupiter radii); sizes are real
+// ratios to Earth. Textures extracted from NASA's public-domain 3D models.
+export const GALILEAN_MOON_DATA = {
+  io:       { orbitRadius: 15,   radius: EARTH_RADIUS * 0.286, periodDays: 1.769138,  meanLongitudeDeg: 342.02, texture: "/textures/io.jpg" },
+  europa:   { orbitRadius: 17.5, radius: EARTH_RADIUS * 0.245, periodDays: 3.551181,  meanLongitudeDeg: 171.02, texture: "/textures/europa.jpg" },
+  ganymede: { orbitRadius: 20.5, radius: EARTH_RADIUS * 0.413, periodDays: 7.154553,  meanLongitudeDeg: 317.54, texture: "/textures/ganymede.jpg" },
+  callisto: { orbitRadius: 24,   radius: EARTH_RADIUS * 0.378, periodDays: 16.689017, meanLongitudeDeg: 181.41, texture: "/textures/callisto.jpg" },
+} as const;
+
+export type GalileanMoonId = keyof typeof GALILEAN_MOON_DATA;
+
 // Moon
 export const MOON_RADIUS = 0.27; // visually scaled to 0.41 for readability (real ratio ~27% of Earth)
 export const MOON_ORBIT_RADIUS = 5; // compressed for visibility (real ≈ 60× Earth radius)
