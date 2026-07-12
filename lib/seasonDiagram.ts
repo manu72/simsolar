@@ -47,7 +47,7 @@ export function getSeasonDiagramConfig(variant: SeasonDiagramVariant): SeasonDia
       dayFraction: { north: 0.5, south: 0.5 },
       title: "Equinox: balanced sunlight",
       caption:
-        "Earth is still tilted, but the tilt leans sideways — not toward the Sun. Both halves of Earth get the same sunshine, so day and night are almost equal everywhere.",
+        "Earth is still tilted, but the tilt leans sideways, not toward the Sun. Both halves of Earth get the same sunshine, so day and night are almost equal everywhere.",
       ariaDescription:
         "The Sun shines from the left onto Earth. Earth's tilted axis lines up exactly with the day–night line, so neither pole leans toward the Sun. Both hemispheres are half lit and half dark, and the daylight bars for the northern and southern halves are equal.",
       northChip: "No lean toward the Sun",
@@ -77,12 +77,11 @@ export function getSeasonDiagramConfig(variant: SeasonDiagramVariant): SeasonDia
     caption: isSummer
       ? `The ${hemisphereName} leans toward the Sun, so sunlight hits it more directly and days last longer. The other half of Earth leans away and has winter.`
       : `The ${hemisphereName} leans away from the Sun, so sunlight arrives at a low angle and days are short. The other half of Earth leans toward the Sun and has summer.`,
-    ariaDescription:
-      `The Sun shines from the left onto Earth, whose tilted axis leans the ${
-        poleTowardSun === "north" ? "North" : "South"
-      } Pole toward the Sun. The half of Earth leaning toward the Sun is mostly in daylight with long days, while the half leaning away is mostly in darkness with short days. It is ${
-        isSummer ? "summer" : "winter"
-      } in the ${hemisphereName}.`,
+    ariaDescription: `The Sun shines from the left onto Earth, whose tilted axis leans the ${
+      poleTowardSun === "north" ? "North" : "South"
+    } Pole toward the Sun. The half of Earth leaning toward the Sun is mostly in daylight with long days, while the half leaning away is mostly in darkness with short days. It is ${
+      isSummer ? "summer" : "winter"
+    } in the ${hemisphereName}.`,
     northChip: northIsSummer ? "Leans toward the Sun" : "Leans away from the Sun",
     southChip: northIsSummer ? "Leans away from the Sun" : "Leans toward the Sun",
     northBarLabel: northIsSummer ? "Long days" : "Short days",
