@@ -14,7 +14,6 @@ Interactive 3D solar system visualisation for solstice and equinox education. Bu
 
 ## Tech Stack
 
-
 | Layer           | Technology                                                                     | Version                  |
 | --------------- | ------------------------------------------------------------------------------ | ------------------------ |
 | Framework       | Next.js (App Router)                                                           | 16.2.1                   |
@@ -28,7 +27,6 @@ Interactive 3D solar system visualisation for solstice and equinox education. Bu
 | Linting         | ESLint (flat config, next core-web-vitals + typescript)                        | 9.x                      |
 | Package Manager | pnpm                                                                           | —                        |
 | Deployment      | Vercel                                                                         | —                        |
-
 
 ## Project Structure
 
@@ -282,17 +280,19 @@ kill <pid>       # free the port
 
 ## Contributing
 
+New planet textures can be found at https://www.solarsystemscope.com/textures/ or https://space.jpl.nasa.gov/tmaps/
+
 ### Quick Tasks for New Contributors
 
 If you're new to this codebase, pick any task below and start:
 
-| Task | Files to Touch | Effort | What You'll Learn |
-|------|---------------|--------|-------------------|
-| Precache Mercury/Venus textures in the service worker (currently missing offline) | [`public/sw.js`](public/sw.js), [`lib/useOfflineStatus.ts`](lib/useOfflineStatus.ts), [`__tests__/swCacheNames.test.ts`](__tests__/swCacheNames.test.ts) | 30 min | PWA caching, cache versioning |
-| Add Mars by extending the generic planet pattern | [`lib/constants.ts`](lib/constants.ts) (`PLANET_DATA`), [`components/canvas/Planet.tsx`](components/canvas/Planet.tsx), [`PlanetSelector.tsx`](components/hud/PlanetSelector.tsx), [`store/useAppStore.ts`](store/useAppStore.ts) | 2-3 hrs | Orbital mechanics, scene graph |
-| Extend season explainer copy or add a new event preset | [`lib/seasonExplainer.ts`](lib/seasonExplainer.ts), [`__tests__/seasonExplainer.test.ts`](__tests__/seasonExplainer.test.ts) | 1-2 hrs | Pure functions, educational content |
-| Add webp/avif texture fallbacks for Earth/Moon textures | [`public/textures/`](public/textures/), shader texture loading code | 1-2 hrs | Asset pipeline, format detection |
-| Improve solstice/equinox date precision (per-year computation) | [`lib/orbitalMechanics.ts`](lib/orbitalMechanics.ts), [`__tests__/orbitalMechanics.test.ts`](__tests__/orbitalMechanics.test.ts) | 2-3 hrs | Orbital mechanics, pure function testing |
+| Task                                                                              | Files to Touch                                                                                                                                                                                                                    | Effort  | What You'll Learn                        |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------------------------------- |
+| Precache Mercury/Venus textures in the service worker (currently missing offline) | [`public/sw.js`](public/sw.js), [`lib/useOfflineStatus.ts`](lib/useOfflineStatus.ts), [`__tests__/swCacheNames.test.ts`](__tests__/swCacheNames.test.ts)                                                                          | 30 min  | PWA caching, cache versioning            |
+| Add Mars by extending the generic planet pattern                                  | [`lib/constants.ts`](lib/constants.ts) (`PLANET_DATA`), [`components/canvas/Planet.tsx`](components/canvas/Planet.tsx), [`PlanetSelector.tsx`](components/hud/PlanetSelector.tsx), [`store/useAppStore.ts`](store/useAppStore.ts) | 2-3 hrs | Orbital mechanics, scene graph           |
+| Extend season explainer copy or add a new event preset                            | [`lib/seasonExplainer.ts`](lib/seasonExplainer.ts), [`__tests__/seasonExplainer.test.ts`](__tests__/seasonExplainer.test.ts)                                                                                                      | 1-2 hrs | Pure functions, educational content      |
+| Add webp/avif texture fallbacks for Earth/Moon textures                           | [`public/textures/`](public/textures/), shader texture loading code                                                                                                                                                               | 1-2 hrs | Asset pipeline, format detection         |
+| Improve solstice/equinox date precision (per-year computation)                    | [`lib/orbitalMechanics.ts`](lib/orbitalMechanics.ts), [`__tests__/orbitalMechanics.test.ts`](__tests__/orbitalMechanics.test.ts)                                                                                                  | 2-3 hrs | Orbital mechanics, pure function testing |
 
 ### Where to Start (Deep Dive)
 
@@ -304,12 +304,12 @@ If you'd rather explore the codebase top-to-bottom:
 
 ### Documentation Map
 
-| Doc | When to read |
-| --- | --- |
-| README | Product context, commands, file structure, onboarding |
-| [`CLAUDE.md`](CLAUDE.md) | Render loop, focus modes, file roles, key patterns |
+| Doc                                      | When to read                                                                     |
+| ---------------------------------------- | -------------------------------------------------------------------------------- |
+| README                                   | Product context, commands, file structure, onboarding                            |
+| [`CLAUDE.md`](CLAUDE.md)                 | Render loop, focus modes, file roles, key patterns                               |
 | [`WORKING_MEMORY.md`](WORKING_MEMORY.md) | Pitfalls, recent decisions, tech debt, lessons learned (last updated 2026-07-12) |
-| [`AGENTS.md`](AGENTS.md) | Next.js 16 API caveats (only if touching App Router) |
+| [`AGENTS.md`](AGENTS.md)                 | Next.js 16 API caveats (only if touching App Router)                             |
 
 ### Common Pitfalls
 

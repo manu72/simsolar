@@ -67,7 +67,7 @@ export const PLANET_DATA = {
     meanLongitudeDeg: 252.25084,
     perihelionLongitudeDeg: 77.45645,
     rotationPeriodDays: 58.646,
-    texture: '/textures/mercury.jpg',
+    texture: "/textures/mercury.jpg",
   },
   venus: {
     semiMajorAxis: 0.72333199 * SEMI_MAJOR_AXIS,
@@ -77,14 +77,14 @@ export const PLANET_DATA = {
     meanLongitudeDeg: 181.97973,
     perihelionLongitudeDeg: 131.53298,
     rotationPeriodDays: -243.018, // retrograde
-    texture: '/textures/venus.jpg',
+    texture: "/textures/venus.jpg",
   },
 } as const;
 
 export type InnerPlanet = keyof typeof PLANET_DATA;
 
 // Moon
-export const MOON_RADIUS = 0.41; // visually scaled for readability (real ratio ~27% of Earth)
+export const MOON_RADIUS = 0.27; // visually scaled to 0.41 for readability (real ratio ~27% of Earth)
 export const MOON_ORBIT_RADIUS = 5; // compressed for visibility (real ≈ 60× Earth radius)
 export const MOON_SIDEREAL_PERIOD_DAYS = 27.321; // sidereal orbital period in days
 export const MOON_INCLINATION_DEG = 5.14;
