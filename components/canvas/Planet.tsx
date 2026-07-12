@@ -11,6 +11,7 @@ import { useAppStore } from '@/store/useAppStore'
 import { usePlanetDrag } from '@/lib/usePlanetDrag'
 import { SimulationContext } from './SimulationContext'
 import { OrbitPath } from './OrbitPath'
+import { GalileanMoons } from './GalileanMoons'
 
 interface PlanetProps {
   planet: PlanetId
@@ -84,6 +85,7 @@ export function Planet({ planet }: PlanetProps) {
             <meshBasicMaterial color="#c7b487" side={THREE.DoubleSide} transparent opacity={0.6} />
           </mesh>
         )}
+        {planet === 'jupiter' && <GalileanMoons />}
         <BodyLabel name={planet} offsetY={data.radius * 1.6} />
       </group>
     </>
