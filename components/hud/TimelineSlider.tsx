@@ -130,6 +130,7 @@ export function TimelineSlider() {
             {/* Range input */}
             <input
               type="range"
+              aria-label="Timeline date"
               min={min}
               max={max}
               step={0.01}
@@ -138,8 +139,8 @@ export function TimelineSlider() {
                 preScrubPlayingRef.current = useAppStore.getState().isPlaying
                 setIsPlaying(false)
               }}
-              onInput={e => {
-                const newJD = parseFloat((e.target as HTMLInputElement).value)
+              onChange={e => {
+                const newJD = parseFloat(e.target.value)
                 clock.julianDay = newJD
                 updateDisplayDateFromClock()
               }}

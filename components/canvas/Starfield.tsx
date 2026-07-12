@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 
 const STAR_COUNT = 2000
-// Outside MAX_ZOOM_DISTANCE (5000) so the camera never exits the star sphere
+// Outside MAX_ZOOM_DISTANCE so the camera never exits the star sphere
 const SPHERE_RADIUS = 8000
 
 const vertexShader = `
