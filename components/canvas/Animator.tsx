@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { SimulationContext } from './SimulationContext'
 import { useAppStore } from '@/store/useAppStore'
-import { getEarthOrbitalPosition, getPlanetOrbitalPosition } from '@/lib/orbitalMechanics'
+import { getEarthOrbitalPosition, getPlanetOrbitalPosition, compressDisplayPosition } from '@/lib/orbitalMechanics'
 import {
   DAYS_PER_SECOND_BASE,
   TWO_PI_PER_SIDEREAL_SECOND,
@@ -14,6 +14,8 @@ import {
   MOON_INCLINATION_RAD,
   MOON_NODAL_PRECESSION_YEARS,
   DEFAULT_EARTH_SCALE,
+  PLANET_DATA,
+  type PlanetId,
 } from '@/lib/constants'
 
 // Pre-allocated objects reused every frame to avoid GC pressure
@@ -51,7 +53,9 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldG
       clock.rotationAngle += delta * rotationSpeed * TWO_PI_PER_SIDEREAL_SECOND
     }
 
-    const earthPos = getEarthOrbitalPosition(clock.julianDay)
+    // Display-compressed, matching Planet/OrbitPath rendering. The direction
+    // is unchanged, so the day/night shader and season geometry stay correct.
+    const earthPos = compressDisplayPosition(getEarthOrbitalPosition(clock.julianDay))
 
     // ── Moon derived values (needed before focus-target positioning) ─────
     // clock.rotationAngle encodes 2π per sidereal day; dividing by
@@ -73,14 +77,14 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldG
     // ── Reference-frame positioning ─────────────────────────────────────
     // The focused body sits at the origin: everything positioned
     // heliocentrically is shifted by -focusOffset (the focused body's
-    // heliocentric position). Mercury/Venus live inside worldGroup at their
-    // heliocentric positions, so the worldGroup shift covers them too.
+    // heliocentric position). The other planets live inside worldGroup at
+    // their heliocentric positions, so the worldGroup shift covers them too.
     if (focusTarget === 'moon') {
       _focusOffset.copy(earthPos).add(_moonLocalPos)
     } else if (focusTarget === 'earth') {
       _focusOffset.copy(earthPos)
-    } else if (focusTarget === 'mercury' || focusTarget === 'venus') {
-      _focusOffset.copy(getPlanetOrbitalPosition(focusTarget, clock.julianDay))
+    } else if (focusTarget in PLANET_DATA) {
+      _focusOffset.copy(compressDisplayPosition(getPlanetOrbitalPosition(focusTarget as PlanetId, clock.julianDay)))
     } else {
       _focusOffset.set(0, 0, 0)
     }
@@ -88,7 +92,7 @@ export function Animator({ earthGroupRef, earthMeshRef, earthMaterialRef, worldG
     if (earthGroupRef.current) {
       earthGroupRef.current.position.copy(earthPos).sub(_focusOffset)
       // Planet Scale applies to Earth unless another planet is the focus
-      const otherPlanetFocused = focusTarget === 'mercury' || focusTarget === 'venus'
+      const otherPlanetFocused = focusTarget in PLANET_DATA
       earthGroupRef.current.scale.setScalar(otherPlanetFocused ? DEFAULT_EARTH_SCALE : earthScale)
     }
     if (worldGroupRef.current) {

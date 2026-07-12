@@ -8,7 +8,8 @@ import {
   J2000_JD,
   EARTH_PERIHELION_LONGITUDE_DEG,
   PLANET_DATA,
-  type InnerPlanet,
+  RADIAL_DISPLAY_EXPONENT,
+  type PlanetId,
 } from './constants'
 
 // ─── Julian Day ────────────────────────────────────────────────────────────
@@ -64,13 +65,13 @@ export function getEarthOrbitalPosition(jd: number): Vector3 {
 }
 
 /**
- * Returns an inner planet's heliocentric position in Three.js world units,
+ * Returns a planet's heliocentric position in Three.js world units,
  * in the same scene frame as getEarthOrbitalPosition (Earth's perihelion
  * along +X, orbit in the XZ plane). Rotating each planet's true anomaly by
  * its longitude of perihelion relative to Earth's keeps relative geometry
  * (elongations, conjunctions) correct.
  */
-export function getPlanetOrbitalPosition(planet: InnerPlanet, jd: number): Vector3 {
+export function getPlanetOrbitalPosition(planet: PlanetId, jd: number): Vector3 {
   const p = PLANET_DATA[planet]
   const e = p.eccentricity
 
@@ -88,6 +89,22 @@ export function getPlanetOrbitalPosition(planet: InnerPlanet, jd: number): Vecto
   const theta = nu + ((p.perihelionLongitudeDeg - EARTH_PERIHELION_LONGITUDE_DEG) * Math.PI) / 180
 
   return new Vector3(r * Math.cos(theta), 0, r * Math.sin(theta))
+}
+
+// ─── Display compression ───────────────────────────────────────────────────
+
+/**
+ * NASA-Eyes-style condensed layout: compresses a heliocentric position's
+ * distance from the Sun by RADIAL_DISPLAY_EXPONENT, normalised so 1 AU
+ * (SEMI_MAJOR_AXIS) maps to itself. Direction is preserved, so angular
+ * geometry (conjunctions, seasons, day/night shading) is unaffected.
+ * Display-only — never feed the result back into orbital maths.
+ * Mutates and returns `pos`.
+ */
+export function compressDisplayPosition(pos: Vector3): Vector3 {
+  const r = pos.length()
+  if (r === 0) return pos
+  return pos.multiplyScalar((r / SEMI_MAJOR_AXIS) ** (RADIAL_DISPLAY_EXPONENT - 1))
 }
 
 // ─── Earth Rotation ────────────────────────────────────────────────────────
@@ -109,8 +126,7 @@ const SOLAR_EVENTS = [
   { month: 11, day: 21, label: 'December Solstice' },
 ] as const
 
-export function getSolsticeEquinoxEvents(): { label: string; jd: number; date: Date }[] {
-  const year = new Date().getUTCFullYear()
+export function getSolsticeEquinoxEvents(year = new Date().getUTCFullYear()): { label: string; jd: number; date: Date }[] {
   return SOLAR_EVENTS.map(({ month, day, label }) => {
     const date = new Date(Date.UTC(year, month, day))
     return { label, date, jd: dateToJulianDay(date) }

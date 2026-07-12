@@ -2,7 +2,7 @@
 
 Interactive 3D solar system visualisation for solstice and equinox education. Built with a southern hemisphere default perspective, SolarSim renders Keplerian orbital mechanics in the browser using WebGL shaders, letting users scrub through a full year to observe how Earth's axial tilt creates the seasons.
 
-**Phase 1** — Sun, Earth, and Moon. Additional planets planned for future phases.
+**Current scope** — Sun, Mercury, Venus, Earth, and the Moon, all clickable and focusable. Mars through Neptune appear in the planet selector as disabled placeholders for future phases.
 
 ## Vision and Goals
 
@@ -13,7 +13,6 @@ Interactive 3D solar system visualisation for solstice and equinox education. Bu
 - PWA-ready with optional offline caching of textures and assets
 
 ## Tech Stack
-
 
 | Layer           | Technology                                                                     | Version                  |
 | --------------- | ------------------------------------------------------------------------------ | ------------------------ |
@@ -29,45 +28,49 @@ Interactive 3D solar system visualisation for solstice and equinox education. Bu
 | Package Manager | pnpm                                                                           | —                        |
 | Deployment      | Vercel                                                                         | —                        |
 
-
 ## Project Structure
 
 ```
 simsolar/
 ├── app/                              # Next.js App Router
-│   ├── layout.tsx                    # Root layout (dark theme, metadata, PWA manifest link)
+│   ├── layout.tsx                    # Root layout (metadata, favicons, PWA manifest link)
 │   ├── page.tsx                      # Home page — renders ClientRoot only
-│   └── globals.css                   # Tailwind v4 imports, CSS custom properties
+│   └── globals.css                   # Tailwind v4 imports, CSS custom properties, season-diagram animations
 ├── components/
 │   ├── ClientRoot.tsx                # Client entry — SimulationClock, Scene, gated HUD, loading overlay
 │   ├── canvas/                       # 3D scene components (React Three Fiber)
 │   │   ├── Scene.tsx                 # R3F Canvas, camera, controls, scene graph composition
-│   │   ├── Animator.tsx              # useFrame loop — orbit, rotation, Moon, shader uniforms
+│   │   ├── Animator.tsx              # useFrame loop — orbit, rotation, focus offsets, Moon, shader uniforms
 │   │   ├── SimulationContext.ts      # React context for mutable SimulationClock ref
 │   │   ├── Sun.tsx                   # Animated surface shader + pointLight + CSS glow + click-to-focus
 │   │   ├── Earth.tsx                 # Custom shader sphere with day/night textures, axial tilt
+│   │   ├── Planet.tsx                # Generic Mercury/Venus — Keplerian position, spin, click-to-focus
 │   │   ├── Moon.tsx                  # Textured sphere, 5.14° inclined orbit, tidal locking, precession
-│   │   ├── OrbitPath.tsx             # Elliptical orbit line in XZ plane
+│   │   ├── OrbitPath.tsx             # Parameterised elliptical orbit line (Earth + inner planets)
 │   │   ├── Starfield.tsx             # ~2000 instanced star points with size variation
 │   │   ├── Annotations.tsx           # HTML labels at solstice/equinox orbital positions
-│   │   ├── ZoomSync.tsx              # Bidirectional camera ↔ Zustand zoom sync
+│   │   ├── ZoomSync.tsx              # Camera ↔ Zustand zoom sync + explainer camera positioning
 │   │   └── ErrorBoundary.tsx         # Error boundary for WebGL/texture loading failures
 │   ├── hud/                          # 2D overlay controls (React DOM)
 │   │   ├── HUD.tsx                   # HUD container with play/pause
 │   │   ├── TimelineSlider.tsx        # Year scrubber with season colour bands, date display, event ticks
-│   │   ├── SpeedControls.tsx         # Orbit speed, rotation speed, camera zoom, earth scale sliders
+│   │   ├── SpeedControls.tsx         # Orbit speed, rotation speed, camera zoom, planet scale sliders
 │   │   ├── HemisphereControl.tsx     # S/N hemisphere toggle
-│   │   ├── LabelsControl.tsx         # Orbital labels toggle (Phase 1)
-│   │   └── PlanetSelector.tsx        # Planet selector (Earth only in Phase 1)
-│   └── ui/
-│       ├── TopLeftControls.tsx       # Info button, season explainer picker (embeds InfoModal)
-│       ├── InfoModal.tsx             # About/help modal with offline caching toggle
-│       └── LoadingOverlay.tsx        # Shown until WebGL scene is ready or fails
+│   │   ├── LabelsControl.tsx         # Orbital labels toggle
+│   │   └── PlanetSelector.tsx        # Mercury/Venus/Earth focusable; Mars–Neptune disabled placeholders
+│   ├── ui/
+│   │   ├── TopLeftControls.tsx       # Info button, season explainer panel (embeds InfoModal + diagram modal)
+│   │   ├── InfoModal.tsx             # About/help modal with offline caching toggle
+│   │   └── LoadingOverlay.tsx        # Shown until WebGL scene is ready or fails
+│   └── explainers/                   # 2D SVG season explainer graphics
+│       ├── SeasonDiagram.tsx         # Configurable portrait SVG — Sun, tilted Earth, day-length bars
+│       └── SeasonDiagramModal.tsx    # "See how it works" trigger + accessible bottom-sheet dialog
 ├── lib/                              # Pure logic, camera math, and React hooks
-│   ├── constants.ts                  # Orbital, scene, Moon, and control constants
-│   ├── orbitalMechanics.ts           # Julian day, Kepler solver, Earth position, rotation, seasons
+│   ├── constants.ts                  # Orbital, scene, Moon, control constants; PLANET_DATA (Mercury/Venus)
+│   ├── orbitalMechanics.ts           # Julian day, Kepler solver, Earth + inner-planet positions, seasons
 │   ├── seasonExplainer.ts            # Solstice/equinox explainer copy, events, scene presets
-│   ├── cameraMath.ts                 # Pixel-to-world conversion, screen pan, pan reset, zoom-to-distance
+│   ├── seasonDiagram.ts              # SVG diagram variant selection + config (5 variants)
+│   ├── cameraMath.ts                 # Pixel-to-world conversion, screen pan, explainer camera positions
 │   ├── usePlanetDrag.ts              # Hook — drag focused planet to reposition on screen
 │   ├── useOfflineStatus.ts           # React hook for service worker cache state and progress
 │   └── shaders/                      # GLSL as TypeScript template literals
@@ -76,33 +79,23 @@ simsolar/
 │       ├── sunSurface.vert.ts        # Sun vertex — 3D trilinear noise displacement, time animation
 │       └── sunSurface.frag.ts        # Sun fragment — procedural FBM noise, limb darkening
 ├── store/
-│   └── useAppStore.ts                # Zustand (playback, speeds, hemisphere, zoom, scale, focus, season explainer)
+│   └── useAppStore.ts                # Zustand (playback, speeds, hemisphere, zoom, planet scale, focus, explainer)
 ├── public/
-│   ├── textures/                     # Earth day/night and Moon texture maps (~25MB total)
-│   ├── icons/                        # PWA app icons (192px, 512px)
+│   ├── textures/                     # Earth day/night, Moon, Mercury, Venus maps (~26MB total)
+│   ├── favicons/                     # Favicon set (wired in app/layout.tsx)
+│   ├── icons/                        # PWA app icons (192px, 512px) + loading rocket
 │   ├── manifest.json                 # PWA manifest
 │   └── sw.js                         # Service worker for offline asset caching
-├── __tests__/                        # Vitest — run `pnpm test` for current counts (5 files, 123 tests)
-│   ├── orbitalMechanics.test.ts      # Julian day, Kepler orbit, seasons, solstice/equinox events
-│   ├── cameraMath.test.ts            # Pixel-to-world, screen pan, zoom-to-distance
+├── __tests__/                        # Vitest — run `pnpm test` for current counts (6 files, 147 tests)
+│   ├── orbitalMechanics.test.ts      # Julian day, Kepler orbits, seasons, subsolar latitude validation
+│   ├── cameraMath.test.ts            # Pixel-to-world, screen pan, explainer camera positions
 │   ├── seasonExplainer.test.ts       # Explainer events, presets, today-aware selection
+│   ├── seasonDiagram.test.ts         # Diagram variant selection and tilt-direction physics
+│   ├── appStore.test.ts              # Store clamping, idempotent focus, explainer state
 │   └── swCacheNames.test.ts          # Service worker cache name coupling with public/sw.js
 ├── .agentic/                         # t8 Agentic OS operational memory and routing (agent-first)
-│   ├── CONFIG/agentic.json           # AgenticOS config (graph-first provider, codemap fallback)
-│   ├── MEMORY_INDEX.md               # Memory index for agent routing
-│   ├── PROJECT_BRIEF.md              # Project brief from repo evidence
-│   ├── SUBSYSTEMS/                   # Subsystem documentation
-│   └── LESSONS/                      # Durable lessons from code changes
 ├── .understand-anything/             # Understand Anything knowledge graph (auto-update enabled)
-│   ├── config.json                   # autoUpdate: true, outputLanguage: en
-│   ├── meta/                         # Graph metadata
-│   └── fingerprints/                 # File fingerprints for freshness
-├── scripts/agentic/                  # AgenticOS runtime tooling
-│   ├── README.md                     # Scripts documentation
-│   ├── graph_sync.py                 # Graph sync script
-│   ├── route_task.py                 # Task routing to context bundle
-│   ├── update_memory.py              # Runtime memory maintenance
-│   └── validate_memory.py            # Memory validation checks
+├── scripts/agentic/                  # AgenticOS Python tooling (graph sync, task routing, memory checks)
 ├── CLAUDE.md                         # AI assistant guidance (architecture, commands, patterns)
 ├── AGENTS.md                         # Agent rules (Next.js version warning)
 ├── WORKING_MEMORY.md                 # Project context, decisions, lessons, tech debt
@@ -114,6 +107,8 @@ simsolar/
 ├── postcss.config.mjs                # PostCSS with @tailwindcss/postcss
 └── package.json                      # Dependencies and scripts
 ```
+
+Note: `docs/` is gitignored — anything under it (docsync artifacts, historical plans) is local-only.
 
 ## Architecture
 
@@ -130,13 +125,14 @@ ClientRoot (SimulationContext.Provider)
 Scene (inside Canvas)
 ├── Animator                       useFrame — advances clock, positions bodies, shader uniforms
 ├── Starfield                      static backdrop (outside worldGroup)
-├── worldGroup                     Sun, OrbitPath, Annotations — offset in geocentric/selenocentric modes
+├── worldGroup                     Sun, OrbitPath, Annotations, Mercury + Venus (Planet ×2) —
+│                                  offset by -focusOffset whenever a non-Sun body is focused
 ├── Earth group (+ Moon nested)    day/night shader, axial tilt, inclined lunar orbit
-├── ZoomSync                       camera ↔ Zustand zoomDistance
+├── ZoomSync                       camera ↔ Zustand zoomDistance + explainer camera positioning
 └── OrbitControls                  mouse orbit/zoom
 ```
 
-### ### Data Flow
+### Data Flow
 
 ```
 SimulationClock (mutable ref — { julianDay, rotationAngle })
@@ -150,7 +146,8 @@ SimulationClock (mutable ref — { julianDay, rotationAngle })
 User Input (HUD sliders, buttons, clicks, season explainer, labels toggle)
   └─ Zustand store (store/useAppStore.ts)
        ├─ isPlaying, orbitSpeed, rotationSpeed
-       ├─ hemisphere, zoomDistance, earthScale (1–20x), focusTarget
+       ├─ hemisphere, zoomDistance, earthScale (1–20x "Planet Scale", focused planet only)
+       ├─ focusTarget ('sun' | 'mercury' | 'venus' | 'earth' | 'moon')
        ├─ activeSeasonExplainer (mode + event label, or null)
        ├─ showOrbitalLabels (boolean)
        └─ HUD / TopLeftControls read via useAppStore() for reactivity
@@ -160,18 +157,22 @@ Date Display
 
 Season Explainer (guided solstice/equinox tours)
   └─ TopLeftControls → setActiveSeasonExplainer()
-       ├─ Animator snaps/advances clock to event Julian day; applies scene preset
+       ├─ TopLeftControls snaps the clock to the event Julian day and applies the scene preset
+       ├─ Animator holds the orbital date but keeps the globe spinning; ZoomSync positions the camera
        ├─ Annotations highlights the active event label
+       ├─ SeasonDiagramModal ("See how it works") opens the matching SVG diagram variant
        └─ clearActiveSeasonExplainer() restores prior playback snapshot
 ```
 
 ### Season Explainer
 
-Educational guided tours for solstice and equinox events. Copy and event metadata live in [`lib/seasonExplainer.ts`](lib/seasonExplainer.ts). [`TopLeftControls`](components/ui/TopLeftControls.tsx) sets `activeSeasonExplainer` in Zustand; [`Animator`](components/canvas/Animator.tsx) drives the clock and scene preset; [`Annotations`](components/canvas/Annotations.tsx) highlights the active event. Pure logic is covered by [`__tests__/seasonExplainer.test.ts`](__tests__/seasonExplainer.test.ts).
+Educational guided tours for solstice and equinox events. Copy and event metadata live in [`lib/seasonExplainer.ts`](lib/seasonExplainer.ts). [`TopLeftControls`](components/ui/TopLeftControls.tsx) sets `activeSeasonExplainer` in Zustand; [`Animator`](components/canvas/Animator.tsx) drives the clock and scene preset; [`ZoomSync`](components/canvas/ZoomSync.tsx) applies a hemisphere-aware camera view; [`Annotations`](components/canvas/Annotations.tsx) highlights the active event. Mercury, Venus, and the Moon are hidden during explainers for pedagogical clarity. Pure logic is covered by [`__tests__/seasonExplainer.test.ts`](__tests__/seasonExplainer.test.ts).
 
-### Triple Reference Frame
+Each explainer panel also offers a **"See how it works"** button that opens an animated 2D SVG diagram in a mobile-friendly bottom-sheet dialog ([`components/explainers/`](components/explainers/)). One configurable SVG covers five variants — a shared equinox graphic plus the four hemisphere × season solstice combinations — selected explicitly from the event label and hemisphere in [`lib/seasonDiagram.ts`](lib/seasonDiagram.ts) (tested in [`__tests__/seasonDiagram.test.ts`](__tests__/seasonDiagram.test.ts)). The dialog traps focus, closes on Escape/backdrop, respects `prefers-reduced-motion`, and pauses its animations when the page is hidden.
 
-Clicking any celestial body sets `focusTarget` to `'sun'` (heliocentric — Sun at origin), `'earth'` (geocentric — Earth at origin), or `'moon'` (selenocentric — Moon at origin). Each click handler is idempotent and calls `event.stopPropagation()`. The Earth shader uniform `uSunPositionWorld` updates accordingly so lighting works in all three modes.
+### Reference Frames (Focus Targets)
+
+Clicking any celestial body sets `focusTarget` to `'sun'`, `'mercury'`, `'venus'`, `'earth'`, or `'moon'`. The focused body sits at the origin: `Animator` computes its heliocentric position (`focusOffset`) each frame and offsets `worldGroup` by `-focusOffset` and the Earth group by `earthPos − focusOffset` (for the Moon, `focusOffset = earthPos + moonLocalPos`). Mercury and Venus position themselves heliocentrically inside `worldGroup`, so the same offset covers them in every mode. Each click handler is idempotent and calls `event.stopPropagation()`. The Earth shader uniform `uSunPositionWorld` updates accordingly so lighting works in all modes.
 
 ### Rendering Loop
 
@@ -179,7 +180,7 @@ Clicking any celestial body sets `focusTarget` to `'sun'` (heliocentric — Sun 
 
 ### Orbital Mechanics
 
-Pure TypeScript functions with no React or Three.js dependencies — Julian day conversions, elliptical orbit position via Kepler's equation (Newton-Raphson, 1e-8 rad tolerance), sidereal rotation angle, season labelling, and solstice/equinox event detection.
+Pure TypeScript functions with minimal dependencies (only `three`'s `Vector3`) — Julian day conversions, elliptical orbit positions via Kepler's equation (Newton-Raphson, 1e-8 rad tolerance) for Earth and the inner planets (Mercury/Venus from J2000 elements in `PLANET_DATA`, perihelion angles relative to Earth's so elongations and conjunctions stay correct), sidereal rotation angle, season labelling, and solstice/equinox event detection. Earth's axis leans toward its December-solstice orbital position (`TILT_DIRECTION_RAD`), not perihelion — validated by subsolar-latitude tests.
 
 ### Shaders
 
@@ -203,13 +204,13 @@ Open [http://localhost:3100](http://localhost:3100) to view the simulation. The 
 
 ### What You'll See
 
-When the app loads, you'll see a 3D scene with a glowing Sun at center and Earth orbiting around it. Below the canvas:
+When the app loads, you'll see a 3D scene with a glowing Sun at center and Mercury, Venus, and Earth (with the Moon) orbiting around it. Below the canvas:
 
 - A **timeline slider** lets you scrub through the year — watch seasons change as you drag
-- **Speed controls** let you adjust orbit speed, rotation speed, zoom, and Earth scale independently
-- Click the **Sun, Earth, or Moon** to center your view on that body (heliocentric, geocentric, or selenocentric)
+- **Speed controls** let you adjust orbit speed, rotation speed, zoom, and planet scale independently
+- Click the **Sun, Mercury, Venus, Earth, or Moon** to center your view on that body
 - A **hemisphere toggle** switches between southern/northern labels and terminology
-- **Season explainer** tours (top-left) walk through solstice and equinox events with guided copy and scene presets
+- **Season explainer** tours (top-left) walk through solstice and equinox events with guided copy and scene presets, plus a "See how it works" animated diagram for each event
 
 The simulation defaults to a southern hemisphere viewpoint — everything is calibrated for contributors and users in the AU/NZ time zone.
 
@@ -257,19 +258,20 @@ kill <pid>       # free the port
 
 ## Features
 
-- **Keplerian orbit** — Earth follows a real elliptical path with correct eccentricity and perihelion longitude
+- **Keplerian orbits** — Earth, Mercury, and Venus follow real elliptical paths with correct eccentricity and perihelion longitude
 - **Day/night shader** — custom GLSL blends day and night textures with a soft terminator and atmosphere rim
 - **Animated sun** — procedural FBM noise surface shader with limb darkening and CSS radial-gradient glow
 - **Moon** — orbits Earth with 5.14 degree inclination, tidal locking, 18.6-year nodal precession, NASA texture
-- **Axial tilt** — 23.44 degrees tilt accurately represented, driving seasonal variation
-- **Click-to-focus views** — click Sun, Earth, or Moon to centre the view on that body (heliocentric, geocentric, or selenocentric)
+- **Axial tilt** — 23.44 degrees tilt leaning toward the December-solstice direction, driving seasonal variation
+- **Click-to-focus views** — click the Sun, Mercury, Venus, Earth, or Moon to centre the view on that body
 - **Drag-to-reposition** — drag the focused planet to shift it on screen, useful for smaller viewports; resets on focus change
 - **Timeline scrubber** — drag through a full year; season colour bands and solstice/equinox tick marks
 - **Playback controls** — play/pause, independent orbit and rotation speed sliders
 - **Camera zoom** — HUD slider bidirectionally synced with mouse wheel via ZoomSync
-- **Earth scale** — enlarge Earth (1–20x) independently of camera zoom for detail viewing
+- **Planet scale** — enlarge the focused planet (1–20x) independently of camera zoom; other bodies keep their default scale
 - **Hemisphere toggle** — switch between southern and northern hemisphere labels and terminology
-- **Season explainer** — guided solstice/equinox tours with educational copy, scene presets, and orbit annotations
+- **Season explainer** — guided solstice/equinox tours with educational copy, scene presets, hemisphere-aware camera views, and orbit annotations
+- **Explainer diagrams** — animated SVG Sun–Earth diagrams (one shared equinox graphic + four hemisphere × season solstice variants) in an accessible, mobile-first modal with reduced-motion support
 - **Solstice/equinox annotations** — labelled positions on the orbit path, updating with hemisphere choice
 - **Starfield** — ~2000 background stars for spatial context
 - **PWA offline support** — opt-in service worker caching of textures and assets via info modal
@@ -278,17 +280,19 @@ kill <pid>       # free the port
 
 ## Contributing
 
+New planet textures can be found at https://www.solarsystemscope.com/textures/ or https://space.jpl.nasa.gov/tmaps/
+
 ### Quick Tasks for New Contributors
 
 If you're new to this codebase, pick any task below and start:
 
-| Task | Files to Touch | Effort | What You'll Learn |
-|------|---------------|--------|-------------------|
-| Remove unused `@react-three/postprocessing` dependency | [`package.json`](package.json), verify no imports across the codebase | 15 min | Dependency cleanup, audit patterns |
-| Add Mars orbit rendering for Phase 2 | [`PlanetSelector.tsx`](components/hud/PlanetSelector.tsx), new canvas component, [`lib/constants.ts`](lib/constants.ts) | 4+ hrs | Orbital mechanics, scene graph |
-| Extend season explainer copy or add a new event preset | [`lib/seasonExplainer.ts`](lib/seasonExplainer.ts), [`__tests__/seasonExplainer.test.ts`](__tests__/seasonExplainer.test.ts) | 1-2 hrs | Pure functions, educational content |
-| Add webp/avif texture fallbacks for Earth/Moon textures | [`public/textures/`](public/textures/), shader texture loading code | 1-2 hrs | Asset pipeline, format detection |
-| Improve solstice/equinox date precision (per-year computation) | [`lib/orbitalMechanics.ts`](lib/orbitalMechanics.ts), [`__tests__/orbitalMechanics.test.ts`](__tests__/orbitalMechanics.test.ts) | 2-3 hrs | Orbital mechanics, pure function testing |
+| Task                                                                              | Files to Touch                                                                                                                                                                                                                    | Effort  | What You'll Learn                        |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- | ---------------------------------------- |
+| Precache Mercury/Venus textures in the service worker (currently missing offline) | [`public/sw.js`](public/sw.js), [`lib/useOfflineStatus.ts`](lib/useOfflineStatus.ts), [`__tests__/swCacheNames.test.ts`](__tests__/swCacheNames.test.ts)                                                                          | 30 min  | PWA caching, cache versioning            |
+| Add Mars by extending the generic planet pattern                                  | [`lib/constants.ts`](lib/constants.ts) (`PLANET_DATA`), [`components/canvas/Planet.tsx`](components/canvas/Planet.tsx), [`PlanetSelector.tsx`](components/hud/PlanetSelector.tsx), [`store/useAppStore.ts`](store/useAppStore.ts) | 2-3 hrs | Orbital mechanics, scene graph           |
+| Extend season explainer copy or add a new event preset                            | [`lib/seasonExplainer.ts`](lib/seasonExplainer.ts), [`__tests__/seasonExplainer.test.ts`](__tests__/seasonExplainer.test.ts)                                                                                                      | 1-2 hrs | Pure functions, educational content      |
+| Add webp/avif texture fallbacks for Earth/Moon textures                           | [`public/textures/`](public/textures/), shader texture loading code                                                                                                                                                               | 1-2 hrs | Asset pipeline, format detection         |
+| Improve solstice/equinox date precision (per-year computation)                    | [`lib/orbitalMechanics.ts`](lib/orbitalMechanics.ts), [`__tests__/orbitalMechanics.test.ts`](__tests__/orbitalMechanics.test.ts)                                                                                                  | 2-3 hrs | Orbital mechanics, pure function testing |
 
 ### Where to Start (Deep Dive)
 
@@ -300,12 +304,12 @@ If you'd rather explore the codebase top-to-bottom:
 
 ### Documentation Map
 
-| Doc | When to read |
-| --- | --- |
-| README | Product context, commands, file structure, onboarding |
-| [`CLAUDE.md`](CLAUDE.md) | Render loop, focus modes, file roles, key patterns |
-| [`WORKING_MEMORY.md`](WORKING_MEMORY.md) | Pitfalls, recent decisions, tech debt, lessons learned (last updated 2026-06-15) |
-| [`AGENTS.md`](AGENTS.md) | Next.js 16 API caveats (only if touching App Router) |
+| Doc                                      | When to read                                                                     |
+| ---------------------------------------- | -------------------------------------------------------------------------------- |
+| README                                   | Product context, commands, file structure, onboarding                            |
+| [`CLAUDE.md`](CLAUDE.md)                 | Render loop, focus modes, file roles, key patterns                               |
+| [`WORKING_MEMORY.md`](WORKING_MEMORY.md) | Pitfalls, recent decisions, tech debt, lessons learned (last updated 2026-07-12) |
+| [`AGENTS.md`](AGENTS.md)                 | Next.js 16 API caveats (only if touching App Router)                             |
 
 ### Common Pitfalls
 
@@ -336,8 +340,9 @@ pnpm build         # production build
 ## Limitations and Caveats
 
 - **WebGL required** — the simulation requires a browser with WebGL support. There is no non-WebGL fallback.
-- **Desktop-optimised** — the HUD layout is designed for wide viewports. Controls wrap on narrow screens but are not fully mobile-optimised.
+- **Desktop-first HUD** — the bottom HUD is designed for wide viewports and wraps on narrow screens. The season explainer panel and diagram modal are mobile-optimised; the rest of the UI is usable but not tuned for phones.
 - **Approximate solstice/equinox dates** — event dates are fixed approximations (e.g. March 20, June 21), not astronomically computed per year. Adequate for educational purposes.
 - **Compressed Moon orbit** — the Moon's orbital radius and size are scaled for visibility (real ratio would be invisible at Earth's scale). Constants document the compression.
-- **Unused dependency** — `@react-three/postprocessing` remains in `package.json` but is not imported. It is incompatible with React 19 + Three.js r183 and should be removed.
-- **No postprocessing** — bloom and glow effects use CSS alternatives (radial-gradient) because `@react-three/postprocessing` is incompatible with the current React/Three.js versions.
+- **Flat inner-planet orbits** — Mercury (7°) and Venus (3.4°) orbital inclinations are deliberately omitted; all orbits render in the ecliptic plane.
+- **Offline cache misses Mercury/Venus** — `public/sw.js` precaches only Earth and Moon textures; the Mercury/Venus textures added later are not yet in the precache list (tracked in `WORKING_MEMORY.md` tech debt).
+- **No postprocessing** — bloom and glow effects use CSS alternatives (radial-gradient) because `@react-three/postprocessing` is incompatible with React 19 + Three.js r183 (the dependency itself has been removed).

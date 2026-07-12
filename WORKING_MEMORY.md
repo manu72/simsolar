@@ -1,12 +1,12 @@
 # Working Memory
 
-**Last Updated:** 2026-06-15
+**Last Updated:** 2026-07-12
 
 ## Architecture
 
 ### State Model
 
-- **Zustand** (`store/useAppStore.ts`): `isPlaying`, `orbitSpeed`, `rotationSpeed`, `hemisphere`, `zoomDistance`, `earthScale` (1–20x), `focusTarget` (`'sun' | 'earth' | 'moon')`, `activeSeasonExplainer` (`ActiveSeasonExplainer | null`), `showOrbitalLabels` (boolean).
+- **Zustand** (`store/useAppStore.ts`): `isPlaying`, `orbitSpeed`, `rotationSpeed`, `hemisphere`, `zoomDistance`, `earthScale` (1–20x — UI label is "Planet Scale"; applies to the **focused** planet only, others render at `DEFAULT_EARTH_SCALE`), `focusTarget` (`'sun' | 'mercury' | 'venus' | 'earth' | 'moon'`), `activeSeasonExplainer` (`ActiveSeasonExplainer | null`), `showOrbitalLabels` (boolean).
 - **SimulationClock** (mutable ref via `SimulationContext`): `julianDay`, `rotationAngle` — written every frame by `Animator`, never in Zustand.
 - **Display date** is local state in `TimelineSlider`, polled from the clock ref via `setInterval`.
 
@@ -17,26 +17,32 @@ ClientRoot (SimulationContext.Provider)
 ├── Scene (R3F Canvas)
 │   ├── Animator          useFrame loop — advances clock, positions Earth/Moon, updates shader uniforms
 │   ├── Starfield         ~2000 instanced points (outside worldGroup — static backdrop)
-│   ├── worldGroup        moves when focusTarget='earth'|'moon' (geocentric/selenocentric view)
-│   │   ├── OrbitPath     elliptical orbit line
+│   ├── worldGroup        offset by -focusOffset whenever a non-Sun body is focused
+│   │   ├── OrbitPath     elliptical orbit line (parameterised; reused by Planet)
 │   │   ├── Sun           animated surface shader + pointLight + CSS radial-gradient glow (Html)
+│   │   ├── Planet ×2     Mercury/Venus — heliocentric self-positioning, own orbit paths
 │   │   └── Annotations   drei Html labels at solstice/equinox positions
 │   ├── Earth (Suspense)  day/night shader, axial tilt group, axis line
 │   │   └── Moon          textured sphere, 5.14° inclined orbit, tidal locking, nodal precession
-│   ├── ZoomSync          bidirectional camera ↔ Zustand zoomDistance sync
+│   ├── ZoomSync          camera ↔ Zustand zoomDistance sync + explainer camera positioning
 │   └── OrbitControls     mouse orbit/zoom
 ├── HUD (React DOM overlay)
 │   ├── TimelineSlider    year scrubber with season bands, date display
-│   ├── SpeedControls     orbit speed, rotation speed, camera zoom, earth scale
+│   ├── SpeedControls     orbit speed, rotation speed, camera zoom, planet scale
 │   ├── HemisphereControl S/N toggle
 │   ├── LabelsControl     orbital labels toggle
-│   └── PlanetSelector    Earth only (Phase 1)
+│   └── PlanetSelector    Mercury/Venus/Earth focusable; Mars–Neptune disabled placeholders
+├── TopLeftControls       Info + Solstice/Equinox explainer panel; embeds InfoModal
+│   └── SeasonDiagramModal "See how it works" — portal bottom-sheet with SVG SeasonDiagram
 └── InfoModal             about/help modal + offline caching toggle
 ```
 
 ### Key Design Decisions
 
-- **Triple reference frame:** `focusTarget` selects heliocentric (Sun at origin), geocentric (Earth at origin, `worldGroup` offset by `-earthPos`), or selenocentric (Moon at origin, Earth offset by `-moonLocalPos`, `worldGroup` offset by `-(earthPos + moonLocalPos)`). The Earth shader uniform `uSunPositionWorld` is set accordingly for all three modes. Each body's click handler calls `setFocusTarget` with its own identity (idempotent, no toggle) and `event.stopPropagation()` to prevent R3F ray propagation to meshes behind it.
+- **Five reference frames:** `focusTarget` puts the focused body at the origin via a single `focusOffset` (its heliocentric position; for the Moon, `earthPos + moonLocalPos`). `worldGroup` is offset by `-focusOffset`, the Earth group by `earthPos - focusOffset`. Mercury/Venus position themselves heliocentrically inside `worldGroup`, so the same offset covers them. The Earth shader uniform `uSunPositionWorld` is set accordingly in all modes. Each body's click handler calls `setFocusTarget` with its own identity (idempotent, no toggle) and `event.stopPropagation()` to prevent R3F ray propagation to meshes behind it.
+- **Axial tilt direction:** Earth's axis leans toward its December-solstice orbital position (`TILT_DIRECTION_RAD = 90° − ϖ`), not toward perihelion. `EARTH_AXIS_WORLD` in constants exports the world-space spin axis; subsolar-latitude tests validate it.
+- **Mercury/Venus:** generic `Planet.tsx` + `PLANET_DATA` J2000 elements + `getPlanetOrbitalPosition` (perihelion angle relative to Earth's keeps elongations/conjunctions correct). Orbital inclination deliberately omitted (all orbits in the ecliptic plane). Hidden during season explainers.
+- **Season diagram modals (2026-07-12):** `lib/seasonDiagram.ts` maps event label + hemisphere to five SVG variants; `components/explainers/SeasonDiagram(Modal).tsx` render a portrait SVG in a portal bottom-sheet ("See how it works" in the explainer panel). Reduced-motion static fallback; animations pause when the page is hidden.
 - **Shaders as TypeScript:** GLSL lives in `.ts` template literals (`lib/shaders/*.ts`), not raw `.glsl` files. No Turbopack raw loader needed; `next.config.ts` is empty.
 - **No postprocessing library:** `@react-three/postprocessing` removed from rendering due to React 19 + Three.js r183 incompatibilities. Sun glow uses CSS radial-gradient via drei `Html`.
 - **Moon parented under Earth:** Moon is a child of the Earth group, so it inherits Earth's position, scale, and reference frame automatically. Orbit angle derived from `clock.rotationAngle / MOON_SIDEREAL_PERIOD_DAYS`.
@@ -49,6 +55,12 @@ ClientRoot (SimulationContext.Provider)
 - Purpose: agent-first routing and operational memory for future AI coding assistants working on the codebase.
 
 ## Recent Features
+
+### Mercury/Venus + Explainer Diagrams (`fca49ea`..`9107609`, 2026-07)
+- Mercury and Venus as clickable, focusable planets with Keplerian orbits (`Planet.tsx`, `PLANET_DATA`, `getPlanetOrbitalPosition`); `FocusTarget` extended to five values.
+- Planet Scale slider applies to the focused planet only; Mercury/Venus/Moon hidden during explainers; equinox explainer camera hemisphere-aware (southern default).
+- Earth's axial tilt aligned with the solstice line instead of perihelion (fixes ~5° terminator miss at equinoxes); subsolar-latitude test suite added.
+- Animated SVG equinox/solstice explainer diagrams in a mobile bottom-sheet modal (5 variants, focus-trapped dialog, reduced-motion support).
 
 ### Focus Target Refactor + Selenocentric View (`66f8ac0`, `b07d5b2`)
 - Replaced `toggleFocusTarget()` with `setFocusTarget(target: 'sun' | 'earth' | 'moon')` in Zustand store. Each body declares its own identity on click — idempotent, no toggle. Clicking the already-focused body is a no-op.
@@ -103,9 +115,10 @@ ClientRoot (SimulationContext.Provider)
 - **R3F click events propagate through ALL intersected meshes along the ray.** When a raycast hits multiple meshes (e.g. Earth in front of Sun), `onClick` fires on every one unless `event.stopPropagation()` is called. Always call `e.stopPropagation()` in mesh click handlers to ensure only the nearest mesh responds. Without this, `setFocusTarget('earth')` fires first, then `setFocusTarget('sun')` overwrites it, making the click appear to do nothing.
 - **Use `setX(value)` not `toggleX()` for focus/selection state.** Toggle actions are fragile: dual-firing events (R3F ray propagation), double-clicks, or future multi-target scenarios all break them. Explicit `setFocusTarget('earth')` is idempotent, composable, and scales to N targets.
 - **Zustand v5: returning `{}` from a functional `set()` still notifies subscribers.** For true no-op idempotency, return the existing state reference (`return s`) when nothing changes — not an empty partial. Test no-ops with a `subscribe` spy, not just state equality.
+- **`backdrop-filter` creates a containing block for `position: fixed` descendants.** The explainer panel uses `backdrop-blur-md`, so a nested modal's `fixed inset-0` overlay gets trapped inside the panel instead of covering the viewport. Render full-screen overlays via `createPortal(..., document.body)` (see `SeasonDiagramModal`). z-index tiers: mobile explainer scrim 55, panel 60, diagram modal 70.
 - **Pre-allocate reusable `THREE.Vector3`/`THREE.Euler` at module scope for `useFrame` loops.** Allocating `new Vector3()` or calling `.clone()` every frame creates GC pressure. Declare module-level scratch objects (e.g. `const _moonLocalPos = new THREE.Vector3()`) and `.set()`/`.copy()` into them each frame.
 
 ## Technical Debt
 
-- **`@react-three/postprocessing` still in `package.json`** but no longer imported anywhere. Should be removed from dependencies.
+- **`public/sw.js` does not precache Mercury/Venus textures.** `TEXTURE_FILES` still lists only earth-day/earth-night/moon; `mercury.jpg`/`venus.jpg` are missing, so offline mode serves broken planets. Fix requires adding both files and bumping `TEXTURE_CACHE` (coupled to `lib/useOfflineStatus.ts`, guarded by `swCacheNames.test.ts`).
 - **`ZoomSync` calls `setZoomDistance` from `useFrame`:** guarded by >1 unit threshold so it only fires on mouse wheel, but follows the same Zustand-from-rAF pattern identified as risky. Monitor for issues.

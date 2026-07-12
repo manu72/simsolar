@@ -2,7 +2,7 @@
 
 import { Html } from '@react-three/drei'
 import { useMemo } from 'react'
-import { getSolsticeEquinoxEvents, getEarthOrbitalPosition } from '@/lib/orbitalMechanics'
+import { getSolsticeEquinoxEvents, getEarthOrbitalPosition, compressDisplayPosition } from '@/lib/orbitalMechanics'
 import { useAppStore } from '@/store/useAppStore'
 
 const SOUTH_LABELS: Record<string, string> = {
@@ -31,7 +31,7 @@ export function Annotations() {
   // useEffect to fire every render (referential equality), causing an infinite loop.
   const eventPositions = useMemo(() =>
     events.map(event => {
-      const pos = getEarthOrbitalPosition(event.jd)
+      const pos = compressDisplayPosition(getEarthOrbitalPosition(event.jd))
       return { ...event, position: [pos.x, pos.y + 6, pos.z] as [number, number, number] }
     }),
     [events],

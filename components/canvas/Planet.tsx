@@ -1,22 +1,23 @@
 'use client'
 
 import { useContext, useEffect, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, type ThreeEvent } from '@react-three/fiber'
 import { useTexture } from '@react-three/drei'
 import * as THREE from 'three'
-import { PLANET_DATA, SIDEREAL_DAY_DAYS, EARTH_PERIHELION_LONGITUDE_DEG, DEFAULT_EARTH_SCALE, type InnerPlanet } from '@/lib/constants'
-import { getPlanetOrbitalPosition } from '@/lib/orbitalMechanics'
+import { PLANET_DATA, SIDEREAL_DAY_DAYS, EARTH_PERIHELION_LONGITUDE_DEG, DEFAULT_EARTH_SCALE, SATURN_RING_INNER, SATURN_RING_OUTER, type PlanetId } from '@/lib/constants'
+import { getPlanetOrbitalPosition, compressDisplayPosition } from '@/lib/orbitalMechanics'
+import { BodyLabel } from './BodyLabel'
 import { useAppStore } from '@/store/useAppStore'
 import { usePlanetDrag } from '@/lib/usePlanetDrag'
 import { SimulationContext } from './SimulationContext'
 import { OrbitPath } from './OrbitPath'
 
 interface PlanetProps {
-  planet: InnerPlanet
+  planet: PlanetId
 }
 
 /**
- * A textured inner planet plus its orbit path. Rendered inside worldGroup,
+ * A textured planet plus its orbit path. Rendered inside worldGroup,
  * positioned heliocentrically each frame — the Animator's worldGroup offset
  * then makes it correct in every focus mode for free.
  */
@@ -34,7 +35,7 @@ export function Planet({ planet }: PlanetProps) {
   useFrame(() => {
     const { earthScale, focusTarget } = useAppStore.getState()
     if (groupRef.current) {
-      groupRef.current.position.copy(getPlanetOrbitalPosition(planet, clock.julianDay))
+      groupRef.current.position.copy(compressDisplayPosition(getPlanetOrbitalPosition(planet, clock.julianDay)))
       // Planet Scale only applies to the focused planet
       groupRef.current.scale.setScalar(focusTarget === planet ? earthScale : DEFAULT_EARTH_SCALE)
     }
@@ -53,24 +54,37 @@ export function Planet({ planet }: PlanetProps) {
   // Explainers teach with Earth alone — other planets would clutter the view
   if (explainerActive) return null
 
+  // Shared by the sphere and Saturn's ring so the ring is clickable/draggable
+  // too; stopPropagation keeps the raycast from also firing on bodies behind
+  const pointerHandlers = {
+    onClick: (e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); useAppStore.getState().setFocusTarget(planet) },
+    onPointerDown,
+    onPointerOver: () => { document.body.style.cursor = useAppStore.getState().focusTarget === planet ? 'grab' : 'pointer' },
+    onPointerOut: () => { document.body.style.cursor = 'auto' },
+  }
+
   return (
     <>
       <OrbitPath
         semiMajorAxis={data.semiMajorAxis}
         eccentricity={data.eccentricity}
         perihelionAngleRad={((data.perihelionLongitudeDeg - EARTH_PERIHELION_LONGITUDE_DEG) * Math.PI) / 180}
+        color={data.color}
       />
       <group ref={groupRef}>
-        <mesh
-          ref={meshRef}
-          onClick={(e) => { e.stopPropagation(); useAppStore.getState().setFocusTarget(planet) }}
-          onPointerDown={onPointerDown}
-          onPointerOver={() => { document.body.style.cursor = useAppStore.getState().focusTarget === planet ? 'grab' : 'pointer' }}
-          onPointerOut={() => { document.body.style.cursor = 'auto' }}
-        >
+        <mesh ref={meshRef} {...pointerHandlers}>
           <sphereGeometry args={[data.radius, 48, 48]} />
           <meshStandardMaterial map={texture} emissive="#181818" />
         </mesh>
+        {/* ponytail: flat-colour untilted ring — swap in a ring texture and
+            Saturn's 26.7° axial tilt if visual fidelity ever matters */}
+        {planet === 'saturn' && (
+          <mesh rotation-x={-Math.PI / 2} {...pointerHandlers}>
+            <ringGeometry args={[data.radius * SATURN_RING_INNER, data.radius * SATURN_RING_OUTER, 96]} />
+            <meshBasicMaterial color="#c7b487" side={THREE.DoubleSide} transparent opacity={0.6} />
+          </mesh>
+        )}
+        <BodyLabel name={planet} offsetY={data.radius * 1.6} />
       </group>
     </>
   )

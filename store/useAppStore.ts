@@ -6,13 +6,14 @@ import {
   MIN_EARTH_SCALE, MAX_EARTH_SCALE, DEFAULT_EARTH_SCALE,
 } from '@/lib/constants'
 import type { SeasonExplainerMode, SolarEventLabel } from '@/lib/seasonExplainer'
+import type { PlanetId } from '@/lib/constants'
 
 interface ActiveSeasonExplainer {
   mode: SeasonExplainerMode
   eventLabel: SolarEventLabel
 }
 
-export type FocusTarget = 'sun' | 'mercury' | 'venus' | 'earth' | 'moon'
+export type FocusTarget = 'sun' | 'earth' | 'moon' | PlanetId
 
 interface AppState {
   isPlaying: boolean
