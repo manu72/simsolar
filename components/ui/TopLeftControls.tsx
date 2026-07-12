@@ -2,6 +2,7 @@
 
 import { useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { SimulationContext } from '@/components/canvas/SimulationContext'
+import { SeasonDiagramModal } from '@/components/explainers/SeasonDiagramModal'
 import { InfoModal } from '@/components/ui/InfoModal'
 import { DEFAULT_EARTH_SCALE, DEFAULT_ZOOM_DISTANCE } from '@/lib/constants'
 import {
@@ -314,6 +315,8 @@ export function TopLeftControls() {
                 <p className="mb-4 text-sm leading-6 text-(--color-explainer-text)">
                   {selectedEvent.summary}
                 </p>
+
+                <SeasonDiagramModal eventLabel={selectedEvent.label} hemisphere={hemisphere} />
 
                 <ol className="space-y-2 text-sm leading-5">
                   <li>

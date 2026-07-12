@@ -261,7 +261,7 @@ function CacheErrorToast({ message, onDone }: { message: string; onDone: () => v
   );
 }
 
-function getFocusableElements(container: HTMLElement | null): HTMLElement[] {
+export function getFocusableElements(container: HTMLElement | null): HTMLElement[] {
   if (!container) return [];
 
   return Array.from(
