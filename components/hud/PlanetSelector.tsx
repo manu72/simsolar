@@ -9,8 +9,8 @@ const PLANETS: { name: string; color: string; size: number; target: FocusTarget 
   { name: 'Mars',    color: '#c1440e', size: 11, target: 'mars'    },
   { name: 'Jupiter', color: '#c88b3a', size: 13, target: 'jupiter' },
   { name: 'Saturn',  color: '#e8d5a3', size: 12, target: 'saturn'  },
-  { name: 'Uranus',  color: '#7de8e8', size: 11, target: null },
-  { name: 'Neptune', color: '#4169e1', size: 11, target: null },
+  { name: 'Uranus',  color: '#7de8e8', size: 11, target: 'uranus'  },
+  { name: 'Neptune', color: '#4169e1', size: 11, target: 'neptune' },
 ]
 
 export function PlanetSelector() {

@@ -46,10 +46,10 @@ export const MIN_EARTH_SCALE = 1;
 export const MAX_EARTH_SCALE = 20;
 export const DEFAULT_EARTH_SCALE = 5;
 
-// Zoom (camera distance from origin) — max fits Saturn's display-compressed
-// orbit (~800 units) in the 45° fov; CAMERA_FAR keeps the starfield visible
+// Zoom (camera distance from origin) — max fits Neptune's display-compressed
+// orbit (~1540 units) in the 45° fov; CAMERA_FAR keeps the starfield visible
 export const MIN_ZOOM_DISTANCE = 50;
-export const MAX_ZOOM_DISTANCE = 2500;
+export const MAX_ZOOM_DISTANCE = 4000;
 export const DEFAULT_ZOOM_DISTANCE = 400;
 export const CAMERA_FAR = 20000;
 
@@ -61,8 +61,9 @@ export const RADIAL_DISPLAY_EXPONENT = 0.6;
 // Planets — J2000 orbital elements (a in AU scaled to scene units where
 // Earth's a = SEMI_MAJOR_AXIS, radii relative to EARTH_RADIUS)
 // ponytail: orbital inclination omitted (Mercury 7°, Venus 3.4°, Mars 1.85°,
-// Jupiter 1.3°, Saturn 2.5°) — all orbits render in the ecliptic plane like
-// Earth's; add an inclination rotation if out-of-plane accuracy ever matters.
+// Jupiter 1.3°, Saturn 2.5°, Uranus 0.77°, Neptune 1.77°) — all orbits render
+// in the ecliptic plane like Earth's; add an inclination rotation if
+// out-of-plane accuracy ever matters.
 export const J2000_JD = 2451545.0; // Jan 1 2000 12:00 UTC
 
 export const PLANET_DATA = {
@@ -120,6 +121,28 @@ export const PLANET_DATA = {
     rotationPeriodDays: 0.44401, // 10.656 h
     texture: "/textures/saturn.jpg",
     color: "#e8d5a3",
+  },
+  uranus: {
+    semiMajorAxis: 19.19126393 * SEMI_MAJOR_AXIS,
+    eccentricity: 0.04716771,
+    periodDays: 30685.4,
+    radius: EARTH_RADIUS * 2.3, // display-compressed (real 3.98× Earth) to suit the condensed layout
+    meanLongitudeDeg: 313.23218,
+    perihelionLongitudeDeg: 170.96424,
+    rotationPeriodDays: -0.71833, // retrograde (17.24 h)
+    texture: "/textures/uranus.jpg",
+    color: "#7de8e8",
+  },
+  neptune: {
+    semiMajorAxis: 30.06896348 * SEMI_MAJOR_AXIS,
+    eccentricity: 0.00858587,
+    periodDays: 60189,
+    radius: EARTH_RADIUS * 2.25, // display-compressed (real 3.87× Earth) to suit the condensed layout
+    meanLongitudeDeg: 304.88003,
+    perihelionLongitudeDeg: 44.97135,
+    rotationPeriodDays: 0.67125, // 16.11 h
+    texture: "/textures/neptune.jpg",
+    color: "#4169e1",
   },
 } as const;
 

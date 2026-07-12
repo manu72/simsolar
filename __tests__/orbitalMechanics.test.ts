@@ -107,7 +107,7 @@ describe('subsolar latitude (axis vs orbit alignment)', () => {
 })
 
 describe('getPlanetOrbitalPosition', () => {
-  const planets: PlanetId[] = ['mercury', 'venus', 'mars', 'jupiter', 'saturn']
+  const planets: PlanetId[] = ['mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune']
 
   it.each(planets)('%s stays in the ecliptic plane (y ≈ 0)', (planet) => {
     const pos = getPlanetOrbitalPosition(planet, J2000_JD + 123.4)
@@ -175,7 +175,7 @@ describe('compressDisplayPosition', () => {
   })
 
   it('keeps planet ordering by distance', () => {
-    const order = (['mercury', 'venus', 'mars', 'jupiter', 'saturn'] as PlanetId[])
+    const order = (['mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'] as PlanetId[])
       .map(p => compressDisplayPosition(getPlanetOrbitalPosition(p, J2000_JD)).length())
     expect([...order].sort((a, b) => a - b)).toEqual(order)
   })

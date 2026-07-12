@@ -67,6 +67,8 @@ export function Scene({ isReady, onReady }: SceneProps) {
               <Planet planet="mars" />
               <Planet planet="jupiter" />
               <Planet planet="saturn" />
+              <Planet planet="uranus" />
+              <Planet planet="neptune" />
             </Suspense>
           </>
         ) : null}
