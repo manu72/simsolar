@@ -14,9 +14,15 @@ void main() {
   // World-space normal (mat3(modelMatrix) for uniform-scale sphere)
   vNormal = normalize(mat3(modelMatrix) * normal);
 
-  // Per-vertex sun direction — computed from actual world positions,
-  // correct in both heliocentric and geocentric reference frames
-  vSunDir = normalize(uSunPositionWorld - worldPos.xyz);
+  // Sun direction from Earth's CENTRE, not from each vertex. The scene Sun is
+  // only a few Earth radii away (orbit 200 units, globe up to 60), so a
+  // per-vertex direction lights a cap of arccos(R/D) < 90° and pushes the
+  // terminator up to 17.5° into the day side — both poles end up dark at the
+  // equinox. Real sunlight is parallel to 0.002°, so one shared direction is
+  // the physically correct model. Works in every focus frame because
+  // uSunPositionWorld is the Sun's true world position.
+  vec3 earthCentre = (modelMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+  vSunDir = normalize(uSunPositionWorld - earthCentre);
 
   // World-space view direction (for atmosphere rim Fresnel)
   vViewDir = normalize(cameraPosition - worldPos.xyz);
