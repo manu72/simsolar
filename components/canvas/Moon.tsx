@@ -11,6 +11,7 @@ import {
 } from '@/lib/constants'
 import { useAppStore } from '@/store/useAppStore'
 import { usePlanetDrag } from '@/lib/usePlanetDrag'
+import { parallelSunlight } from '@/lib/shaders/parallelSunlight'
 
 const ORBIT_SEGMENTS = 128
 
@@ -67,7 +68,7 @@ export function Moon({ groupRef, inclinationGroupRef }: MoonProps) {
           onPointerOut={() => { document.body.style.cursor = 'auto' }}
         >
           <sphereGeometry args={[MOON_RADIUS, 32, 32]} />
-          <meshStandardMaterial map={moonTexture} emissive="#181818" />
+          <meshStandardMaterial map={moonTexture} emissive="#181818" onBeforeCompile={parallelSunlight} />
         </mesh>
       </group>
     </group>

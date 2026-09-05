@@ -12,6 +12,7 @@ import { usePlanetDrag } from '@/lib/usePlanetDrag'
 import { SimulationContext } from './SimulationContext'
 import { OrbitPath } from './OrbitPath'
 import { GalileanMoons } from './GalileanMoons'
+import { parallelSunlight } from '@/lib/shaders/parallelSunlight'
 
 interface PlanetProps {
   planet: PlanetId
@@ -75,7 +76,7 @@ export function Planet({ planet }: PlanetProps) {
       <group ref={groupRef}>
         <mesh ref={meshRef} {...pointerHandlers}>
           <sphereGeometry args={[data.radius, 48, 48]} />
-          <meshStandardMaterial map={texture} emissive="#181818" />
+          <meshStandardMaterial map={texture} emissive="#181818" onBeforeCompile={parallelSunlight} />
         </mesh>
         {/* ponytail: flat-colour untilted ring — swap in a ring texture and
             Saturn's 26.7° axial tilt if visual fidelity ever matters */}
