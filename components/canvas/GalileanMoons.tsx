@@ -8,6 +8,7 @@ import { GALILEAN_MOON_DATA, J2000_JD, type GalileanMoonId } from '@/lib/constan
 import { useAppStore } from '@/store/useAppStore'
 import { SimulationContext } from './SimulationContext'
 import { BodyLabel } from './BodyLabel'
+import { parallelSunlight } from '@/lib/shaders/parallelSunlight'
 
 const ORBIT_SEGMENTS = 96
 
@@ -66,7 +67,7 @@ function GalileanMoon({ moon }: { moon: GalileanMoonId }) {
       <group ref={groupRef}>
         <mesh>
           <sphereGeometry args={[data.radius, 32, 32]} />
-          <meshStandardMaterial map={texture} emissive="#181818" />
+          <meshStandardMaterial map={texture} emissive="#181818" onBeforeCompile={parallelSunlight} />
         </mesh>
         {showLabel && <BodyLabel name={moon} offsetY={data.radius * 2.5} />}
       </group>
